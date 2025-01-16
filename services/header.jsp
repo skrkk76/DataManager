@@ -185,7 +185,7 @@ if(showContent == null || "".equals(showContent))
 									if(bCreateTask)
 									{
 %>
-										<li><a href="javascript:popupContent('addUserTaskView.jsp', '550', '400')"><%= resourceBundle.getProperty("DataManager.DisplayText.Create_Task") %></a></li>
+										<li><a href="javascript:popupContent('addUserTaskView.jsp', '300', '400')"><%= resourceBundle.getProperty("DataManager.DisplayText.Create_Task") %></a></li>
 <%
 									}
 									if(bUpdateBNO)

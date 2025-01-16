@@ -92,7 +92,7 @@
 						<td class="input">
 							<input type="radio" name="shortLink" id="shortLink" value="<%= RDMServicesConstants.ACTIONS_CREATE_TASK %>" <%= sHomePage.equals(RDMServicesConstants.ACTIONS_CREATE_TASK) ? "checked" : "" %>>
 							<%= tabSpace %>
-							<b>&raquo;&nbsp;<a href="javascript:popupContent('addUserTaskView.jsp', '550', '400')"><%= resourceBundle.getProperty("DataManager.DisplayText.Create_Task") %></a></b>
+							<b>&raquo;&nbsp;<a href="javascript:popupContent('addUserTaskView.jsp', '300', '400')"><%= resourceBundle.getProperty("DataManager.DisplayText.Create_Task") %></a></b>
 							<%= sHomePage.equals(RDMServicesConstants.ACTIONS_CREATE_TASK) ? "("+resourceBundle.getProperty("DataManager.DisplayText.Default_View")+")" : "" %>
 						</td>
 					</tr>

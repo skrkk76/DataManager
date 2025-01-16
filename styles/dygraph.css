@@ -38,6 +38,27 @@ td.text
 	font-family:Arial,sans-serif;
 }
 
+td.task
+{
+	border: solid 1px #ffffff;
+	text-align: left;
+	background-color: #f0f3f4;
+	color: #000000;
+	font-size:12px;
+	font-family:Arial,sans-serif;
+}
+
+td.txtLabel
+{
+	border: solid 1px #ffffff;
+	text-align: left;
+	background-color: #888888;
+	color: #ffffff;
+	font-size:12px;
+	font-family:Arial,sans-serif;
+	font-weight: bold;
+}
+
 td.image
 {
 	border: solid 1px #888888;
@@ -59,7 +80,7 @@ input[type='text']
 	border: 1px solid #000000;
 	font-size: 8pt;
 	font-family: Verdana;
-	box-shadow: 1px 1px 5px #CCC;
+	box-shadow: 1px 1px 1px #CCC;
 }
 
 select
@@ -114,4 +135,17 @@ a.blink
 a.noblink
 {
 	
+}
+
+.buttons {
+  background-color: #a9cce3;
+  border: none;
+  color: black;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  cursor: pointer;
+  height: 20px;
+  width: 100px;
 }

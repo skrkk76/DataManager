@@ -28,6 +28,8 @@
 	<form name="frm" method="post" target="results" action="manageUsersResults.jsp">
 		<table align="center" border="0" cellpadding="1" cellspacing="1" width="<%= winWidth * 0.6 %>">
 			<tr>
+				<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.User_Name") %></b></td>
+				<td class="input"><input type="textbox" id="username" name="username" value=""></td>
 				<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.User_Role") %></b></td>
 				<td class="input">
 					<select id="role" name="role">

@@ -18,11 +18,12 @@
 	UserTasks userTasks = new UserTasks();
 	try
 	{
-		Map<String, String> mTaskDeliverable = new HashMap<String, String>();
+		Map<String, String[]> mTaskDeliverable = new HashMap<String, String[]>();
 
 		String sAttrName = "";
 		String sAttrValue = "";
 		String sTareWeight = "";
+		String sTareWeightClb = "";
 		DecimalFormat df2 = new DecimalFormat("#.####");
 
 		Enumeration enum1 = request.getParameterNames();
@@ -32,7 +33,7 @@
 			sAttrValue = request.getParameter(sAttrName);
 
 			if("taskId".equals(sAttrName) || "selTaskId".equals(sAttrName) || "mode".equals(sAttrName) || 
-				"scale".equals(sAttrName) || "deliverableId".equals(sAttrName) || sAttrName.endsWith("_TW"))
+				"scale".equals(sAttrName) || "deliverableId".equals(sAttrName) || sAttrName.endsWith("_TW") || sAttrName.endsWith("_TW_CLB"))
 			{
 				if("scale".equals(sAttrName))
 				{
@@ -48,14 +49,23 @@
 			if(sAttrValue != null && !"".equals(sAttrValue.trim()))
 			{
 				sTareWeight = request.getParameter(sAttrName+"_TW");
+				sTareWeightClb = request.getParameter(sAttrName+"_TW_CLB");
 				if(sTareWeight != null && !"".equals(sTareWeight.trim()))
-				{			
+				{
 					sAttrValue = "" + df2.format((Double.parseDouble(sAttrValue) - Double.parseDouble(sTareWeight)));
 				}
 				
-				mTaskDeliverable.put(sAttrName, sAttrValue);
+				if(!sTareWeightClb.equals(sTareWeight))
+				{
+					mTaskDeliverable.put(sAttrName, new String[] {sAttrValue, sTareWeight});
+				}
+				else
+				{
+					mTaskDeliverable.put(sAttrName, new String[] {sAttrValue, ""});
+				}
 			}
 		}
+		 
 
 		if("add".equals(sAction) && !mTaskDeliverable.isEmpty())
 		{
@@ -73,7 +83,7 @@
 	catch(Exception e)
 	{
 		sErr = e.getMessage();
-		sErr = (sErr == null ? "null" : sErr.replaceAll("\"", "'").replaceAll("\r", " ").replaceAll("\n", " "));
+		sErr = (sErr == null ? "null" : sErr.replace("\"", "'").replace("\r", " ").replace("\n", " "));
 	}
 %>
 <html>
@@ -91,7 +101,7 @@
 			{
 				top.opener.parent.frames['content'].document.location.href = 'userTaskDeliverables.jsp?taskId=<%= sTaskId %>';
 				parent.frames['content'].document.location.href = parent.frames['content'].document.location.href;
-			}				
+			}
 			else if(mode == "edit")
 			{
 				top.opener.parent.frames['content'].document.location.href = top.opener.parent.frames['content'].document.location.href;

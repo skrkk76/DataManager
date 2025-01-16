@@ -62,6 +62,10 @@
 				if (item.isFormField())
 				{
 					sField = item.getFieldName();
+					if("hid_userId".equals(sField))
+					{
+						sHidUserId = item.getString();
+					}
 					if(mKeys.containsKey(sField))
 					{
 						if("dept".equals(sField) || "group".equals(sField))
@@ -90,12 +94,27 @@
 					if(sImageName != null && !"".equals(sImageName))
 					{
 						File imageFile = new File(sImagePath, (sUserId + ".jpg"));
-						if(!imageFile.exists())
+						if(imageFile.exists())
 						{
-							imageFile.createNewFile();
+							imageFile.delete();
 						}
+						imageFile.createNewFile();
 						item.write(imageFile);
 					}
+				}
+			}
+			
+			if("edit".equals(sAction) && !sUserId.equals(sHidUserId))
+			{
+				File imageFile1 = new File(sImagePath, sUserId + ".jpg"); 
+				File imageFile2 = new File(sImagePath, sHidUserId + ".jpg");
+				if(imageFile1.exists() && imageFile2.exists())
+				{
+					boolean bDeleted = imageFile2.delete();
+				}
+				else if(!imageFile1.exists() && imageFile2.exists())
+				{
+					boolean bRenamed = imageFile2.renameTo(imageFile1);
 				}
 			}
 		}
@@ -126,7 +145,7 @@
 		}
 		else if("edit".equals(sAction))
 		{
-			RDMServicesUtils.updateUser(sUserId, mUserInfo);
+			RDMServicesUtils.updateUser(sHidUserId, mUserInfo);
 		}
 		else if("delete".equals(sAction))
 		{

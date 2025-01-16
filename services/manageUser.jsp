@@ -46,6 +46,8 @@
 		sDesignation = mUserInfo.get(RDMServicesConstants.DESIGNATION);
 		sQualification = mUserInfo.get(RDMServicesConstants.QUALIFICATION);
 	}
+	
+	boolean bAdd = "add".equals(sMode);
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -67,14 +69,14 @@
 	
 		function submitForm()
 		{
+			if(!checkUserId())
+			{
+				return false;
+			}
 <%
-			if("add".equals(sMode))
+			if(bAdd)
 			{
 %>
-				if(!checkUserId())
-				{
-					return false;
-				}
 				if(!checkPassword())
 				{
 					return false;
@@ -182,7 +184,7 @@
 		
 		function checkUserName() 
 		{
-			var nameRegex = /^[a-zA-Z ]+$/;
+			var nameRegex = /^[A-Za-z ]+$/;
 			
 			var firstName = document.getElementById("firstName");
 			firstName.value = firstName.value.trim();
@@ -234,14 +236,6 @@
 					email.focus;
 					return false;
 				}
-			}
-			else
-			{
-				/*
-				alert("<%= resourceBundle.getProperty("DataManager.DisplayText.Email_Addr_Empty") %>");
-				email.focus;
-				return false;
-				*/
 			}
 			return true;
 		}
@@ -366,7 +360,7 @@
 			<tr>
 				<td class="label" width="30%"><b><%= resourceBundle.getProperty("DataManager.DisplayText.User_ID") %></b></td>
 <%
-				if("add".equals(sMode))
+				if(bAdd)
 				{
 %>
 					<td class="input" width="70%">
@@ -378,8 +372,8 @@
 				{
 %>
 					<td class="input" width="30%">
-						<%= mUserInfo.get(RDMServicesConstants.USER_ID) %>
-						<input type="hidden" id="userId" name="userId" value="<%= mUserInfo.get(RDMServicesConstants.USER_ID) %>">
+						<input type="text" id="userId" name="userId" value="<%= mUserInfo.get(RDMServicesConstants.USER_ID) %>" maxlength="15">
+						<input type="hidden" id="hid_userId" name="hid_userId" value="<%= sUserId %>">
 					</td>
 					<td rowspan="5" class="input" width="40%">
 						<img src="../UserImages/<%= sUserId %>.jpg" height="150" width="150" align="right">
@@ -389,7 +383,7 @@
 %>
 			</tr>
 <%
-			if("add".equals(sMode))
+			if(bAdd)
 			{
 %>			
 				<tr>
@@ -403,26 +397,26 @@
 %>
 			<tr>
 				<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.First_Name") %></b></td>
-				<td class="input" colspan="<%= !"add".equals(sMode) ? 2 : 0 %>">
+				<td class="input" colspan="<%= !bAdd ? 2 : 0 %>">
 					<input type="text" id="firstName" name="firstName" size="15" value="<%= sFirstName %>">
 				</td>
 			</tr>
 			<tr>
 				<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.Last_Name") %></b></td>
-				<td class="input" colspan="<%= !"add".equals(sMode) ? 2 : 0 %>">
+				<td class="input" colspan="<%= !bAdd ? 2 : 0 %>">
 					<input type="text" id="lastName" name="lastName" size="15" value="<%= sLastName %>">
 				</td>
 			</tr>
 			<tr>
 				<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.Gender") %></b></td>
-				<td class="input" colspan="<%= !"add".equals(sMode) ? 2 : 0 %>">
+				<td class="input" colspan="<%= !bAdd ? 2 : 0 %>">
 					<input type="radio" id="gender" name="gender" value="M" <%= "M".equals(sGender) ? "checked" : "" %>><%= resourceBundle.getProperty("DataManager.DisplayText.Male") %>
 					<input type="radio" id="gender" name="gender" value="F" <%= "F".equals(sGender) ? "checked" : "" %>><%= resourceBundle.getProperty("DataManager.DisplayText.Female") %>
 				</td>
 			</tr>
 			<tr>
 				<td class="label" id="a"><b><%= resourceBundle.getProperty("DataManager.DisplayText.DateOfBirth") %><b></td>
-				<td class="input" colspan="<%= !"add".equals(sMode) ? 2 : 0 %>">
+				<td class="input" colspan="<%= !bAdd ? 2 : 0 %>">
 					<input type="text" size="10" id="dateOfBirth" name="dateOfBirth" readonly>
 					<a href="#" onClick="setYears(1960, 2020);showCalender('a', 'dateOfBirth');"><img src="../images/calender.png"></a>
 					<a href="#" onClick="javascript:document.getElementById('dateOfBirth').value=''"><img src="../images/clear.png"></a>
@@ -430,7 +424,7 @@
 			</tr>
 			<tr>
 				<td class="label" id="b"><b><%= resourceBundle.getProperty("DataManager.DisplayText.DateOfJoin") %><b></td>
-				<td class="input" colspan="<%= !"add".equals(sMode) ? 2 : 0 %>">
+				<td class="input" colspan="<%= !bAdd ? 2 : 0 %>">
 					<input type="text" size="10" id="dateOfJoin" name="dateOfJoin" readonly>
 					<a href="#" onClick="setYears(2000, 2050);showCalender('b', 'dateOfJoin');"><img src="../images/calender.png"></a>
 					<a href="#" onClick="javascript:document.getElementById('dateOfJoin').value=''"><img src="../images/clear.png"></a>
@@ -438,13 +432,13 @@
 			</tr>
 			<tr>
 				<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.Designation") %></b></td>
-				<td class="input" colspan="<%= !"add".equals(sMode) ? 2 : 0 %>">
+				<td class="input" colspan="<%= !bAdd ? 2 : 0 %>">
 					<input type="text" id="designation" name="designation" size="15" value="<%= sDesignation %>">
 				</td>
 			</tr>
 			<tr>
 				<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.User_Role") %></b></td>
-				<td class="input" colspan="<%= !"add".equals(sMode) ? 2 : 0 %>">
+				<td class="input" colspan="<%= !bAdd ? 2 : 0 %>">
 <%
 					String sRole = mUserInfo.get(RDMServicesConstants.ROLE_NAME);
 %>
@@ -460,9 +454,9 @@
 			</tr>
 			<tr>
 				<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.Department") %></b></td>
-				<td class="input" colspan="<%= !"add".equals(sMode) ? 2 : 0 %>">
+				<td class="input" colspan="<%= !bAdd ? 2 : 0 %>">
 <%
-					StringList slDept = ("add".equals(sMode) ? new StringList() : StringList.split(mUserInfo.get(RDMServicesConstants.DEPARTMENT_NAME), "\\|"));
+					StringList slDept = (bAdd ? new StringList() : StringList.split(mUserInfo.get(RDMServicesConstants.DEPARTMENT_NAME), "\\|"));
 %>
 					<select id="dept" name="dept" multiple size="5">
 <%
@@ -483,9 +477,9 @@
 			</tr>
 			<tr>
 				<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.Group") %></b></td>
-				<td class="input" colspan="<%= !"add".equals(sMode) ? 2 : 0 %>">
+				<td class="input" colspan="<%= !bAdd ? 2 : 0 %>">
 <%
-					StringList slGroups = ("add".equals(sMode) ? new StringList() : StringList.split(mUserInfo.get(RDMServicesConstants.GROUP_NAME), "\\|"));
+					StringList slGroups = (bAdd ? new StringList() : StringList.split(mUserInfo.get(RDMServicesConstants.GROUP_NAME), "\\|"));
 %>
 					<select id="group" name="group" multiple size="5">
 <%
@@ -506,25 +500,25 @@
 			</tr>
 			<tr>
 				<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.Address") %></b></td>
-				<td class="input" colspan="<%= !"add".equals(sMode) ? 2 : 0 %>">
+				<td class="input" colspan="<%= !bAdd ? 2 : 0 %>">
 					<textarea id="address" name="address"><%= sAddress %></textarea>
 				</td>
 			</tr>
 			<tr>
 				<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.Contact_No") %></b></td>
-				<td class="input" colspan="<%= !"add".equals(sMode) ? 2 : 0 %>">
+				<td class="input" colspan="<%= !bAdd ? 2 : 0 %>">
 					<input type="text" id="contactNo" name="contactNo" size="15" value="<%= sContactNo %>">
 				</td>
 			</tr>
 			<tr>
 				<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.Email") %></b></td>
-				<td class="input" colspan="<%= !"add".equals(sMode) ? 2 : 0 %>">
+				<td class="input" colspan="<%= !bAdd ? 2 : 0 %>">
 					<input type="text" id="email" name="email" value="<%= sEmail %>">
 				</td>
 			</tr>
 			<tr>
 				<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.Preferred_Language") %></b></td>
-				<td class="input" colspan="<%= !"add".equals(sMode) ? 2 : 0 %>">
+				<td class="input" colspan="<%= !bAdd ? 2 : 0 %>">
 					<select id="locale" name="locale">
 						<option value="" <%= "".equals(sLocale) ? "selected" : "" %>><%= resourceBundle.getProperty("DataManager.DisplayText.Please_choose_one") %></option>
 						<option value="nl" <%= "nl".equals(sLocale) ? "selected" : "" %>>Dutch</option>
@@ -538,29 +532,29 @@
 			</tr>
 			<tr>
 				<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.Qualification") %></b></td>
-				<td class="input" colspan="<%= !"add".equals(sMode) ? 2 : 0 %>">
+				<td class="input" colspan="<%= !bAdd ? 2 : 0 %>">
 					<input type="text" id="qualification" name="qualification" size="15" value="<%= sQualification %>">
 				</td>
 			</tr>
 			<tr>
 				<td class="label"><b>Needs Training</b></td>
-				<td class="input" colspan="<%= !"add".equals(sMode) ? 2 : 0 %>">
+				<td class="input" colspan="<%= !bAdd ? 2 : 0 %>">
 					<input type="checkbox" id="training" name="training" value="Y" <%= ("Y".equals(sTraining) ? "checked" : "") %>>
 				</td>
 			</tr>
 			<tr>
 				<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.UploadImage") %></b></td>
-				<td class="input" colspan="<%= !"add".equals(sMode) ? 2 : 0 %>">
+				<td class="input" colspan="<%= !bAdd ? 2 : 0 %>">
 					<input type="file" id="image" name="image" accept="image/*">
 				</td>
 			</tr>
 			<tr>
-				<td colspan="<%= !"add".equals(sMode) ? 3 : 2 %>">
+				<td colspan="<%= !bAdd ? 3 : 2 %>">
 					&nbsp;
 				</td>
 			</tr>
 			<tr>
-				<td colspan="<%= !"add".equals(sMode) ? 3 : 2 %>" align="right">
+				<td colspan="<%= !bAdd ? 3 : 2 %>" align="right">
 					<input type="button" name="Save" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Save") %>" onClick="submitForm()">&nbsp;&nbsp;&nbsp;
 					<input type="button" name="Close" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Close") %>" onClick="javascript:top.window.close()">
 				</td>

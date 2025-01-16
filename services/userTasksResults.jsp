@@ -100,22 +100,22 @@ StringList slInactiveCntrl = RDMSession.getInactiveControllers();
 	
 	function showTaskDetails(sTaskId)
 	{
-		window.open('userTaskDetailsView.jsp?taskId='+sTaskId, '', 'left=200,top=100,resizable=yes,scrollbars=yes,status=no,toolbar=no,height=650,width=600');			
+		window.open('userTaskDetailsView.jsp?taskId='+sTaskId, '', 'left=200,top=100,resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=600');
 	}
 	
 	function showTaskDeliverables(sTaskId)
 	{
-		window.open('userTaskDeliverablesView.jsp?taskId='+sTaskId, '', 'left=25,top=25,resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=800');			
+		window.open('userTaskDeliverablesView.jsp?taskId='+sTaskId, '', 'left=25,top=25,resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=800');
 	}
 	
 	function showTaskWBS(sTaskName, sTaskId)
 	{
-		window.open('userTaskWBSView.jsp?taskName='+sTaskName+'&taskId='+sTaskId, '', 'left=25,top=25,resizable=yes,scrollbars=yes,status=no,toolbar=no,height=800,width=1200');			
+		window.open('userTaskWBSView.jsp?taskName='+sTaskName+'&taskId='+sTaskId, '', 'left=25,top=25,resizable=yes,scrollbars=yes,status=no,toolbar=no,height=800,width=1200');
 	}
 	
-	function checkAll () 
+	function checkAll()
 	{
-		var check = document.getElementById('chk_all').checked;
+		var check = parent.document.getElementById('chk_all').checked;
 		var val = "";
 		if(check)
 		{
@@ -227,7 +227,7 @@ StringList slInactiveCntrl = RDMSession.getInactiveControllers();
 		var divs = document.getElementsByTagName("div");
 		for(var i = 0; i < divs.length; i++)
 		{
-			if(divs[i].id == "noTasks" || divs[i].id == "totalDeliverables" || divs[i].id == "NotDownloadDeliverables" || divs[i].id.startsWith("Room_"))
+			if(divs[i].id == "NotDownloadDeliverables" || divs[i].id.startsWith("Room_"))
 			{
 				continue;
 			}
@@ -249,16 +249,16 @@ StringList slInactiveCntrl = RDMSession.getInactiveControllers();
 			{
 				divs[i].style.display = "none";
 			}
-		}		
+		}
 	}
 	
 	function showTaskInfo(id, notes, size)
 	{
 		parent.document.getElementById('taskInfo_id').style.display = "block";
-		parent.document.getElementById('taskInfo_id').innerHTML = id;
+		parent.document.getElementById('taskInfo_id').innerHTML = "<b>Task Id:</b>&nbsp;" + id;
 		
 		parent.document.getElementById('taskInfo_notes').style.display = "block";
-		parent.document.getElementById('taskInfo_notes').innerHTML = notes;
+		parent.document.getElementById('taskInfo_notes').innerHTML = "<b>Notes:</b>&nbsp;" + notes;
 		
 		parent.document.getElementById('taskInfo_size').style.display = "block";
 		parent.document.getElementById('taskInfo_size').innerHTML = "<b>" + size + "</b>";
@@ -290,16 +290,12 @@ StringList slInactiveCntrl = RDMSession.getInactiveControllers();
 </head>
 
 <body>
-<%	
+<%
 	boolean bFlag = (bChangeStatus && RDMServicesConstants.TASK_STATUS_CANCELLED.equals(sStatus));
 %>
 	<form name="frm" action="manageUserTaskProcess.jsp" method="post" target="hiddenFrame">
 		<input type="hidden" id="mode" name="mode" value="">
-		<table border="0" cellpadding="0" align="center" cellspacing="0" width="100%">
-			<tr>
-				<td class="input" width="5%" style="font-size:14px;font-weight:bold;text-align:center"><div id="noTasks"></div></td>
-				<td class="input" width="95%" colspan="16" style="font-size:12px;font-weight:bold;text-align:left"><div id="totalDeliverables"></div></td>
-			</tr>
+		<table border="0" cellpadding="0" align="left" cellspacing="0" width="100%">
 <%
 		int iSz = 0;
 		Iterator<String> itrTask = null;
@@ -331,7 +327,7 @@ StringList slInactiveCntrl = RDMSession.getInactiveControllers();
 		int iTotalTasks = 0;
 		int iDelCnt = 0;
 		double dDelQty = 0;
-		double dOverage = 0;	
+		double dOverage = 0;
 		double dTaskOverage = 0;
 		double dTaskTotal = 0;
 		Integer iTotalDelCnt = null;
@@ -341,7 +337,7 @@ StringList slInactiveCntrl = RDMSession.getInactiveControllers();
 		StringBuilder sbNotDownloaded = null;
 		DecimalFormat df = new DecimalFormat("#.###");
 		DecimalFormat dfPercent = new DecimalFormat("#.##");
-
+		
 		if(mode != null)
 		{
 			SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.ENGLISH);
@@ -392,361 +388,338 @@ StringList slInactiveCntrl = RDMSession.getInactiveControllers();
 				mlTasks = taskInfo.getTasks();
 				
 				iSz = mlTasks.size();
-				if(iSz > 0)
+				iTotalTasks += iSz;
+				for(int i=0; i<iSz; i++)
 				{
-					iTotalTasks += iSz;
-					for(int i=0; i<iSz; i++)
+					mTask = mlTasks.get(i);
+					sRoom = mTask.get(RDMServicesConstants.ROOM_ID);
+					sTaskId = mTask.get(RDMServicesConstants.TASK_AUTONAME);
+					sTaskAdmId = mTask.get(RDMServicesConstants.TASK_ID);
+					sStatus = mTask.get(RDMServicesConstants.STATUS);
+					sAssignee = mTask.get(RDMServicesConstants.ASSIGNEE);
+					sParent = mTask.get(RDMServicesConstants.PARENT_TASK);
+					sParent = ((sParent == null || "null".equals(sParent)) ? "" : sParent);
+					sBatchNo = mTask.get(RDMServicesConstants.BATCH_NO);
+					sBatchNo = ((sBatchNo == null || "null".equals(sBatchNo)) ? "" : sBatchNo);
+					sAttachments = mTask.get(RDMServicesConstants.ATTACHMENTS);
+					sAttachments = ((sAttachments == null || "null".equals(sAttachments)) ? "" : sAttachments);
+					sTaskAdmName = mTask.get(RDMServicesConstants.TASK_NAME);
+					
+					if(i == 0)
 					{
-						mTask = mlTasks.get(i);
-						sRoom = mTask.get(RDMServicesConstants.ROOM_ID);
-						sTaskId = mTask.get(RDMServicesConstants.TASK_AUTONAME);
-						sTaskAdmId = mTask.get(RDMServicesConstants.TASK_ID);
-						sStatus = mTask.get(RDMServicesConstants.STATUS);
-						sAssignee = mTask.get(RDMServicesConstants.ASSIGNEE);
-						sParent = mTask.get(RDMServicesConstants.PARENT_TASK);
-						sParent = ((sParent == null || "null".equals(sParent)) ? "" : sParent);
-						sBatchNo = mTask.get(RDMServicesConstants.BATCH_NO);
-						sBatchNo = ((sBatchNo == null || "null".equals(sBatchNo)) ? "" : sBatchNo);
-						sAttachments = mTask.get(RDMServicesConstants.ATTACHMENTS);
-						sAttachments = ((sAttachments == null || "null".equals(sAttachments)) ? "" : sAttachments);
-						sTaskAdmName = mTask.get(RDMServicesConstants.TASK_NAME);
+						mDeliverableCnt = taskInfo.getSize();
+						mDeliverableQty = taskInfo.getQuantity();
+						sbGroupHeader = new StringBuilder();
+						sbOverage = new StringBuilder();
+						dTaskOverage = 0;
+						dTaskTotal = 0;
 						
-						if(i == 0)
+						sbNotDownloaded = new StringBuilder();
+						itrDel = mDeliverableCnt.keySet().iterator();
+						while(itrDel.hasNext())
 						{
-							mDeliverableCnt = taskInfo.getSize();
-							mDeliverableQty = taskInfo.getQuantity();
-							sbGroupHeader = new StringBuilder();
-							sbOverage = new StringBuilder();
-							dTaskOverage = 0;
-							dTaskTotal = 0;
+							sAttrName = itrDel.next();
+							iDelCnt = mDeliverableCnt.get(sAttrName)[0];
+							dDelQty = mDeliverableQty.get(sAttrName)[0];
+							dOverage = mDeliverableQty.get(sAttrName)[2];
+							dTaskOverage += dOverage;
+							dTaskTotal += dDelQty;
 							
-							sbNotDownloaded = new StringBuilder();
-							itrDel = mDeliverableCnt.keySet().iterator();
-							while(itrDel.hasNext())
+							if(mTotalDelCnt.containsKey(sAttrName))
 							{
-								sAttrName = itrDel.next();
-								iDelCnt = mDeliverableCnt.get(sAttrName)[0];
-								dDelQty = mDeliverableQty.get(sAttrName)[0];
-								dOverage = mDeliverableQty.get(sAttrName)[2];
-								dTaskOverage += dOverage;
-								dTaskTotal += dDelQty;
+								iTotalDelCnt = mTotalDelCnt.get(sAttrName);
+								iTotalDelCnt += iDelCnt;
 								
-								if(mTotalDelCnt.containsKey(sAttrName))
-								{
-									iTotalDelCnt = mTotalDelCnt.get(sAttrName);								
-									iTotalDelCnt += iDelCnt;
-									
-									dTotalDelQty = mTotalDelQty.get(sAttrName);
-									dTotalDelQty += dDelQty;
-									
-									dTotalOverage = mTotalOverage.get(sAttrName);
-									dTotalOverage += dOverage;									
-								}
-								else
-								{
-									iTotalDelCnt = iDelCnt;
-									dTotalDelQty = dDelQty;
-									dTotalOverage = dOverage;
-								}
-								mTotalDelCnt.put(sAttrName, iTotalDelCnt);
-								mTotalDelQty.put(sAttrName, dTotalDelQty);
-								mTotalOverage.put(sAttrName, dTotalOverage);
+								dTotalDelQty = mTotalDelQty.get(sAttrName);
+								dTotalDelQty += dDelQty;
 								
-								sbGroupHeader.append(sAttrName);
-								sbGroupHeader.append(" (");
-								sbGroupHeader.append(RDMServicesUtils.getAttributeUnits().get(sAttrName));
-								sbGroupHeader.append("): ");
-								sbGroupHeader.append("<font color='blue'>");
-								sbGroupHeader.append(df.format(dDelQty));
-								sbGroupHeader.append(" (");
-								sbGroupHeader.append(iDelCnt);
-								sbGroupHeader.append(")");
-								sbGroupHeader.append("</font>");
-								sbGroupHeader.append("  ");
-								
-								sbNotDownloaded.append(sAttrName);
-								sbNotDownloaded.append(" (");
-								sbNotDownloaded.append(RDMServicesUtils.getAttributeUnits().get(sAttrName));
-								sbNotDownloaded.append("): ");
-								sbNotDownloaded.append("<font color='red'>");
-								sbNotDownloaded.append(df.format(mDeliverableQty.get(sAttrName)[1]));
-								sbNotDownloaded.append(" (");
-								sbNotDownloaded.append(mDeliverableCnt.get(sAttrName)[1]);
-								sbNotDownloaded.append(")");
-								sbNotDownloaded.append("</font>");
-								sbNotDownloaded.append("  ");
-								
-								sbOverage.append(sAttrName);
-								sbOverage.append(" (");
-								sbOverage.append(RDMServicesUtils.getAttributeUnits().get(sAttrName));
-								sbOverage.append("): ");
-								sbOverage.append("<font color='blue'>");
-								sbOverage.append(df.format(dOverage));
-								sbOverage.append(" (");
-								sbOverage.append(dfPercent.format((dOverage / dDelQty) * 100));
-								sbOverage.append("%)</font>");
-								sbOverage.append("  ");
-							}
-							
-							if(dTaskOverage > 0)
-							{
-								sbGroupHeader.append("<br>");
-								sbGroupHeader.append(resourceBundle.getProperty("DataManager.DisplayText.Overage"));
-								sbGroupHeader.append(":&nbsp;");
-								sbGroupHeader.append("<font color='blue'>");
-								sbGroupHeader.append(df.format(dTaskOverage));
-								sbGroupHeader.append("&nbsp;(");
-								sbGroupHeader.append(dfPercent.format((dTaskOverage / dTaskTotal) * 100));
-								sbGroupHeader.append("%)</font>");
-								sbGroupHeader.append("&nbsp;&nbsp;&nbsp;");
-								sbGroupHeader.append(sbOverage.toString());
-							}
-			
-							if(bUserBased)
-							{
-								totalTime = taskInfo.getTime();
-								sbGroupHeader.append("</td>");
-								sbGroupHeader.append("<td class='input' width='38%' style='font-size:12px;font-weight:bold;text-align:left' colspan='7'>");
-								sbGroupHeader.append(resourceBundle.getProperty("DataManager.DisplayText.Duration"));
-								sbGroupHeader.append(": <font color='blue'>");
-								sbGroupHeader.append((totalTime / 60) + " hr : " + (totalTime % 60) + " mm");
-								sbGroupHeader.append("</font>");
-								sbGroupHeader.append("&nbsp;&nbsp;&nbsp;&nbsp;");
-								sbGroupHeader.append(resourceBundle.getProperty("DataManager.DisplayText.Productivity"));
-								sbGroupHeader.append(": <font color='blue'>");
-								sbGroupHeader.append(df.format(taskInfo.getProductivity()));
-								sbGroupHeader.append("</font>");
+								dTotalOverage = mTotalOverage.get(sAttrName);
+								dTotalOverage += dOverage;
 							}
 							else
 							{
-								sbGroupHeader.append("</td>");
-								sbGroupHeader.append("<td class='input' width='38%' style='font-size:12px;font-weight:bold;text-align:left' colspan='7'>");
-								sbGroupHeader.append(sbNotDownloaded.toString());
+								iTotalDelCnt = iDelCnt;
+								dTotalDelQty = dDelQty;
+								dTotalOverage = dOverage;
 							}
-%>
-							<tr>
-								<td class="input" width="8%" style="font-size:12px;font-weight:bold;text-align:center" colspan="2">
-									<a id="<%= sGroupName %>" class="noblink" href="javascript:toggleDisplay('div_<%= sGroupName %>')">
-										<%= mUserNames.containsKey(sGroupName) ? (mUserNames.get(sGroupName)+"&nbsp;("+sAssignee+")") : sGroupName %>
-									</a>
-								</td>
-								<td class='input' width='54%' style='font-size:12px;font-weight:bold;text-align:left' colspan='8'>
-<%
-								if(dTaskTotal > 0)
-								{
-%>
-									<%= resourceBundle.getProperty("DataManager.DisplayText.Total") %>:&nbsp;
-									<font color='blue'><%= df.format(dTaskTotal) %></font>&nbsp;&nbsp;&nbsp;
-<%
-								}
-%>
-									<%= sbGroupHeader.toString() %>
-								</td>
-							</tr>
-							<tr>
-								<td colspan="17">
-									<div id="div_<%= sGroupName %>" style="display:block">
-										<table cellspacing="0" cellpadding="0" border="0" width="100%">
-											<tr>
-												<th class="label" width="2%"><input type="checkbox" id="chk_all" name="chk_all" <%= bFlag ? "disabled" : "" %> onClick="javascript:checkAll()"></th>
-												<th class="label" width="2%">ATT</th>
-												<th class="label" width="6%"><%= resourceBundle.getProperty("DataManager.DisplayText.Task_Name") %></th>
-												<th class="label" width="6%"><%= resourceBundle.getProperty("DataManager.DisplayText.Task_Id") %></th>
-												<th class="label" width="6%"><%= resourceBundle.getProperty("DataManager.DisplayText.Room_No") %></th>
-												<th class="label" width="6%"><%= resourceBundle.getProperty("DataManager.DisplayText.Batch_No") %></th>
-												<th class="label" width="5%"><%= resourceBundle.getProperty("DataManager.DisplayText.Status") %></th>
-												<th class="label" width="10%"><%= resourceBundle.getProperty("DataManager.DisplayText.Owner") %></th>
-												<th class="label" width="10%"><%= resourceBundle.getProperty("DataManager.DisplayText.Assignee") %></th>
-												<th class="label" width="5%"><%= resourceBundle.getProperty("DataManager.DisplayText.In_Time") %></th>
-												<th class="label" width="6%"><%= resourceBundle.getProperty("DataManager.DisplayText.Estimated_Start").replaceAll(" ", "<br>") %></th>
-												<th class="label" width="6%"><%= resourceBundle.getProperty("DataManager.DisplayText.Estimated_End").replaceAll(" ", "<br>") %></th>
-												<th class="label" width="6%"><%= resourceBundle.getProperty("DataManager.DisplayText.Actual_Start").replaceAll(" ", "<br>") %></th>
-												<th class="label" width="6%"><%= resourceBundle.getProperty("DataManager.DisplayText.Actual_End").replaceAll(" ", "<br>") %></th>
-												<th class="label" width="6%"><%= resourceBundle.getProperty("DataManager.DisplayText.First_Del_CreatedOn").replaceAll(" ", "<br>") %></th>
-												<th class="label" width="6%"><%= resourceBundle.getProperty("DataManager.DisplayText.Last_Del_CreatedOn").replaceAll(" ", "<br>") %></th>
-												<th class="label" width="3%"><%= resourceBundle.getProperty("DataManager.DisplayText.Deliverables") %></th>
-												<th class="label" width="3%"><%= resourceBundle.getProperty("DataManager.DisplayText.WBS") %></th>
-											</tr>
-<%
+							mTotalDelCnt.put(sAttrName, iTotalDelCnt);
+							mTotalDelQty.put(sAttrName, dTotalDelQty);
+							mTotalOverage.put(sAttrName, dTotalOverage);
+							
+							sbGroupHeader.append(sAttrName);
+							sbGroupHeader.append(" (");
+							sbGroupHeader.append(RDMServicesUtils.getAttributeUnits().get(sAttrName));
+							sbGroupHeader.append("): ");
+							sbGroupHeader.append("<font color='blue'>");
+							sbGroupHeader.append(df.format(dDelQty));
+							sbGroupHeader.append(" (");
+							sbGroupHeader.append(iDelCnt);
+							sbGroupHeader.append(")");
+							sbGroupHeader.append("</font>");
+							sbGroupHeader.append("  ");
+							
+							sbNotDownloaded.append(sAttrName);
+							sbNotDownloaded.append(" (");
+							sbNotDownloaded.append(RDMServicesUtils.getAttributeUnits().get(sAttrName));
+							sbNotDownloaded.append("): ");
+							sbNotDownloaded.append("<font color='red'>");
+							sbNotDownloaded.append(df.format(mDeliverableQty.get(sAttrName)[1]));
+							sbNotDownloaded.append(" (");
+							sbNotDownloaded.append(mDeliverableCnt.get(sAttrName)[1]);
+							sbNotDownloaded.append(")");
+							sbNotDownloaded.append("</font>");
+							sbNotDownloaded.append("  ");
+							
+							sbOverage.append(sAttrName);
+							sbOverage.append(" (");
+							sbOverage.append(RDMServicesUtils.getAttributeUnits().get(sAttrName));
+							sbOverage.append("): ");
+							sbOverage.append("<font color='blue'>");
+							sbOverage.append(df.format(dOverage));
+							sbOverage.append(" (");
+							sbOverage.append(dfPercent.format((dOverage / dDelQty) * 100));
+							sbOverage.append("%)</font>");
+							sbOverage.append("  ");
 						}
 						
-						sInTime = "";
-						bUserNotLoggedIn = false;
-						mLogs = mUserLogs.get(sAssignee);
-						if(mLogs != null)
+						if(dTaskOverage > 0)
 						{
-							sDate = mTask.get(RDMServicesConstants.ACTUAL_START);
-							if("".equals(sDate))
-							{
-								sDate = mTask.get(RDMServicesConstants.ESTIMATED_START);
-							}
-							sDate = sDate.substring(0, sDate.indexOf(" "));
-							sDate = sdfOut.format(sdfIn.parse(sDate));
-							
-							mlUserLogs = mLogs.get(sDate);
-							if(mlUserLogs != null && mlUserLogs.size() > 0)
-							{
-								mLogData = mlUserLogs.get(mlUserLogs.size() - 1);
-								sInTime = mLogData.get(RDMServicesConstants.LOG_IN);
-								sInTime = sdfOut1.format(sdfIn1.parse(sInTime));
-							}
-							
-							mlUserLogs = mLogs.get(sdfOut.format(currDt));
-							if(mlUserLogs != null && mlUserLogs.size() > 0)
-							{
-								mLogData = mlUserLogs.get(mlUserLogs.size() - 1);
-								bUserNotLoggedIn = ("".equals(mLogData.get(RDMServicesConstants.LOG_IN)) && "".equals(mLogData.get(RDMServicesConstants.LOG_OUT)));
-							}
+							sbGroupHeader.append("<br>");
+							sbGroupHeader.append(resourceBundle.getProperty("DataManager.DisplayText.Overage"));
+							sbGroupHeader.append(":&nbsp;");
+							sbGroupHeader.append("<font color='blue'>");
+							sbGroupHeader.append(df.format(dTaskOverage));
+							sbGroupHeader.append("&nbsp;(");
+							sbGroupHeader.append(dfPercent.format((dTaskOverage / dTaskTotal) * 100));
+							sbGroupHeader.append("%)</font>");
+							sbGroupHeader.append("&nbsp;&nbsp;&nbsp;");
+							sbGroupHeader.append(sbOverage.toString());
+						}
+		
+						if(bUserBased)
+						{
+							totalTime = taskInfo.getTime();
+							sbGroupHeader.append("</td>");
+							sbGroupHeader.append("<td class='input' width='47%' style='font-size:12px;font-weight:bold;text-align:left' colspan='9'>");
+							sbGroupHeader.append(resourceBundle.getProperty("DataManager.DisplayText.Duration"));
+							sbGroupHeader.append(": <font color='blue'>");
+							sbGroupHeader.append((totalTime / 60) + " hr : " + (totalTime % 60) + " mm");
+							sbGroupHeader.append("</font>");
+							sbGroupHeader.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+							sbGroupHeader.append(resourceBundle.getProperty("DataManager.DisplayText.Productivity"));
+							sbGroupHeader.append(": <font color='blue'>");
+							sbGroupHeader.append(df.format(taskInfo.getProductivity()));
+							sbGroupHeader.append("</font>");
+						}
+						else
+						{
+							sbGroupHeader.append("</td>");
+							sbGroupHeader.append("<td class='input' width='47%' style='font-size:12px;font-weight:bold;text-align:left' colspan='9'>");
+							sbGroupHeader.append(sbNotDownloaded.toString());
+						}
+%>
+						<tr>
+							<td colspan="18">
+								<div id="div_<%= sGroupName %>" style="display:block">
+									<table cellspacing="0" cellpadding="0" border="0" width="100%">
+										<tr>
+											<td class="input" width="10%" style="font-size:12px;font-weight:bold;text-align:center" colspan="3">
+												<a id="<%= sGroupName %>" class="noblink" href="javascript:toggleDisplay('div_<%= sGroupName %>')">
+													<%= mUserNames.containsKey(sGroupName) ? (mUserNames.get(sGroupName)+"&nbsp;("+sAssignee+")") : sGroupName %>
+												</a>
+											</td>
+											<td class="input" width="43%" style="font-size:12px;font-weight:bold;text-align:left" colspan="6">
+<%
+											if(dTaskTotal > 0)
+											{
+%>
+												<%= resourceBundle.getProperty("DataManager.DisplayText.Total") %>:&nbsp;
+												<font color='blue'><%= df.format(dTaskTotal) %></font>&nbsp;&nbsp;&nbsp;
+<%
+											}
+%>
+												<%= sbGroupHeader.toString() %>
+											</td>
+										</tr>
+<%
+					}
+					
+					sInTime = "";
+					bUserNotLoggedIn = false;
+					mLogs = mUserLogs.get(sAssignee);
+					if(mLogs != null)
+					{
+						sDate = mTask.get(RDMServicesConstants.ACTUAL_START);
+						if("".equals(sDate))
+						{
+							sDate = mTask.get(RDMServicesConstants.ESTIMATED_START);
+						}
+						sDate = sDate.substring(0, sDate.indexOf(" "));
+						sDate = sdfOut.format(sdfIn.parse(sDate));
+						
+						mlUserLogs = mLogs.get(sDate);
+						if(mlUserLogs != null && mlUserLogs.size() > 0)
+						{
+							mLogData = mlUserLogs.get(mlUserLogs.size() - 1);
+							sInTime = mLogData.get(RDMServicesConstants.LOG_IN);
+							sInTime = sdfOut1.format(sdfIn1.parse(sInTime));
 						}
 						
-						bFlag = (bChangeStatus && ((bUserNotLoggedIn && RDMServicesConstants.TASK_STATUS_NOT_STARTED.equals(sStatus)) || 
-							RDMServicesConstants.TASK_STATUS_CANCELLED.equals(sStatus)));
-						
-						sNotes = mTask.get(RDMServicesConstants.NOTES);
-						sNotes = "<b>" + resourceBundle.getProperty("DataManager.DisplayText.Notes") + ":&nbsp;</b>" 
-							+ ((sNotes == null || "null".equalsIgnoreCase(sNotes)) ? "" : sNotes.replaceAll("\"", "").replaceAll("'", ""));
-%>
-						<tr onMouseOver="showTaskInfo('<%= sTaskId %>', '<%= sNotes.replaceAll("\r", " ").replaceAll("\n", " ") %>', '<%= mTask.get(RDMServicesConstants.TASK_DELIVERABLES) %>'); this.style.color='blue'" onMouseOut="hideTaskInfo(); this.style.color='black'">
-							<td class="input">
-								<input type="checkbox" id="<%= sTaskId %>" name="<%= sTaskId %>" <%= bFlag ? "disabled" : "" %> value="N" onClick="javascript:check(this)">
-								<input type="hidden" id="<%= sTaskId %>_Status" name="<%= sTaskId %>_Status" value="<%= sStatus %>">
-							</td>
-							<td class="input">
-<%
-							if(!"".equals(sAttachments))
-							{
-%>
-								<a href="javascript:viewAttachments('<%= sTaskId %>')"><img src="../images/attachments.png"></img></a>
-<%
-							}
-							else
-							{
-%>
-								&nbsp;
-<%
-							}
-%>
-							</td>
-							<td class="input"><a href="javascript:showTaskDetails('<%= sTaskId %>')"><%= sTaskId %></a></td>
-							<td class="input"><%= sTaskAdmId %> <%= "".equals(sTaskAdmName) ? "" : "(" + sTaskAdmName + ")" %></td>
-<%
-							if(slInactiveCntrl.contains(sRoom))
-							{
-%>
-								<td class="input"><%= sRoom %></td>
-<%
-							}
-							else
-							{
-%>
-								<td class="input"><a href="javascript:openController('<%= sRoom %>')"><%= sRoom %></a></td>
-<%
-							}
-%>
-							<td class="input"><%= sBatchNo %></td>
-							<td class="input"><%= sStatus %></td>
-							<td class="input">
-								<a style="text-decoration:underline;color:black" href="javascript:showDetails('<%= mTask.get(RDMServicesConstants.OWNER) %>')">
-									<%= mUserNames.get(mTask.get(RDMServicesConstants.OWNER)) %> (<%= mTask.get(RDMServicesConstants.OWNER) %>)
-								</a>
-							</td>
-							<td class="input">
-								<a style="text-decoration:underline;color:black" href="javascript:showDetails('<%= sAssignee %>')">
-									<%= ("".equals(sAssignee) ? "" : mUserNames.get(sAssignee) + " (" + sAssignee +")") %>
-								</a>
-							</td>							
-							<td class="input"><%= sInTime %></td>
-							<td class="input"><%= mTask.get(RDMServicesConstants.ESTIMATED_START) %></td>
-							<td class="input"><%= mTask.get(RDMServicesConstants.ESTIMATED_END) %></td>
-							<td class="input"><%= mTask.get(RDMServicesConstants.ACTUAL_START) %></td>
-							<td class="input"><%= mTask.get(RDMServicesConstants.ACTUAL_END) %></td>
-							<td class="input"><%= mTask.get(RDMServicesConstants.FIRST_DELIVERABLE_CREATED_ON) %></td>
-							<td class="input"><%= mTask.get(RDMServicesConstants.LAST_DELIVERABLE_CREATED_ON) %></td>
-							<td class="input" style="font-size:14px;text-align:center">
-<%
-							if(RDMServicesConstants.TASK_STATUS_NOT_STARTED.equals(sStatus))
-							{
-%>
-								&nbsp;
-<%
-							}
-							else
-							{
-								sLastTime =  mTask.get(RDMServicesConstants.LAST_DELIVERABLE_CREATED_ON);
-								if("".equals(sLastTime))
-								{
-									sLastTime =  mTask.get(RDMServicesConstants.ACTUAL_START);
-								}
-								
-								lMin = 0;
-								if(!"".equals(sLastTime))
-								{
-									lastDt = sdf.parse(sLastTime);
-									lMin = (currDt.getTime() - lastDt.getTime()) / (60 * 1000);
-								}
-								
-								mTaskDuration = RDMServicesUtils.getTaskAlertDuration();
-								iDurationAlert = (mTaskDuration.containsKey(sTaskAdmId) ? mTaskDuration.get(sTaskAdmId) : 0);
-								if("".equals(mTask.get(RDMServicesConstants.ACTUAL_END)) && (iDurationAlert > 0 && lMin > iDurationAlert))
-								{
-%>
-									<a href="javascript:showTaskDeliverables('<%= sTaskId %>')" style="text-decoration:underline;color:red">
-										<blink><font color='red'>
-										<%= mTask.get(RDMServicesConstants.NOT_DOWNLOADED) %>(<%= mTask.get(RDMServicesConstants.DELIVERABLE_CNT) %>)
-										</font></blink>
-									</a>
-									
-									<script language="javascript">
-										document.getElementById('<%= sGroupName %>').className = "blink";
-									</script>
-<%
-								}
-								else
-								{
-%>
-									<a href="javascript:showTaskDeliverables('<%= sTaskId %>')">
-										<%= mTask.get(RDMServicesConstants.NOT_DOWNLOADED) %>(<%= mTask.get(RDMServicesConstants.DELIVERABLE_CNT) %>)
-									</a>
-<%
-								}
-							}
-%>
-							</td>
-							<td class="input" style="font-size:14px;text-align:center">
-								<a href="javascript:showTaskWBS('<%= sTaskId %>', '<%= sTaskAdmId %>')">
-									<%= mTask.get(RDMServicesConstants.NO_CHILD_TASKS) %>(<%= mTask.get(RDMServicesConstants.NO_CHILD_TASKS_CLOSED) %>)
-								</a>
-							</td>
-						</tr>
-<%
-						if(i == (iSz - 1))
+						mlUserLogs = mLogs.get(sdfOut.format(currDt));
+						if(mlUserLogs != null && mlUserLogs.size() > 0)
 						{
-%>
-										</table>
-									</div>
-								</td>
-							</tr>
-<%
+							mLogData = mlUserLogs.get(mlUserLogs.size() - 1);
+							bUserNotLoggedIn = ("".equals(mLogData.get(RDMServicesConstants.LOG_IN)) && "".equals(mLogData.get(RDMServicesConstants.LOG_OUT)));
 						}
 					}
-				}
-				else
-				{
+					
+					bFlag = (bChangeStatus && ((bUserNotLoggedIn && RDMServicesConstants.TASK_STATUS_NOT_STARTED.equals(sStatus)) || 
+						RDMServicesConstants.TASK_STATUS_CANCELLED.equals(sStatus)));
+					
+					sNotes = mTask.get(RDMServicesConstants.NOTES);
+					sNotes = ((sNotes == null || "null".equalsIgnoreCase(sNotes)) ? "" : (sNotes.replace("\"", "").replace("'", "").replace("\r", " ").replace("\n", " ")));
 %>
-					<tr>
-						<td class="input" style="text-align:center" colspan="17">
-							<%= resourceBundle.getProperty("DataManager.DisplayText.No_User_Tasks") %>
+					<tr onMouseOver="showTaskInfo('<%= sTaskId %>', '<%= sNotes %>', '<%= mTask.get(RDMServicesConstants.TASK_DELIVERABLES) %>'); this.style.color='blue'" onMouseOut="hideTaskInfo(); this.style.color='black'">
+						<td class="task" width="2%">
+							<input type="checkbox" id="<%= sTaskId %>" name="<%= sTaskId %>" <%= bFlag ? "disabled" : "" %> value="N" onClick="javascript:check(this)">
+							<input type="hidden" id="<%= sTaskId %>_Status" name="<%= sTaskId %>_Status" value="<%= sStatus %>">
+						</td>
+						<td class="task" width="2%">
+<%
+						if(!"".equals(sAttachments))
+						{
+%>
+							<a href="javascript:viewAttachments('<%= sTaskId %>')"><img src="../images/attachments.png"></img></a>
+<%
+						}
+						else
+						{
+%>
+							&nbsp;
+<%
+						}
+%>
+						</td>
+						<td class="task" width="5%"><a href="javascript:showTaskDetails('<%= sTaskId %>')"><%= sTaskId %></a></td>
+						<td class="task" width="7%"><%= sTaskAdmId %> <%= "".equals(sTaskAdmName) ? "" : "(" + sTaskAdmName + ")" %></td>
+<%
+						if(slInactiveCntrl.contains(sRoom))
+						{
+%>
+							<td class="task" width="5%"><%= sRoom %></td>
+<%
+						}
+						else
+						{
+%>
+							<td class="task" width="5%"><a href="javascript:openController('<%= sRoom %>')"><%= sRoom %></a></td>
+<%
+						}
+%>
+						<td class="task" width="5%"><%= sBatchNo %></td>
+						<td class="task" width="5%"><%= sStatus %></td>
+						<td class="task" width="9.1%">
+							<a style="text-decoration:underline;color:black" href="javascript:showDetails('<%= mTask.get(RDMServicesConstants.OWNER) %>')">
+								<%= mUserNames.get(mTask.get(RDMServicesConstants.OWNER)) %> (<%= mTask.get(RDMServicesConstants.OWNER) %>)
+							</a>
+						</td>
+						<td class="task" width="9.1%">
+							<a style="text-decoration:underline;color:black" href="javascript:showDetails('<%= sAssignee %>')">
+								<%= ("".equals(sAssignee) ? "" : mUserNames.get(sAssignee) + " (" + sAssignee +")") %>
+							</a>
+						</td>
+						<td class="task" width="5%"><%= sInTime %></td>
+						<td class="task" width="7%"><%= mTask.get(RDMServicesConstants.ESTIMATED_START) %></td>
+						<td class="task" width="7%"><%= mTask.get(RDMServicesConstants.ESTIMATED_END) %></td>
+						<td class="task" width="6%"><%= mTask.get(RDMServicesConstants.ACTUAL_START) %></td>
+						<td class="task" width="6%"><%= mTask.get(RDMServicesConstants.ACTUAL_END) %></td>
+						<td class="task" width="7%"><%= mTask.get(RDMServicesConstants.FIRST_DELIVERABLE_CREATED_ON) %></td>
+						<td class="task" width="7%"><%= mTask.get(RDMServicesConstants.LAST_DELIVERABLE_CREATED_ON) %></td>
+						<td class="task" width="3%" style="font-size:14px;text-align:center">
+<%
+						if(RDMServicesConstants.TASK_STATUS_NOT_STARTED.equals(sStatus))
+						{
+%>
+							&nbsp;
+<%
+						}
+						else
+						{
+							sLastTime =  mTask.get(RDMServicesConstants.LAST_DELIVERABLE_CREATED_ON);
+							if("".equals(sLastTime))
+							{
+								sLastTime =  mTask.get(RDMServicesConstants.ACTUAL_START);
+							}
+							
+							lMin = 0;
+							if(!"".equals(sLastTime))
+							{
+								lastDt = sdf.parse(sLastTime);
+								lMin = (currDt.getTime() - lastDt.getTime()) / (60 * 1000);
+							}
+							
+							mTaskDuration = RDMServicesUtils.getTaskAlertDuration();
+							iDurationAlert = (mTaskDuration.containsKey(sTaskAdmId) ? mTaskDuration.get(sTaskAdmId) : 0);
+							if("".equals(mTask.get(RDMServicesConstants.ACTUAL_END)) && (iDurationAlert > 0 && lMin > iDurationAlert))
+							{
+%>
+								<a href="javascript:showTaskDeliverables('<%= sTaskId %>')" style="text-decoration:underline;color:red">
+									<blink><font color='red'>
+									<%= mTask.get(RDMServicesConstants.NOT_DOWNLOADED) %>(<%= mTask.get(RDMServicesConstants.DELIVERABLE_CNT) %>)
+									</font></blink>
+								</a>
+								
+								<script language="javascript">
+									document.getElementById('<%= sGroupName %>').className = "blink";
+								</script>
+<%
+							}
+							else
+							{
+%>
+								<a href="javascript:showTaskDeliverables('<%= sTaskId %>')">
+									<%= mTask.get(RDMServicesConstants.NOT_DOWNLOADED) %>(<%= mTask.get(RDMServicesConstants.DELIVERABLE_CNT) %>)
+								</a>
+<%
+							}
+						}
+%>
+						</td>
+						<td class="task" width="3%" style="font-size:14px;text-align:center">
+							<a href="javascript:showTaskWBS('<%= sTaskId %>', '<%= sTaskAdmId %>')">
+								<%= mTask.get(RDMServicesConstants.NO_CHILD_TASKS) %>(<%= mTask.get(RDMServicesConstants.NO_CHILD_TASKS_CLOSED) %>)
+							</a>
 						</td>
 					</tr>
 <%
+					if(i == (iSz - 1))
+					{
+%>
+									</table>
+								</div>
+							</td>
+						</tr>
+<%
+					}
 				}
+			}
+			
+			if(iTotalTasks == 0)
+			{
+%>
+				<tr>
+					<td class="task" style="text-align:center" colspan="18">
+						<%= resourceBundle.getProperty("DataManager.DisplayText.No_User_Tasks") %>
+					</td>
+				</tr>
+<%
 			}
 		}
 		else
 		{
 %>
 			<tr>
-				<td class="input" style="text-align:center" colspan="17">
+				<td class="task" style="text-align:center" colspan="18">
 					<%= resourceBundle.getProperty("DataManager.DisplayText.Tasks_Search_Msg") %>
 				</td>
 			</tr>
@@ -756,9 +729,9 @@ StringList slInactiveCntrl = RDMSession.getInactiveControllers();
 		</table>
 	</form>
 	<script language="javascript">
-		parent.document.getElementById('start').disabled = true;				
-		parent.document.getElementById('complete').disabled = true;	
-		parent.document.getElementById('copy').disabled = true;		
+		parent.document.getElementById('start').disabled = true;
+		parent.document.getElementById('complete').disabled = true;
+		parent.document.getElementById('copy').disabled = true;
 		parent.document.getElementById('delete').disabled = true;
 		parent.document.getElementById('download').disabled = true;
 		parent.document.getElementById('start').style.display = "none";
@@ -860,23 +833,43 @@ StringList slInactiveCntrl = RDMSession.getInactiveControllers();
 			}
 		}
 %>
-		document.getElementById('noTasks').innerHTML = "<%= iTotalTasks %>";
+
 <%
+		if(iTotalTasks > 0)
+		{
+%>
+			parent.document.getElementById('noTasks').innerHTML = "<%= resourceBundle.getProperty("DataManager.DisplayText.Total_Tasks") %>" + ":&nbsp;&nbsp;<%= iTotalTasks %>";
+<%
+		}
+		else
+		{
+%>
+			parent.document.getElementById('noTasks').innerHTML = "";
+<%
+		}
+		
 		if(dTotalQuantity > 0)
 		{
 %>
-			document.getElementById('totalDeliverables').innerHTML = "<%= resourceBundle.getProperty("DataManager.DisplayText.Total") %>" +
-				":&nbsp;<font color='blue'> <%= df.format(dTotalQuantity) %> </font>&nbsp;&nbsp;&nbsp; <%= sTotalDisplay %>";	
+			parent.document.getElementById('totalDeliverables').innerHTML = "<%= resourceBundle.getProperty("DataManager.DisplayText.Weight") %>" +
+				":&nbsp;<font color='blue'> <%= df.format(dTotalQuantity) %> </font>&nbsp;&nbsp; <%= sTotalDisplay %>";
 <%
 		}
 		
 		if(dTotalOverage > 0)
 		{
 %>
-			document.getElementById('totalDeliverables').innerHTML += "<br>" +
+			parent.document.getElementById('totalDeliverables').innerHTML += "<br>" +
 				"<%= resourceBundle.getProperty("DataManager.DisplayText.Overage") %> :&nbsp;<font color='blue'>" + 
-					"<%= df.format(dTotalOverage) %>&nbsp;(<%= dfPercent.format((dTotalOverage / dTaskOverage) * 100) %>%)</font>&nbsp;&nbsp;&nbsp;" + 
+					"<%= df.format(dTotalOverage) %>&nbsp;(<%= dfPercent.format((dTotalOverage / dTaskOverage) * 100) %>%)</font>&nbsp;&nbsp;" + 
 						"<%= sTotalOverage %>";
+<%
+		}
+		
+		if(dTotalQuantity == 0 && dTotalOverage == 0)
+		{
+%>
+			parent.document.getElementById('totalDeliverables').innerHTML = "";
 <%
 		}
 %>

@@ -450,7 +450,8 @@ CREATE TABLE rdm_admin.task_deliverable_info (
     created_on timestamp without time zone,
     download_flag boolean DEFAULT false NOT NULL,
     download_by character varying(15),
-    download_on timestamp with time zone
+    download_on timestamp with time zone,
+    modified_tw character varying(5)
 );
 
 

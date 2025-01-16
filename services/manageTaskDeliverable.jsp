@@ -123,14 +123,14 @@ Collections.sort(lKeys, String.CASE_INSENSITIVE_ORDER);
 				alert("<%= resourceBundle.getProperty("DataManager.DisplayText.Select_Scale") %>");
 			}
 			else
-			{				
+			{
 				var arrScale = scale.split("|");
 				var scaleIP = arrScale[0];
 				var port = arrScale[1];
 				var scaleId = arrScale[2];
 
 				parent.frames['hiddenFrame'].document.location.href = "readWeighingScale.jsp?scaleIP="+scaleIP+"&port="+port+"&attrName="+sAttrName+"&scaleId="+scaleId;
-				
+
 				document.getElementById(sAttrName+'_weights').style.display = "none";
 				document.getElementById(sAttrName+'_loading').style.display = "block";
 			}
@@ -196,9 +196,9 @@ Collections.sort(lKeys, String.CASE_INSENSITIVE_ORDER);
 		<input type="hidden" id="mode" name="mode" value="<%= mode %>">
 		<input type="hidden" id="taskId" name="taskId" value="<%= sTaskId %>">
 		<input type="hidden" id="deliverableId" name="deliverableId" value="<%= sDeliverableId %>">
-		<table border="0" cellpadding="1" cellspacing="0" width="80%" align="center">
+		<table border="0" cellpadding="1" cellspacing="0" width="<%= (!slReadWeights.isEmpty() ? "100%" : "60%") %>" align="center">
 			<tr>
-				<td colspan="<%= (!slReadWeights.isEmpty() ? "4" : "3") %>" align="center" style="font-size:16px;font-weight:bold;font-family:Arial,sans-serif">
+				<td colspan="<%= (!slReadWeights.isEmpty() ? "4" : "2") %>" align="center" style="font-size:16px;font-weight:bold;font-family:Arial,sans-serif">
 <%
 				if(sDeliverableId == null || "".equals(sDeliverableId))
 				{
@@ -216,14 +216,14 @@ Collections.sort(lKeys, String.CASE_INSENSITIVE_ORDER);
 				</td>
 			</tr>
 			<tr>
-				<td colspan="<%= (!slReadWeights.isEmpty() ? "4" : "3") %>">&nbsp;</td>
+				<td colspan="<%= (!slReadWeights.isEmpty() ? "4" : "2") %>">&nbsp;</td>
 			</tr>
 			<tr>
 <%
 			if((sDeliverableId == null || "".equals(sDeliverableId)) && (mlTasks.size() > 0))
 			{
 %>
-				<td colspan="<%= (!slReadWeights.isEmpty() ? "4" : "3") %>">
+				<td colspan="<%= (!slReadWeights.isEmpty() ? "4" : "2") %>">
 					<select id="selTaskId" name="selTaskId" onChange="javascript:showTaskDeliverables()">
 <%
 					String sTaskAutoId = null;
@@ -237,7 +237,7 @@ Collections.sort(lKeys, String.CASE_INSENSITIVE_ORDER);
 <%
 						for(int j=0; j<mlValues.size(); j++)
 						{
-							mTask = mlValues.get(j);					
+							mTask = mlValues.get(j);
 							sTaskAutoId = mTask.get(RDMServicesConstants.TASK_AUTONAME);
 							sTaskAssignee = mTask.get(RDMServicesConstants.ASSIGNEE);
 							sAdminTaskId = mTask.get(RDMServicesConstants.TASK_ID);
@@ -296,6 +296,7 @@ Collections.sort(lKeys, String.CASE_INSENSITIVE_ORDER);
 			String sAttrValue = null;
 			String sReadWeights = null;
 			String sTareWeight = null;
+			String sActualTW = null;
 			for(int i=0; i<slTaskAttrs.size(); i++)
 			{
 				sAttrName = slTaskAttrs.get(i);
@@ -303,7 +304,7 @@ Collections.sort(lKeys, String.CASE_INSENSITIVE_ORDER);
 				sAttrUnit = mInfo.get(RDMServicesConstants.ATTRIBUTE_UNIT);
 %>
 				<tr>
-					<td class="label" width="40%">
+					<td class="label" width="<%= (!slReadWeights.isEmpty() ? "40%" : "70%") %>">
 						<b><%= sAttrName %>
 <%
 						if(!"".equals(sAttrUnit))
@@ -320,13 +321,14 @@ Collections.sort(lKeys, String.CASE_INSENSITIVE_ORDER);
 					sAttrValue = (sAttrValue == null ? "" : sAttrValue);
 					if(slReadWeights.contains(sAttrName))
 					{
+						sActualTW = mInfo.get(RDMServicesConstants.TARE_WEIGHT);
 						sTareWeight = (String)session.getAttribute(sAttrName+"_TW");
-						sTareWeight = (sTareWeight == null ? mInfo.get(RDMServicesConstants.TARE_WEIGHT) : sTareWeight);
+						sTareWeight = (sTareWeight == null ? sActualTW : sTareWeight);
 %>
 						<td class="input" width="20%">
-							<input type="text" id="<%= sAttrName %>" name="<%= sAttrName %>" value="<%= sAttrValue %>" size="12" readonly>
+							<input type="text" id="<%= sAttrName %>" name="<%= sAttrName %>" value="<%= sAttrValue %>" size="12">
 						</td>
-						<td class="input" width="20%">
+						<td class="input" width="10%">
 							<div id="<%= sAttrName %>_weights">
 								<a href="javascript:getWeights('<%= sAttrName %>')"><img src="../images/readWeights.jpg" border="0"></a>
 							</div>
@@ -335,14 +337,29 @@ Collections.sort(lKeys, String.CASE_INSENSITIVE_ORDER);
 							</div>
 						</td>
 						<td class="input" width="20%">
+<%
+						if(!sActualTW.equals(sTareWeight))
+						{
+%>
+							<input type="text" id="<%= sAttrName %>_TW" name="<%= sAttrName %>_TW" value="<%= sTareWeight %>" size="5" style="color:#FF0000">
+							&nbsp;<b><%= sActualTW %></b>
+<%
+						}
+						else
+						{
+%>
 							<input type="text" id="<%= sAttrName %>_TW" name="<%= sAttrName %>_TW" value="<%= sTareWeight %>" size="5">
-						</td>					
+<%
+						}
+%>
+							<input type="hidden" id="<%= sAttrName %>_TW_CLB" name="<%= sAttrName %>_TW_CLB" value="<%= sActualTW %>">
+						</td>
 <%
 					}
 					else
 					{
 %>
-						<td class="input" width="60%">
+						<td class="input" width="30%">
 							<input type="text" id="<%= sAttrName %>" name="<%= sAttrName %>" value="<%= sAttrValue %>" onChange="javascript:enableSubmit(this)">
 						</td>
 <%
@@ -353,10 +370,10 @@ Collections.sort(lKeys, String.CASE_INSENSITIVE_ORDER);
 			}
 %>
 			<tr>
-				<td colspan="<%= (!slReadWeights.isEmpty() ? "4" : "3") %>">&nbsp;</td>
+				<td colspan="<%= (!slReadWeights.isEmpty() ? "4" : "2") %>">&nbsp;</td>
 			</tr>
 			<tr>
-				<td colspan="<%= (!slReadWeights.isEmpty() ? "4" : "3") %>" align="right">
+				<td colspan="<%= (!slReadWeights.isEmpty() ? "4" : "2") %>" align="right">
 <%
 				if(slTaskAttrs.size() > 0)
 				{

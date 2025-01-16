@@ -92,7 +92,7 @@ Map<String, Map<String, MapList>> mUserLogs = RDMServicesUtils.getTimesheets(mIn
 		
 		function addChildTask()
 		{
-			window.open('addUserTaskView.jsp?parentTask=<%= sTaskId %>', '', 'left=250,top=150,resizable=no,scrollbars=no,status=no,toolbar=no,height=550,width=400');			
+			window.open('addUserTaskView.jsp?parentTask=<%= sTaskId %>', '', 'left=250,top=150,resizable=no,scrollbars=no,status=no,toolbar=no,height=300,width=400');			
 		}
 		
 		function submitForm()

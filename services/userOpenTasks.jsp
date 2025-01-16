@@ -48,7 +48,7 @@ boolean bDeleteTask = RDMServicesConstants.ROLE_ADMIN.equals(u.getRole());
 	
 	function showTaskDetails(sTaskId)
 	{
-		window.open('userTaskDetailsView.jsp?taskId='+sTaskId, '', 'left=200,top=100,resizable=yes,scrollbars=yes,status=no,toolbar=no,height=650,width=600');			
+		window.open('userTaskDetailsView.jsp?taskId='+sTaskId, '', 'left=200,top=100,resizable=yes,scrollbars=yes,status=no,toolbar=no,height=600,width=600');			
 	}
 	
 	function showTaskDeliverables(sTaskId)

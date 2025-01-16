@@ -8,6 +8,8 @@
 <%@include file="commonUtils.jsp" %>
 
 <%
+	String sUsername = request.getParameter("username");
+	sUsername = (sUsername == null ? "" : sUsername);
 	String sRoleFilter = request.getParameter("role");
 	sRoleFilter = (sRoleFilter == null ? "" : sRoleFilter);
 	String sDeptFilter = request.getParameter("dept");
@@ -28,7 +30,7 @@
 	
 	com.client.util.User contextUser = (com.client.util.User)session.getAttribute("contextUser");
 	
-	MapList mlUsers = RDMServicesUtils.getUsers(sRoleFilter, sDeptFilter, "yes".equals(sBlockedUsers));
+	MapList mlUsers = RDMServicesUtils.getUsers(sUsername, sRoleFilter, sDeptFilter, "yes".equals(sBlockedUsers));
 	int iSz = mlUsers.size();
 	
 	Random randomGenerator = new Random();

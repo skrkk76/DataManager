@@ -26,19 +26,6 @@
 	<script language="javaScript" type="text/javascript" src="../scripts/jquery.min.js"></script>
 	<script language="javaScript" type="text/javascript" src="../scripts/select2.full.js"></script>
 	<script language="javaScript" type="text/javascript" src="../scripts/bootstrap.min.js"></script>
-	
-	<style type="text/css">		
-		td.txtLabel
-		{
-			border: solid 1px #ffffff;
-			text-align: left;
-			background-color: #888888;
-			color: #ffffff;
-			font-size:12px;
-			font-family:Arial,sans-serif;
-			font-weight: bold;
-		}
-	</style>
 
 	<script type="text/javascript">
 		//<![CDATA[
@@ -49,7 +36,6 @@
 	</script>
 	
 	<script language="javascript">
-
 		function searchTasks()
 		{
 			document.frm.target = "results";
@@ -95,11 +81,11 @@
 			url += "&end_date="+document.getElementById('end_date').value;
 			url += "&batch="+document.getElementById('batch').value;
 			url += "&stage="+document.getElementById('stage').value;
+			url += "&searchType="+document.getElementById('searchType').value;
 			url += "&childTasks="+childTasks;
 			url += "&parentTasks="+parentTasks;
 			url += "&coOwners="+coOwners;
 			url += "&limit="+limit;
-
 			document.location.href = url;
 		}
 	</script>
@@ -109,6 +95,8 @@
 	<form name="frm" method="post" target="results" action="userTasksResults.jsp">
 		<input type="hidden" id="mode" name="mode" value="search">
 		<table align="center" border="0" cellpadding="1" cellspacing="1">
+			<tr><td>
+			<table align="center" border="0" cellpadding="1" cellspacing="1">
 			<tr>
 				<td class="txtLabel" rowspan="3"><%= resourceBundle.getProperty("DataManager.DisplayText.Task") %></td>
 				<td rowspan="3">
@@ -155,8 +143,7 @@
 					<input type="radio" name="searchType" id="searchType" value="<%= RDMServicesConstants.DATE_BASED %>">
 					<%= resourceBundle.getProperty("DataManager.DisplayText.Date") %>
 				</td>
-
-				<td colspan="5">&nbsp;</td>
+				<td colspan="7">&nbsp;</td>
 			</tr>
 			<tr>
 				<td class="txtLabel"><%= resourceBundle.getProperty("DataManager.DisplayText.Room") %></td>
@@ -228,6 +215,7 @@
 				<td>
 					<input type="checkbox" id="coOwners" name="coOwners" value="Y">
 				</td>
+				<td colspan="2">&nbsp;</td>
 			</tr>
 <%
 			Map <String, String> mDepartments = RDMServicesUtils.getDepartments();
@@ -277,7 +265,7 @@
 					<select id="owner" name="owner" style="width:180px" class="js-example-basic-multiple">
 						<option value=""><%= resourceBundle.getProperty("DataManager.DisplayText.All") %></option>
 <%
-						MapList mlOwners = RDMServicesUtils.getTaskOwners(u.getDepartment(), true);							
+						MapList mlOwners = RDMServicesUtils.getTaskOwners(u.getDepartment(), true);
 						for(int i=0, iSz=mlOwners.size(); i<iSz; i++)
 						{
 							mInfo = mlOwners.get(i);
@@ -344,46 +332,88 @@
 				<td>
 					<input type="text" id="limit" name="limit" size="5" value="500">
 				</td>
+				<td colspan="2">&nbsp;</td>
 			</tr>
 		</table>
-		<table border="0" cellpadding="1" cellspacing="1" width="100%">
-			<tr>
-				<td align="left" width="5%">
-					<div id="actions">
-						<input type="button" id="start" name="start" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Task_Start") %>" onClick="javascript:frames['results'].startTasks()">
-						<input type="button" id="complete" name="complete" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Task_Complete") %>" onClick="javascript:frames['results'].completeTasks()">									
-						<input type="button" id="delete" name="delete" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Task_Delete") %>" onClick="javascript:frames['results'].deleteTasks()">
-					</div>
-				</td>				
-				<td align="left" width="5%">
-					<div id="downloadbtn">					
-						<input type="button" id="download" name="download" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Download") %>" onClick="javascript:frames['results'].download()">
-					</div>
-				</td>
-				<td align="left" width="5%">
-					<div id="copybtn">
-						<input type="button" id="copy" name="copy" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Task_Copy") %>" onClick="javascript:frames['results'].copyTasks()">
-					</div>
-				</td>
-				<td align="right" width="75%"></td>
-				<td align="right" width="5%">
+		</td>
+		<td>
+			<table border="1" align="center" cellpadding="2" cellspacing="2" width="100%">
+				<tr>
+					<td align="right" width="10%">
+						<div id="actions">
+							<button class="buttons" id="start" name="start" onClick="javascript:frames['results'].startTasks()"><%= resourceBundle.getProperty("DataManager.DisplayText.Task_Start") %></button>
+							<button class="buttons" id="complete" name="complete" onClick="javascript:frames['results'].completeTasks()"><%= resourceBundle.getProperty("DataManager.DisplayText.Task_Complete") %></button>
+							<button class="buttons" id="delete" name="delete" onClick="javascript:frames['results'].deleteTasks()"><%= resourceBundle.getProperty("DataManager.DisplayText.Task_Delete") %></button>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td align="left" width="10%">
+						<div id="downloadbtn">
+							<button class="buttons" id="download" name="download" onClick="javascript:frames['results'].download()"><%= resourceBundle.getProperty("DataManager.DisplayText.Download") %></button>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td align="left" width="10%">
+						<div id="copybtn">
+							<button class="buttons" id="copy" name="copy" onClick="javascript:frames['results'].copyTasks()"><%= resourceBundle.getProperty("DataManager.DisplayText.Task_Copy") %></button>
+						</div>
+					</td>
+				</tr>
 <%
 				if(RDMServicesConstants.ROLE_ADMIN.equals(u.getRole()))
 				{
 %>
-					<input type="button" id="ExportTasks" name="ExportTasks" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Export_Tasks") %>" onClick="exportTasks()">
+				<tr>
+					<td align="left" width="10%">
+						<button class="buttons" id="ExportTasks" name="ExportTasks" onClick="exportTasks()"><%= resourceBundle.getProperty("DataManager.DisplayText.Export_Tasks") %></button>
+					</td>
+				</tr>
 <%
 				}
 %>
-				</td>
-				<td align="right" width="5%">
-					<input type="button" name="SearchTasks" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Search_Tasks") %>" onClick="searchTasks()">
-				</td>
+				<tr>
+					<td align="left" width="10%">
+						<button class="buttons" id="SearchTasks" name="SearchTasks" onClick="searchTasks()"><%= resourceBundle.getProperty("DataManager.DisplayText.Search_Tasks") %></button>
+					</td>
+				</tr>
+			</table>
+		</td>
+		</tr>
+		</table>
+		<table align="left" border="0" cellpadding="0" cellspacing="0" width="98%">
+			<tr height="10pt">
+				<td width="0.6%">&nbsp;</td>
+				<td class="input" width="10%" colspan="4" style="font-size:12px;font-weight:bold;text-align:center"><div id="noTasks"></div></td>
+				<td class="input" width="90%" colspan="14" style="font-size:12px;font-weight:bold;text-align:left"><div id="totalDeliverables"></div></td>
 			</tr>
-			<tr height="25pt" width="100%">
-				<td class="txtLabel" width="10%"><div id="taskInfo_id"></div></td>
-				<td class="input" width="50%" colspan="3"><div id="taskInfo_notes"></div></td>
-				<td class="input" width="50%" colspan="3"><div id="taskInfo_size"></div></td>
+			<tr height="10pt">
+				<td width="0.6%">&nbsp;</td>
+				<td class="input" width="16%" colspan="4" style="font-size:12px;font-weight:bold;text-align:center"><div id="taskInfo_id"></div></td>
+				<td class="input" width="66%" colspan="10" style="font-size:12px;font-weight:bold;text-align:left"><div id="taskInfo_notes"></div></td>
+				<td class="input" width="18%" colspan="4" style="font-size:12px;font-weight:bold;text-align:left"><div id="taskInfo_size"></div></td>
+			</tr>
+			<tr height="10pt">
+				<td width="0.6%">&nbsp;</td>
+				<td class="txtLabel" width="2%" style="text-align:center"><input type="checkbox" id="chk_all" name="chk_all" onClick="javascript:frames['results'].checkAll()"></td>
+				<td class="txtLabel" width="2%" style="text-align:center">ATT</td>
+				<td class="txtLabel" width="5%" style="text-align:center"><%= resourceBundle.getProperty("DataManager.DisplayText.Task_Name") %></td>
+				<td class="txtLabel" width="7%" style="text-align:center"><%= resourceBundle.getProperty("DataManager.DisplayText.Task_Id") %></td>
+				<td class="txtLabel" width="5%" style="text-align:center"><%= resourceBundle.getProperty("DataManager.DisplayText.Room_No") %></td>
+				<td class="txtLabel" width="5%" style="text-align:center"><%= resourceBundle.getProperty("DataManager.DisplayText.Batch_No") %></td>
+				<td class="txtLabel" width="5%" style="text-align:center"><%= resourceBundle.getProperty("DataManager.DisplayText.Status") %></td>
+				<td class="txtLabel" width="9%" style="text-align:center"><%= resourceBundle.getProperty("DataManager.DisplayText.Owner") %></td>
+				<td class="txtLabel" width="9%" style="text-align:center"><%= resourceBundle.getProperty("DataManager.DisplayText.Assignee") %></td>
+				<td class="txtLabel" width="5%" style="text-align:center"><%= resourceBundle.getProperty("DataManager.DisplayText.In_Time") %></td>
+				<td class="txtLabel" width="7%" style="text-align:center"><%= resourceBundle.getProperty("DataManager.DisplayText.Estimated_Start") %></td>
+				<td class="txtLabel" width="7%" style="text-align:center"><%= resourceBundle.getProperty("DataManager.DisplayText.Estimated_End") %></td>
+				<td class="txtLabel" width="6%" style="text-align:center"><%= resourceBundle.getProperty("DataManager.DisplayText.Actual_Start") %></td>
+				<td class="txtLabel" width="6%" style="text-align:center"><%= resourceBundle.getProperty("DataManager.DisplayText.Actual_End") %></td>
+				<td class="txtLabel" width="7%" style="text-align:center"><%= resourceBundle.getProperty("DataManager.DisplayText.First_Del_CreatedOn") %></td>
+				<td class="txtLabel" width="7%" style="text-align:center"><%= resourceBundle.getProperty("DataManager.DisplayText.Last_Del_CreatedOn") %></td>
+				<td class="txtLabel" width="3%" style="text-align:center; background-color:#FFFFFF;"><img src="../images/TaskDeliverables.jpg"></td>
+				<td class="txtLabel" width="3%" style="text-align:center"><%= resourceBundle.getProperty("DataManager.DisplayText.WBS") %></td>
 			</tr>
 		</table>
 	</form>
@@ -429,8 +459,8 @@
 			</tr>
 		</tbody>
 		<tbody id="calender"></tbody>
-	</table>	
+	</table>
 	
-	<iframe name="results" src="userTasksResults.jsp" align="middle" frameBorder="0" width="100%" height="<%= winHeight * 0.7 %>px">
+	<iframe name="results" src="userTasksResults.jsp" align="left" frameBorder="0" width="100%" height="<%= (winHeight * 0.64) %>px">
 </body>
 </html>
