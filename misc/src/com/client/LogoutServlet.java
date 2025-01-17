@@ -31,24 +31,31 @@ public class LogoutServlet extends HttpServlet
 		try 
 		{
 			HttpSession session = request.getSession(true);
-			String user = ((User)session.getAttribute("currentSessionUser")).getUser();
+			if(session == null)
+			{
+				return;
+			}
 			
-			StringBuilder logDetails = new StringBuilder();
-			logDetails.append("<b>IP:</b> ");
-			logDetails.append(request.getParameter("ip"));
-			logDetails.append("<br>");
-			logDetails.append("<b>Hostname:</b> ");
-			logDetails.append(request.getParameter("hostname"));
-			logDetails.append("<br>");
-			logDetails.append("<b>Location:</b> ");
-			logDetails.append(request.getParameter("city"));
-			logDetails.append(", ");
-			logDetails.append(request.getParameter("region"));
-			logDetails.append(", ");
-			logDetails.append(request.getParameter("country"));
-			
-			DataQuery query = new DataQuery();
-			query.logUserActivity(user, logDetails.toString(), false, ""); 
+			User user = (User)session.getAttribute("currentSessionUser");
+			if(user != null)
+			{
+				StringBuilder logDetails = new StringBuilder();
+				logDetails.append("<b>IP:</b> ");
+				logDetails.append(request.getParameter("ip"));
+				logDetails.append("<br>");
+				logDetails.append("<b>Hostname:</b> ");
+				logDetails.append(request.getParameter("hostname"));
+				logDetails.append("<br>");
+				logDetails.append("<b>Location:</b> ");
+				logDetails.append(request.getParameter("city"));
+				logDetails.append(", ");
+				logDetails.append(request.getParameter("region"));
+				logDetails.append(", ");
+				logDetails.append(request.getParameter("country"));
+				
+				DataQuery query = new DataQuery();
+				query.logUserActivity(user.getUser(), logDetails.toString(), false, ""); 
+			}
 			
 			Enumeration<String> attrNames = session.getAttributeNames();
 			while(attrNames.hasMoreElements())
