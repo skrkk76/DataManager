@@ -85,7 +85,8 @@ StringList slInactiveCntrl = RDMSession.getInactiveControllers();
 			return this.slice(0, str.length) == str;
 		};
 	}
-
+	var firstToggle = true;
+	
 	function openController(sCntrl)
 	{
 		if(sCntrl == "General")
@@ -137,6 +138,44 @@ StringList slInactiveCntrl = RDMSession.getInactiveControllers();
 					//do nothing
 				}
 				else
+				{
+					e.checked = check;
+					e.value = val;
+				}
+			}  
+		}
+	}
+	
+	function checkRoomTasks(chkbox)
+	{
+		var check = document.getElementById(chkbox).checked;
+		var val = "";
+		if(check)
+		{
+			val = "Y";
+		}
+		else
+		{
+			val = "N";
+		}
+
+		var bFlag = false;
+		var inputs = document.getElementsByTagName("input");
+		for(var i=0; i<inputs.length; i++)
+		{
+			var e = inputs[i];
+			if(e.type == "checkbox")
+			{
+				if ((e.name == chkbox) && !bFlag)
+				{
+					bFlag = true;
+				}
+				else if(e.name.endsWith("_chkAll") && bFlag)
+				{
+					bFlag = false;
+				}
+				
+				if(bFlag)
 				{
 					e.checked = check;
 					e.value = val;
@@ -227,11 +266,6 @@ StringList slInactiveCntrl = RDMSession.getInactiveControllers();
 		var divs = document.getElementsByTagName("div");
 		for(var i = 0; i < divs.length; i++)
 		{
-			if(divs[i].id == "NotDownloadDeliverables" || divs[i].id.startsWith("Room_"))
-			{
-				continue;
-			}
-			
 			if(divs[i].id == divId)
 			{
 				var display = divs[i].style.display;
@@ -243,13 +277,22 @@ StringList slInactiveCntrl = RDMSession.getInactiveControllers();
 				{
 					display = "block";
 				}
-				divs[i].style.display = display;
+				
+				if(firstToggle)
+				{
+					divs[i].style.display = "block";
+				}
+				else
+				{
+					divs[i].style.display = display;
+				}
 			}
 			else
 			{
 				divs[i].style.display = "none";
 			}
 		}
+		firstToggle = false;
 	}
 	
 	function showTaskInfo(id, notes, size)
@@ -500,7 +543,7 @@ StringList slInactiveCntrl = RDMSession.getInactiveControllers();
 						{
 							totalTime = taskInfo.getTime();
 							sbGroupHeader.append("</td>");
-							sbGroupHeader.append("<td class='input' width='47%' style='font-size:12px;font-weight:bold;text-align:left' colspan='9'>");
+							sbGroupHeader.append("<td class='txtLabel' width='45.3%' style='color:#000000' colspan='8'>");
 							sbGroupHeader.append(resourceBundle.getProperty("DataManager.DisplayText.Duration"));
 							sbGroupHeader.append(": <font color='blue'>");
 							sbGroupHeader.append((totalTime / 60) + " hr : " + (totalTime % 60) + " mm");
@@ -514,33 +557,36 @@ StringList slInactiveCntrl = RDMSession.getInactiveControllers();
 						else
 						{
 							sbGroupHeader.append("</td>");
-							sbGroupHeader.append("<td class='input' width='47%' style='font-size:12px;font-weight:bold;text-align:left' colspan='9'>");
+							sbGroupHeader.append("<td class='txtLabel' width='45.3%' style='color:#000000' colspan='8'>");
 							sbGroupHeader.append(sbNotDownloaded.toString());
 						}
 %>
 						<tr>
+							<td class="txtLabel" width="1.9%">
+								<input type="checkbox" id="<%= sGroupName %>_chkAll" name="<%= sGroupName %>_chkAll" onClick="javascript:checkRoomTasks('<%= sGroupName %>_chkAll')" value="N">
+							</td>
+							<td class="txtLabel" width="7%" style="font-size:12px;font-weight:bold;text-align:center" colspan="2">
+								<a id="<%= sGroupName %>" class="noblink" href="javascript:toggleDisplay('div_<%= sGroupName %>')">
+									<%= mUserNames.containsKey(sGroupName) ? (mUserNames.get(sGroupName)+"&nbsp;("+sAssignee+")") : sGroupName %>
+								</a>
+							</td>
+							<td class="txtLabel" width="44.7%" style="color:#000000" colspan="7">
+<%
+							if(dTaskTotal > 0)
+							{
+%>
+								<%= resourceBundle.getProperty("DataManager.DisplayText.Total") %>:&nbsp;
+								<font color='blue'><%= df.format(dTaskTotal) %></font>&nbsp;&nbsp;&nbsp;
+<%
+							}
+%>
+							<%= sbGroupHeader.toString() %>
+							</td>
+						</tr>
+						<tr>
 							<td colspan="18">
 								<div id="div_<%= sGroupName %>" style="display:block">
 									<table cellspacing="0" cellpadding="0" border="0" width="100%">
-										<tr>
-											<td class="input" width="10%" style="font-size:12px;font-weight:bold;text-align:center" colspan="3">
-												<a id="<%= sGroupName %>" class="noblink" href="javascript:toggleDisplay('div_<%= sGroupName %>')">
-													<%= mUserNames.containsKey(sGroupName) ? (mUserNames.get(sGroupName)+"&nbsp;("+sAssignee+")") : sGroupName %>
-												</a>
-											</td>
-											<td class="input" width="43%" style="font-size:12px;font-weight:bold;text-align:left" colspan="6">
-<%
-											if(dTaskTotal > 0)
-											{
-%>
-												<%= resourceBundle.getProperty("DataManager.DisplayText.Total") %>:&nbsp;
-												<font color='blue'><%= df.format(dTaskTotal) %></font>&nbsp;&nbsp;&nbsp;
-<%
-											}
-%>
-												<%= sbGroupHeader.toString() %>
-											</td>
-										</tr>
 <%
 					}
 					
@@ -579,6 +625,7 @@ StringList slInactiveCntrl = RDMSession.getInactiveControllers();
 					sNotes = mTask.get(RDMServicesConstants.NOTES);
 					sNotes = ((sNotes == null || "null".equalsIgnoreCase(sNotes)) ? "" : (sNotes.replace("\"", "").replace("'", "").replace("\r", " ").replace("\n", " ")));
 %>
+
 					<tr onMouseOver="showTaskInfo('<%= sTaskId %>', '<%= sNotes %>', '<%= mTask.get(RDMServicesConstants.TASK_DELIVERABLES) %>'); this.style.color='blue'" onMouseOut="hideTaskInfo(); this.style.color='black'">
 						<td class="task" width="2%">
 							<input type="checkbox" id="<%= sTaskId %>" name="<%= sTaskId %>" <%= bFlag ? "disabled" : "" %> value="N" onClick="javascript:check(this)">

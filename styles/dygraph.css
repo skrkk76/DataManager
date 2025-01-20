@@ -42,7 +42,7 @@ td.task
 {
 	border: solid 1px #ffffff;
 	text-align: left;
-	background-color: #f0f3f4;
+	background-color: #d2dbde;
 	color: #000000;
 	font-size:12px;
 	font-family:Arial,sans-serif;
@@ -52,8 +52,7 @@ td.txtLabel
 {
 	border: solid 1px #ffffff;
 	text-align: left;
-	background-color: #888888;
-	color: #ffffff;
+	background-color: #bbbbbb;
 	font-size:12px;
 	font-family:Arial,sans-serif;
 	font-weight: bold;
@@ -112,18 +111,18 @@ td.stage
 
 a:link
 {
-	text-decoration:  underline;
-	color:            black;
+	text-decoration: underline;
+	color: black;
 } 
 a:visited
 {
-	text-decoration:  underline;
-	color:            black;
+	text-decoration: underline;
+	color: black;
 } 
 a:hover
 {
-	text-decoration:  underline;
-	color:            black;
+	text-decoration: underline;
+	color: black;
 }
 
 a.blink
@@ -138,14 +137,14 @@ a.noblink
 }
 
 .buttons {
-  background-color: #a9cce3;
-  border: none;
-  color: black;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 12px;
-  cursor: pointer;
-  height: 20px;
-  width: 100px;
+	background-color: #a9cce3;
+	border: none;
+	color: black;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 12px;
+	cursor: pointer;
+	height: 20px;
+	width: 100px;
 }
