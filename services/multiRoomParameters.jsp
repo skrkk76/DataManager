@@ -27,7 +27,7 @@
 	StringList slControllers = RDMSession.getControllers(iSelRange, 10, slCntrlPhases);
 	Map<String, ParamSettings> mParamStgs = RDMServicesUtils.getMultiRoomViewParamaters(sCntrlType);
 	ArrayList<String> displayOrder = RDMServicesUtils.getDisplayOrder(sCntrlType);
-	
+
 	boolean bShowSaveReset = false;
 	String sRole = u.getRole();
 	String sController = null;
@@ -36,6 +36,7 @@
 	String sParam = null;
 	String sValue = null;
 	String sUnit = null;
+	String sStage = null;
 	String sLastRefresh = null;
 	Map<String, Map<String, String[]>> mAllParams = new HashMap<String, Map<String, String[]>>();
 	Map<String, String[]> mParams = null;
@@ -314,7 +315,7 @@
 							if(slGraphs.contains(sCntrlType+" Dashboard"))
 							{
 								Map<String, String> mGrpParams = u.getGraphParams(sCntrlType+" Dashboard");
-								sParams = mGrpParams.get("PARAMS").replaceAll(",", "\\|");
+								sParams = mGrpParams.get("PARAMS").replace(",", "|");
 %>
 								<a href="javascript:showGraph('<%=sController%>')"><%= resourceBundle.getProperty("DataManager.DisplayText.Show_Graph") %></a>
 <%
@@ -335,26 +336,29 @@
 					for(int m=0; m<displayOrder.size(); m++)
 					{
 						sParam = displayOrder.get(m);
-						if(!mParamStgs.containsKey(sParam))
+						if(!"time".equals(sParam))
 						{
-							if(sParam.startsWith(">>>"))
+							if(!mParamStgs.containsKey(sParam))
 							{
+								if(sParam.startsWith(">>>"))
+								{
 %>
-								<tr>
-									<td class="stage" align="center" colspan="<%= iSZ+3 %>">
-										<%= sParam.replaceAll(">", " ").trim() %>
-									</td>
-								</tr>
+									<tr>
+										<td class="stage" align="center" colspan="<%= iSZ+3 %>">
+											<%= sParam.replace(">", " ").trim() %>
+										</td>
+									</tr>
 <%
+								}
+								continue;
 							}
-							continue;
-						}
-				
-						paramS = mParamStgs.get(sParam);
-						sAccess = u.getUserAccess(paramS);
-						if(sAccess == null || RDMServicesConstants.ACCESS_NONE.equals(sAccess))
-						{
-							continue;
+					
+							paramS = mParamStgs.get(sParam);
+							sAccess = u.getUserAccess(paramS);
+							if(sAccess == null || RDMServicesConstants.ACCESS_NONE.equals(sAccess))
+							{
+								continue;
+							}
 						}
 %>
 						<tr>
@@ -364,7 +368,15 @@
 							sController = slControllers.get(n);
 							
 							mParams = mAllParams.get(sController);
-							saParamVal = mParams.get(sParam);
+							if(sParam.equals("time"))
+							{
+								saParamVal = mParams.get("time " + mParams.get("current phase")[0]);
+							}
+							else
+							{
+								saParamVal = mParams.get(sParam);
+							}
+							
 							if(saParamVal == null || saParamVal.length == 0)
 							{
 								saParamVal = new String[] {"", ""};
@@ -375,6 +387,20 @@
 							{
 								sValue = saParamVal[0];
 								sUnit = saParamVal[1];
+							}
+							
+							if(sParam.equals("current phase"))
+							{
+								if(sValue.endsWith(".0"))
+								{
+									sValue = sValue.substring(0, sValue.indexOf("."));
+								}
+								sStage = RDMServicesUtils.getStageName(sCntrlType, sValue);
+								if(!("".equals(sStage) || "-".equals(sStage)))
+								{
+									mParams.put("current phase", new String[] {((sStage + " " + sValue).replace(".", " ")), ""});
+									sValue = sStage + "&nbsp;("+ sValue + ")";
+								}
 							}
 							
 							try
@@ -392,7 +418,7 @@
 							if(n == 0)
 							{
 %>
-								<th style="text-align: left;border-right:0px"><%= sParam %>
+								<th style="text-align: left;border-right:0px"><%= ("time".equals(sParam) ? "current phase running time" : sParam) %>
 <%
 								if(!"".equals(sUnit))
 								{

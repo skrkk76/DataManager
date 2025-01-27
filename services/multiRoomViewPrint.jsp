@@ -29,6 +29,7 @@
 	String sParam = null;
 	String sValue = null;
 	String sUnit = null;
+	String sStage = null;
 	String sLastRefresh = null;
 	Map<String, Map<String, String[]>> mAllParams = new HashMap<String, Map<String, String[]>>();
 	Map<String, String[]> mParams = null;	
@@ -105,26 +106,29 @@
 		for(int m=0; m<displayOrder.size(); m++)
 		{
 			sParam = displayOrder.get(m);
-			if(!mParamStgs.containsKey(sParam))
+			if(!"time".equals(sParam))
 			{
-				if(sParam.startsWith(">>>"))
+				if(!mParamStgs.containsKey(sParam))
 				{
+					if(sParam.startsWith(">>>"))
+					{
 %>						
 					<tr>
 						<td class="stage" align="center" colspan="<%= iSZ+1 %>">
-							<%= sParam.replaceAll(">", " ").trim() %>
+							<%= sParam.replace(">", " ").trim() %>
 						</td>
 					</tr>
 <%
+					}
+					continue;
 				}
-				continue;
-			}
 			
-			paramS = mParamStgs.get(sParam);
-			sAccess = u.getUserAccess(paramS);
-			if(sAccess == null || RDMServicesConstants.ACCESS_NONE.equals(sAccess))
-			{
-				continue;
+				paramS = mParamStgs.get(sParam);
+				sAccess = u.getUserAccess(paramS);
+				if(sAccess == null || RDMServicesConstants.ACCESS_NONE.equals(sAccess))
+				{
+					continue;
+				}
 			}
 %>
 			<tr>
@@ -138,7 +142,15 @@
 					}
 					
 					mParams = mAllParams.get(sController);
-					saParamVal = mParams.get(sParam);
+					if(sParam.equals("time"))
+					{
+						saParamVal = mParams.get("time " + mParams.get("current phase")[0]);
+					}
+					else
+					{
+						saParamVal = mParams.get(sParam);
+					}
+
 					
 					if(saParamVal != null)
 					{
@@ -149,6 +161,20 @@
 					{
 						sValue = "";
 						sUnit = "";
+					}
+							
+					if(sParam.equals("current phase"))
+					{
+						if(sValue.endsWith(".0"))
+						{
+							sValue = sValue.substring(0, sValue.indexOf("."));
+						}
+						sStage = RDMServicesUtils.getStageName(sCntrlType, sValue);
+						if(!("".equals(sStage) || "-".equals(sStage)))
+						{
+							mParams.put("current phase", new String[] {((sStage + " " + sValue).replace(".", " ")), ""});
+							sValue = sStage + "&nbsp;("+ sValue + ")";
+						}
 					}
 					
 					try
@@ -166,7 +192,7 @@
 					if(n == 0)
 					{
 %>
-						<td class="label"><%= sParam %>
+						<td class="label"><%= ("time".equals(sParam) ? "current phase running time" : sParam) %>
 <%
 						if(!"".equals(sUnit))
 						{
