@@ -13,7 +13,7 @@
 	String sDefParamType = request.getParameter("defParamType");
 	sDefParamType = ((sDefParamType == null || "".equals(sDefParamType)) ? "Default Product" : sDefParamType);
 	
-	StringList slControllers = RDMSession.getControllers(u);	
+	StringList slControllers = RDMSession.getControllers(u);
 	ArrayList<String[]> alPhases = RDMServicesUtils.getControllerStages(sController);
 	
 	Map<String, ParamSettings> mViewParams = RDMServicesUtils.getSingleRoomViewParamaters(sController);

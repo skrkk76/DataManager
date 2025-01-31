@@ -10,7 +10,7 @@
 
 <html>
 <%
-	String sErr = "";	
+	String sErr = "";
 	try
 	{
 		Map<String, String> mInfo = new HashMap<String, String>();

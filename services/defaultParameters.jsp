@@ -9,13 +9,12 @@
 <%@include file="commonUtils.jsp" %>
 
 <%
-try {
 	String sController = request.getParameter("controller");
 	String sDefParamType = request.getParameter("defParamType");
 	sDefParamType = ((sDefParamType == null || "".equals(sDefParamType)) ? "Default Product" : sDefParamType);
 	StringList slControllers = RDMSession.getControllers(u);	
 	ArrayList<String[]> alPhases = RDMServicesUtils.getControllerStages(sController);
-	
+
 	Map<String, ParamSettings> mViewParams = RDMServicesUtils.getSingleRoomViewParamaters(sController);
 	ArrayList<String> alParams = RDMServicesUtils.getDisplayOrder(sController);
 
@@ -740,9 +739,6 @@ try {
 		<input type="hidden" id="<%= sKey %>" name="<%= sKey %>" value="<%= sVal %>">
 <%		
 	}
-} catch(Exception e) {
-	e.printStackTrace(System.out);
-}
 %>	
 	</form>
 

@@ -9,10 +9,6 @@
 
 <%@include file="commonUtils.jsp" %>
 
-<%
-	String sController = request.getParameter("controller");
-%>
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
@@ -108,6 +104,7 @@
 	String sAccess = null;
 	ParamSettings mParam = null;
 	
+	String sController = request.getParameter("controller");
 	PLCServices client = new PLCServices(RDMSession, sController);
 	String sCntrlType = client.getControllerType();
 

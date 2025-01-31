@@ -106,11 +106,11 @@
 				if(!slHeaders.contains(sHeader))
 				{
 					slHeaders.add(sHeader);
-%>					
+%>
 					<tr>
 						<td colspan="5" align="center"><b><%= resourceBundle.getProperty("DataManager.DisplayText."+sHeader) %></b></td>
 					</tr>
-<%					
+<%
 				}
 %>
 				<tr>

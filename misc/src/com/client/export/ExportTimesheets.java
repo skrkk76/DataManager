@@ -187,6 +187,7 @@ public class ExportTimesheets extends HttpServlet
 		Cell cell = null;
 		
 		String sUserId = null;
+		String sDate = null;
 		String sInDate = null;
 		String sOutDate = null;
 		String sTime = null;
@@ -216,20 +217,24 @@ public class ExportTimesheets extends HttpServlet
 			mLogs = new TreeMap<String, MapList>(mLogs);
 			for (Map.Entry<String, MapList> mLog : mLogs.entrySet()) 
 			{
-				sInDate = mLog.getKey();
+				sDate = mLog.getKey();
 				mLogs = mUserLogs.get(sUserId);
 				
-				mlLogs = mLogs.get(sInDate);
+				mlLogs = mLogs.get(sDate);
 				for (int i=0; i<mlLogs.size(); i++) 
 				{
-					sInHrs = ""; sInMin = ""; sOutDate = ""; sOutHrs = ""; sOutMin = ""; sDeptIn = ""; sDeptOut = "";
 					mLogData = mlLogs.get(i);
+					sInDate = ""; sInHrs = ""; sInMin = "";
+					sOutDate = ""; sOutHrs = ""; sOutMin = "";
+					sDeptIn = ""; sDeptOut = "";
+					sInTimestamp = ""; sOutTimestamp = "";
 
 					sTime = mLogData.get(RDMServicesConstants.LOG_IN);
 					if(sTime != null && !"".equals(sTime))
 					{
 						sInTimestamp = sdfOut.format(sdfIn.parse(sTime));
 						
+						sInDate = sInTimestamp.substring(0, sInTimestamp.indexOf(' '));
 						sInTime = sTime.substring(sTime.indexOf(' ')).trim();
 						sInHrs = sInTime.substring(0, sInTime.indexOf(':'));
 						sInMin = sInTime.substring(sInTime.indexOf(':') + 1);

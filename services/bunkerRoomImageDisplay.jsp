@@ -32,7 +32,7 @@
 
 	String sCntrlType = client.getControllerType();
 	String stageName = RDMServicesUtils.getStageName(sCntrlType, sPhase);
-	StringList slControllers = RDMSession.getControllers(u);	
+	StringList slControllers = RDMSession.getControllers(u);
 
 	TreeMap<String, Map<String, String>> mDisplayParams = null;
 	mViewParams = RDMServicesUtils.getRoomImageParamaters(sCntrlType);
