@@ -13,16 +13,7 @@
 	String sDefParamType = request.getParameter("defParamType");
 	sDefParamType = ((sDefParamType == null || "".equals(sDefParamType)) ? "Default Product" : sDefParamType);
 
-	PLCServices client = null;
-	String sCntrlVersion = RDMSession.getControllerVersion(sController);
-	if(com.client.util.RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion))
-	{
-		client = new PLCServices_oldHW(RDMSession, sController);
-	}
-	else if(com.client.util.RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion))
-	{
-		client = new PLCServices_newHW(RDMSession, sController);
-	}
+	PLCServices client = new PLCServices(RDMSession, sController);
 
 	StringList slControllers = RDMSession.getControllers(u);
 	ArrayList<String[]> alPhases = RDMServicesUtils.getControllerStages(sController);

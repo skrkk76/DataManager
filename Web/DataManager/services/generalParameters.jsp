@@ -107,15 +107,7 @@
 	String sController = request.getParameter("controller");
 	String sCntrlVersion = RDMSession.getControllerVersion(sController);
 	
-	PLCServices client = null;
-	if(com.client.util.RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion))
-	{
-		client = new PLCServices_oldHW(RDMSession, sController);
-	}
-	else if(com.client.util.RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion))
-	{
-		client = new PLCServices_newHW(RDMSession, sController);
-	}
+	PLCServices client = new PLCServices(RDMSession, sController);
 	String sCntrlType = client.getControllerType();
 
 	Map<String, ParamSettings> mParamSettings = RDMServicesUtils.getGeneralViewParams(sCntrlType);

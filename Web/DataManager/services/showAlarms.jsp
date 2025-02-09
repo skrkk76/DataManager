@@ -39,16 +39,7 @@
 <%
 			String sRoomId = request.getParameter("controller");
 
-			PLCServices client = null;
-			String sCntrlVersion = RDMSession.getControllerVersion(sRoomId);
-			if(com.client.util.RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion))
-			{
-				client = new PLCServices_oldHW(RDMSession, sRoomId);
-			}
-			else if(com.client.util.RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion))
-			{
-				client = new PLCServices_newHW(RDMSession, sRoomId);
-			}
+			PLCServices client = new PLCServices(RDMSession, sRoomId);
 
 			MapList mlAlarms = client.getAlarmList();
 			Map<String, String> mUsers = RDMServicesUtils.getUserNames();

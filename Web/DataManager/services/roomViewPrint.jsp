@@ -42,16 +42,7 @@
 		try
 		{
 			sController = slControllers.get(i);
-
-			String sCntrlVersion = RDMSession.getControllerVersion(sController);
-			if(com.client.util.RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion))
-			{
-				client = new PLCServices_oldHW(RDMSession, sController);
-			}
-			else if(com.client.util.RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion))
-			{
-				client = new PLCServices_newHW(RDMSession, sController);
-			}
+			client = new PLCServices(RDMSession, sController);
 
 			mParams = client.getRoomViewParams(u, bRealTime);
 			mAllParams.put(sController, mParams);

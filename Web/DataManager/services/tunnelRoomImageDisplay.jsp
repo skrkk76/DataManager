@@ -24,17 +24,7 @@
 <%
 	String sController = request.getParameter("controller");
 
-	PLCServices client = null;
-	String sCntrlVersion = RDMSession.getControllerVersion(sController);
-	if(com.client.util.RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion))
-	{
-		client = new PLCServices_oldHW(RDMSession, sController);
-	}
-	else if(com.client.util.RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion))
-	{
-		client = new PLCServices_newHW(RDMSession, sController);
-	}
-
+	PLCServices client = new PLCServices(RDMSession, sController);
 	mParams = client.getControllerData(true);
 
 	String sCurrentPhase = (mParams.containsKey("current phase") ? mParams.get("current phase")[0] : "");

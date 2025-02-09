@@ -12,16 +12,7 @@
 	String sCntrlType = request.getParameter("cntrlType");
 	DataQuery qry = new DataQuery();
 
-	PLCServices client = null;
-	String sCntrlVersion = RDMSession.getControllerVersion(sController);
-	if(com.client.util.RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion))
-	{
-		client = new PLCServices_oldHW(RDMSession, sController);
-	}
-	else if(com.client.util.RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion))
-	{
-		client = new PLCServices_newHW(RDMSession, sController);
-	}
+	PLCServices client = new PLCServices(RDMSession, sController);
 
 	Map<String, ParamSettings> mParamSettings = qry.getGeneralParamAdminSettings(sCntrlType);
 	ArrayList<String> displayOrder = qry.getGeneralParamDisplayOrder(sCntrlType);
