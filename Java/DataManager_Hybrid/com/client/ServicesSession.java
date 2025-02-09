@@ -20,6 +20,7 @@ public class ServicesSession extends RDMServicesConstants
 	private static Map<String, String> mControllers = new HashMap<String, String>();
 	private static Map<String, StringList> mActiveControllers = new HashMap<String, StringList>();
 	private static Map<String, StringList> mInactiveControllers = new HashMap<String, StringList>();
+	private static Map<String, String> mControllerVersion = new HashMap<String, String>();
 	
 	public ServicesSession() throws Exception
 	{
@@ -51,6 +52,7 @@ public class ServicesSession extends RDMServicesConstants
 			mInactiveControllers.clear();
 			hsActiveControllerTypes.clear();
 			hsInactiveControllerTypes.clear();
+			mControllerVersion.clear();
 		}
 		
 		if(mControllers.isEmpty() || mControllers.size() == 0)
@@ -68,6 +70,7 @@ public class ServicesSession extends RDMServicesConstants
 		    		controller = mInfo.get(ROOM_ID);
 		    		cntrlType = mInfo.get(CNTRL_TYPE);
 		    		mControllers.put(controller, mInfo.get(ROOM_IP));
+		    		mControllerVersion.put(controller, mInfo.get(CNTRL_VERSION));
 		    		
 		    		StringList slControllers = (ACTIVE.equals(mInfo.get(ROOM_STATUS)) ? 
 		    			mActiveControllers.get(cntrlType) : mInactiveControllers.get(cntrlType));
@@ -310,15 +313,33 @@ public class ServicesSession extends RDMServicesConstants
 	
 	public Map<String, String> getControllerParameters(String cntrlType) throws Exception
 	{
+		boolean bOld = true;
+		boolean bNew = true;
+		Map<String, String> mOldCntrlParams = null;
+		Map<String, String> mNewCntrlParams = null;
+		
 		StringList slControllers = mActiveControllers.get(cntrlType);
 		for (int i = 0, iSz = slControllers.size(); i < iSz; i++)
 		{
 			try
 			{
 				String controller = slControllers.get(i);
+				String sCntrlVersion = getControllerVersion(controller);
 				
-				PLCServices client = new PLCServices(this, controller);
-				return client.getControllerParameters(cntrlType);
+				PLCServices client = null;
+				if(bOld && RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion))
+				{
+					client = new PLCServices_oldHW(this, controller);
+					mOldCntrlParams = client.getControllerParameters(cntrlType);
+					bOld = false;
+				}
+				else if(bNew && RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion))
+				{
+					client = new PLCServices_newHW(this, controller);
+					mNewCntrlParams = client.getControllerParameters(cntrlType);
+					bNew = false;
+				}
+				
 			}
 			catch(Exception e)
 			{
@@ -326,7 +347,17 @@ public class ServicesSession extends RDMServicesConstants
 			}
 		}
 		
-		return null;
+		Map<String, String> mCntrlParams = new HashMap<String, String>();
+		if(mOldCntrlParams != null)
+		{
+			mCntrlParams.putAll(mOldCntrlParams);
+		}
+		if(mNewCntrlParams != null)
+		{
+			mCntrlParams.putAll(mNewCntrlParams);
+		}
+		
+		return mCntrlParams;
 	}
 	
 	public String getControllerIP(String sController) throws Exception
@@ -338,5 +369,16 @@ public class ServicesSession extends RDMServicesConstants
 		}
 		
 		return IP;
+	}
+	
+	public String getControllerVersion(String sController) throws Exception
+	{
+		String version = mControllerVersion.get(sController);
+		if(RDMServicesUtils.isNullOrEmpty(version))
+		{
+			version = CNTRL_VERSION_OLD;
+		}
+		
+		return version;
 	}
 }

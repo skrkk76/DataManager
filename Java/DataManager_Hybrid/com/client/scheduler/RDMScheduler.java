@@ -5,10 +5,13 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.client.PLCServices;
+import com.client.PLCServices_newHW;
+import com.client.PLCServices_oldHW;
 import com.client.ServicesSession;
 import com.client.db.DataQuery;
 import com.client.license.VerifyLicense;
 import com.client.rules.RuleEngine;
+import com.client.util.RDMServicesConstants;
 import com.client.util.RDMServicesUtils;
 import com.client.util.StringList;
 
@@ -50,6 +53,7 @@ public class RDMScheduler
 	{
 		String sController = "";
 		StringList slControllers = null;
+		PLCServices client = null;
 		Map<String, String[]> mParams = null;
 		Map<String, Map<String, String[]>> mControllerParams = new HashMap<String, Map<String, String[]>>();
 		ServicesSession session = new ServicesSession();
@@ -79,7 +83,15 @@ public class RDMScheduler
 			try
 			{
 				sController = slControllers.get(i);
-				PLCServices client = new PLCServices(session, sController);
+				String sCntrlVersion = session.getControllerVersion(sController);
+				if(RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion))
+				{
+					client = new PLCServices_oldHW(session, sController);
+				}
+				else if(RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion))
+				{
+					client = new PLCServices_newHW(session, sController);
+				}
 				mParams = client.getControllerData(true);
 				mParams.remove("Last Refresh");
 				mParams.remove("manual.sl");

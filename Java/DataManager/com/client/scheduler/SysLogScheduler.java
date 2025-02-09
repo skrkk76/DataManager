@@ -8,12 +8,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.client.PLCServices;
-import com.client.PLCServices_newHW;
-import com.client.PLCServices_oldHW;
 import com.client.ServicesSession;
 import com.client.db.DataQuery;
 import com.client.license.VerifyLicense;
-import com.client.util.RDMServicesConstants;
 import com.client.util.StringList;
 
 public class SysLogScheduler
@@ -75,7 +72,6 @@ public class SysLogScheduler
 		Date toTime = ((cal == null) ? null : cal.getTime());
 		String sController = "";
 		ArrayList<String[]> alSysLog = null;
-		PLCServices client = null;
 		Map<String, ArrayList<String[]>> mControllerLog = new HashMap<String, ArrayList<String[]>>();
 		
 		ServicesSession session = new ServicesSession();
@@ -92,15 +88,7 @@ public class SysLogScheduler
 			try
 			{
 				sController = slControllers.get(i);
-				String sCntrlVersion = session.getControllerVersion(sController);
-				if(RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion))
-				{
-					client = new PLCServices_oldHW(session, sController);
-				}
-				else if(RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion))
-				{
-					client = new PLCServices_newHW(session, sController);
-				}
+				PLCServices client = new PLCServices(session, sController);
 				alSysLog = client.getSysLog(toTime);
 				mControllerLog.put(sController, alSysLog);
 			}

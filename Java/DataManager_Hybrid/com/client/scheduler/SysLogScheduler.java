@@ -1,5 +1,6 @@
 package com.client.scheduler;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -7,18 +8,17 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.client.PLCServices;
+import com.client.PLCServices_newHW;
+import com.client.PLCServices_oldHW;
 import com.client.ServicesSession;
 import com.client.db.DataQuery;
 import com.client.license.VerifyLicense;
-import com.client.notify.NotifyAlarms;
-import com.client.util.MapList;
+import com.client.util.RDMServicesConstants;
 import com.client.util.StringList;
 
-public class AlarmScheduler
+public class SysLogScheduler
 {
-	private int cnt = -1;
 	private Calendar cal = null;
-	private Date date = null;
 	
 	public static void main(String[] args) throws Throwable
 	{
@@ -29,7 +29,7 @@ public class AlarmScheduler
 			{
 				throw new Exception("Unlicensed software, please contact the provider for license");
 			}
-		
+			
 			int i = 0;
 			if(args.length == 1)
 			{
@@ -40,11 +40,11 @@ public class AlarmScheduler
 				}
 				catch(Exception e)
 				{
-					i = -5;
+					i = -30;
 				}
 			}
 			
-			new AlarmScheduler(i);
+			new SysLogScheduler(i);
 		}
 		catch(Exception e)
 		{
@@ -56,29 +56,27 @@ public class AlarmScheduler
 		}
 	}
 	
-	public AlarmScheduler(int i) throws Throwable
+	public SysLogScheduler(int i) throws Throwable
 	{
-		cal = Calendar.getInstance();
-		date = cal.getTime();
-		
 		if(i < 0)
 		{
+			cal = Calendar.getInstance();
 			cal.add(Calendar.MINUTE, i);
 			cal.add(Calendar.SECOND, (0 - cal.get(Calendar.SECOND)));
-			cnt = 50;
 		}
-
-		Map<String, MapList> mControllerAlarms = this.getControllerAlarms();
-		this.saveAlarms(mControllerAlarms);
+		
+		Map<String, ArrayList<String[]>> mControllerLogs = this.getControllerSysLog();
+		this.saveLogs(mControllerLogs);
 		this.deleteDuplicateLogs();
-		this.notifyUsers();
 	}
 	
-	private Map<String, MapList> getControllerAlarms() throws Exception
+	private Map<String, ArrayList<String[]>> getControllerSysLog() throws Throwable
 	{
+		Date toTime = ((cal == null) ? null : cal.getTime());
 		String sController = "";
-		MapList mlAlarms = null;
-		Map<String, MapList> mControllerParams = new HashMap<String, MapList>();
+		ArrayList<String[]> alSysLog = null;
+		PLCServices client = null;
+		Map<String, ArrayList<String[]>> mControllerLog = new HashMap<String, ArrayList<String[]>>();
 		
 		ServicesSession session = new ServicesSession();
 		StringList slControllers = session.getAllControllers();
@@ -94,39 +92,47 @@ public class AlarmScheduler
 			try
 			{
 				sController = slControllers.get(i);
-				PLCServices client = new PLCServices(session, sController);
-				mlAlarms = client.getAlarmList(cnt, true);
-				mControllerParams.put(sController, mlAlarms);
+				String sCntrlVersion = session.getControllerVersion(sController);
+				if(RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion))
+				{
+					client = new PLCServices_oldHW(session, sController);
+				}
+				else if(RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion))
+				{
+					client = new PLCServices_newHW(session, sController);
+				}
+				alSysLog = client.getSysLog(toTime);
+				mControllerLog.put(sController, alSysLog);
 			}
 			catch(Exception e)
 			{
-				System.out.println(sController + " [getControllerAlarms] : " + e.getLocalizedMessage());
+				System.out.println(sController + " [getControllerSysLog] : " + e.getLocalizedMessage());
 				e.printStackTrace(System.out);
 			}
 		}
 		
-		return mControllerParams;
+		return mControllerLog;
 	}
 	
-	private void saveAlarms(Map<String, MapList> mControllerParams) throws Exception
+	private void saveLogs(Map<String, ArrayList<String[]>> mControllerLog) throws Exception
 	{
 		String sController = "";
-		MapList mlAlarms;
+		ArrayList<String[]> alSysLog;
 		DataQuery query = new DataQuery();
 		
-		Iterator<String> itr = mControllerParams.keySet().iterator();
+		Iterator<String> itr = mControllerLog.keySet().iterator();
 		while(itr.hasNext())
 		{
 			try
 			{
 				sController = itr.next();
-				mlAlarms = mControllerParams.get(sController);
+				alSysLog = mControllerLog.get(sController);
 				
-				query.saveAlarmLogs(sController, mlAlarms);
+				query.saveSysLogs("SYSTEM", sController, alSysLog);
 			}
 			catch(Exception e)
 			{
-				System.out.println(sController + " [saveAlarms] : " + e.getLocalizedMessage());
+				System.out.println(sController + " [saveLogs] : " + e.getLocalizedMessage());
 				e.printStackTrace(System.out);
 			}
 		}
@@ -135,12 +141,6 @@ public class AlarmScheduler
 	private void deleteDuplicateLogs() throws Exception
 	{
 		DataQuery query = new DataQuery();
-		query.deleteDuplicateAlarmLogs();
-	}
-	
-	private void notifyUsers() throws Exception
-	{
-		NotifyAlarms notifyAlarms = new NotifyAlarms();
-		notifyAlarms.notifyUsers(date);
+		query.deleteDuplicateSysLogs();
 	}
 }

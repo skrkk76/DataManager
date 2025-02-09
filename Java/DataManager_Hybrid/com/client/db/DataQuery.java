@@ -27,7 +27,8 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.postgresql.copy.CopyManager;
 import org.postgresql.core.BaseConnection;
 
-import com.client.PLCServices;
+import com.client.PLCServices_newHW;
+import com.client.PLCServices_oldHW;
 import com.client.ServicesSession;
 import com.client.license.EncryptDecrypt;
 import com.client.license.VerifyLicense;
@@ -2695,6 +2696,7 @@ public class DataQuery extends RDMServicesConstants
 				mRoom.put(CNTRL_TYPE, rs.getString(CNTRL_TYPE));
 				mRoom.put(ROOM_STATUS, rs.getString(ROOM_STATUS));
 				mRoom.put(GROUP_NAME, rs.getString(GROUP_NAME));
+				mRoom.put(CNTRL_VERSION, rs.getString(CNTRL_VERSION));
 								
 				mlRooms.add(mRoom);
 			}
@@ -2724,10 +2726,12 @@ public class DataQuery extends RDMServicesConstants
 			String sCntrlType = mInfo.get(CNTRL_TYPE);
 			String sStatus = mInfo.get(ROOM_STATUS);
 			String sGroup = mInfo.get(GROUP_NAME);
+			String sCntrlVersion = mInfo.get(CNTRL_VERSION);
 			
 			sbUpdate.append("update "+SCHEMA_NAME+".ROOM_INFO set ");
 			sbUpdate.append("RM_IP = '"+sRoomIP+"',");
 			sbUpdate.append("CNTRL_TYPE = '"+sCntrlType+"', ");
+			sbUpdate.append("CNTRL_VERSION = '"+sCntrlVersion+"', ");
 			sbUpdate.append("GROUP_NAME = '"+sGroup+"', ");
 			sbUpdate.append("RM_STATUS = '"+sStatus+"' ");
 			sbUpdate.append("where RM_ID = '"+sRoomId+"'");
@@ -2803,6 +2807,7 @@ public class DataQuery extends RDMServicesConstants
 			String sCntrlType = mInfo.get(CNTRL_TYPE);
 			String sStatus = mInfo.get(ROOM_STATUS);
 			String sGroup = mInfo.get(GROUP_NAME);
+			String sCntrlVersion = mInfo.get(CNTRL_VERSION);
 			
 			sbInsert.append("insert into "+SCHEMA_NAME+".ROOM_INFO (");
 			sbInsert.append("RM_ID,RM_IP,CNTRL_TYPE,GROUP_NAME,RM_STATUS,CNTRL_VERSION");
@@ -2816,6 +2821,8 @@ public class DataQuery extends RDMServicesConstants
 			sbInsert.append(sGroup);
 			sbInsert.append("','");
 			sbInsert.append(sStatus);
+			sbInsert.append("','");
+			sbInsert.append(sCntrlVersion);
 			sbInsert.append("')");
 			
 			stmt.executeUpdate(sbInsert.toString());
@@ -2860,9 +2867,19 @@ public class DataQuery extends RDMServicesConstants
 			{
 				String sParam = null;
 				StringList slParams = new StringList();
+				Map<String, String> mCntrlParams = null;
 				
-				PLCServices client = new PLCServices(RDMSession, sRoomId);
-				Map<String, String> mCntrlParams = client.getControllerParameters(sCntrlType);
+				String sCntrlVersion = RDMSession.getControllerVersion(sRoomId);
+				if(RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion))
+				{
+					PLCServices_oldHW client = new PLCServices_oldHW(RDMSession, sRoomId);
+					mCntrlParams = client.getControllerParameters(sCntrlType);
+				}
+				else if(RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion))
+				{
+					PLCServices_newHW client = new PLCServices_newHW(RDMSession, sRoomId);
+					mCntrlParams = client.getControllerParameters(sCntrlType);
+				}
 				
 				Iterator<String> itr = mCntrlParams.keySet().iterator();
 				while(itr.hasNext())

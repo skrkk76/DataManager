@@ -7,11 +7,14 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.client.PLCServices;
+import com.client.PLCServices_newHW;
+import com.client.PLCServices_oldHW;
 import com.client.ServicesSession;
 import com.client.db.DataQuery;
 import com.client.license.VerifyLicense;
 import com.client.notify.NotifyAlarms;
 import com.client.util.MapList;
+import com.client.util.RDMServicesConstants;
 import com.client.util.StringList;
 
 public class AlarmScheduler
@@ -77,6 +80,7 @@ public class AlarmScheduler
 	private Map<String, MapList> getControllerAlarms() throws Exception
 	{
 		String sController = "";
+		PLCServices client = null;
 		MapList mlAlarms = null;
 		Map<String, MapList> mControllerParams = new HashMap<String, MapList>();
 		
@@ -94,7 +98,15 @@ public class AlarmScheduler
 			try
 			{
 				sController = slControllers.get(i);
-				PLCServices client = new PLCServices(session, sController);
+				String sCntrlVersion = session.getControllerVersion(sController);
+				if(RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion))
+				{
+					client = new PLCServices_oldHW(session, sController);
+				}
+				else if(RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion))
+				{
+					client = new PLCServices_newHW(session, sController);
+				}
 				mlAlarms = client.getAlarmList(cnt, true);
 				mControllerParams.put(sController, mlAlarms);
 			}

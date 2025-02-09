@@ -80,6 +80,7 @@ public class RDMServicesConstants
 	public final static String ROOM_ID = "RM_ID";
 	public final static String ROOM_IP = "RM_IP";
 	public final static String CNTRL_TYPE = "CNTRL_TYPE";
+	public final static String CNTRL_VERSION = "CNTRL_VERSION";
 	public final static String ROOM_STATUS = "RM_STATUS";
 	
 	public final static String STAGE_NUMBER = "STAGE_NUMBER";
@@ -287,6 +288,8 @@ public class RDMServicesConstants
 	public final static String BACKUP_PATH = "BACKUP_PATH";
 	public final static String ACCT_KEY_NAME = "ACCT_KEY_NAME";
 	public final static String ACCT_KEY_VAL = "ACCT_KEY_VAL";
+	public final static String CNTRL_VERSION_OLD = "old";
+	public final static String CNTRL_VERSION_NEW = "new";
 	
 	public final static String USER_IP = "USER_IP";
 
