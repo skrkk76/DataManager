@@ -346,7 +346,7 @@ ALTER TABLE rdm_admin.general_params_admin OWNER TO "RDM_ADMIN";
 CREATE TABLE rdm_admin.grower_def_param_val (
     param_name character varying(50) NOT NULL,
     default_product character varying(10),
-    fresh_mushroom character varying
+    fresh_mushroom character varying(10)
 );
 
 
@@ -509,9 +509,9 @@ ALTER TABLE rdm_admin.scale_info OWNER TO "RDM_ADMIN";
 
 CREATE TABLE rdm_admin.stage_info (
     stage_name character varying(25) NOT NULL,
+    stage_number character varying NOT NULL,
     stage_desc character varying(50),
-    cntrl_type character varying(15) NOT NULL,
-    stage_number character varying NOT NULL
+    cntrl_type character varying(15) NOT NULL
 );
 
 
