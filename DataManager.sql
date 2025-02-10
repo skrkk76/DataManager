@@ -346,7 +346,6 @@ ALTER TABLE rdm_admin.general_params_admin OWNER TO "RDM_ADMIN";
 CREATE TABLE rdm_admin.grower_def_param_val (
     param_name character varying(50) NOT NULL,
     default_product character varying(10),
-    agaricus_bisporus character varying,
     fresh_mushroom character varying
 );
 
