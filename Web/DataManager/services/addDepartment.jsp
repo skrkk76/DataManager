@@ -74,8 +74,8 @@
 				<td class="input">
 					<select id="editParams" name="editParams">
 						<option value=""><%= resourceBundle.getProperty("DataManager.DisplayText.Please_choose_one") %></option>
-						<option value="Y" <%= "Y".equals(sEditParams) ? "Selected" : "" %>><%= resourceBundle.getProperty("DataManager.DisplayText.Yes") %></option>
-						<option value="N" <%= "N".equals(sEditParams) ? "Selected" : "" %>><%= resourceBundle.getProperty("DataManager.DisplayText.No") %></option>
+						<option value="Y"><%= resourceBundle.getProperty("DataManager.DisplayText.Yes") %></option>
+						<option value="N"><%= resourceBundle.getProperty("DataManager.DisplayText.No") %></option>
 					</select>
 				</td>
 			</tr>
