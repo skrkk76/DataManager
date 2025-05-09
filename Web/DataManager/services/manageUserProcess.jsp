@@ -37,7 +37,6 @@
 	mKeys.put("manageUsers", RDMServicesConstants.MANAGE_USERS);
 	mKeys.put("manageAlarms", RDMServicesConstants.MANAGE_ALARMS);
 	mKeys.put("locale", RDMServicesConstants.LOCALE);
-	mKeys.put("training", RDMServicesConstants.TRAINING);
 	mKeys.put("designation", RDMServicesConstants.DESIGNATION);
 	mKeys.put("qualification", RDMServicesConstants.QUALIFICATION);
 	
