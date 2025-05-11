@@ -117,7 +117,7 @@
 			while (enumeration.hasMoreElements())
 			{
 				sName = (String) enumeration.nextElement();
-				if("mode".equals(sName) || "chk_all".equals(sName) || sName.endsWith("_Status"))
+				if("mode".equals(sName) || "chk_all".equals(sName) || sName.endsWith("_Status") || sName.endsWith("_chkAll"))
 				{
 					continue;
 				}
@@ -141,7 +141,7 @@
 			while (enumeration.hasMoreElements())
 			{
 				sName = (String) enumeration.nextElement();
-				if("mode".equals(sName) || "chk_all".equals(sName) || sName.endsWith("_Status"))
+				if("mode".equals(sName) || "chk_all".equals(sName) || sName.endsWith("_Status") || sName.endsWith("_chkAll"))
 				{
 					continue;
 				}
@@ -166,7 +166,7 @@
 			while (enumeration.hasMoreElements())
 			{
 				sName = (String) enumeration.nextElement();
-				if("mode".equals(sName) || "chk_all".equals(sName) || sName.endsWith("_Status"))
+				if("mode".equals(sName) || "chk_all".equals(sName) || sName.endsWith("_Status") || sName.endsWith("_chkAll"))
 				{
 					continue;
 				}				
@@ -206,7 +206,7 @@
 			while (enumeration.hasMoreElements())
 			{
 				sName = (String) enumeration.nextElement();
-				if("mode".equals(sName) || "chk_all".equals(sName) || sName.endsWith("_Status"))
+				if("mode".equals(sName) || "chk_all".equals(sName) || sName.endsWith("_Status") || sName.endsWith("_chkAll"))
 				{
 					continue;
 				}

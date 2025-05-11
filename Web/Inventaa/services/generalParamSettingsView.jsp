@@ -11,22 +11,10 @@
 <%
 	String sCntrlType = request.getParameter("cntrlType");
 	DataQuery qry = new DataQuery();
-
-	PLCServices client = null;
-	String sCntrlVersion = RDMSession.getControllerVersion(sController);
-	if(com.client.util.RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion))
-	{
-		client = new PLCServices_oldHW(RDMSession, sController);
-	}
-	else if(com.client.util.RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion))
-	{
-		client = new PLCServices_newHW(RDMSession, sController);
-	}
-
+	
 	Map<String, ParamSettings> mParamSettings = qry.getGeneralParamAdminSettings(sCntrlType);
 	ArrayList<String> displayOrder = qry.getGeneralParamDisplayOrder(sCntrlType);
-
-	Map<String, String> mGenParams = client.getControllerParameters(sCntrlType);
+	Map<String, String> mGenParams = RDMSession.getControllerParameters(sCntrlType);
 	StringBuilder sbDelParams = new StringBuilder();
 	
 	Random randomGenerator = new Random();
@@ -227,8 +215,13 @@
 				{
 					sName = (String)displayOrder.get(i);
 					mParam = mParamSettings.get(sName);
+					
+					if(mParam == null)
+					{
+						continue;
+					}
 
-					if(mParam != null && (mGenParams.size() > 0 && !mGenParams.containsKey(sName)))
+					if(mGenParams.size() > 0 && !mGenParams.containsKey(sName))
 					{
 						if(sbDelParams.length() > 1)
 						{

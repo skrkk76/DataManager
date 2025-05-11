@@ -17,7 +17,7 @@
 	String sSelRange = request.getParameter("selRange");
 	int iSelRange = (sSelRange == null || "".equals(sSelRange)) ? 0 : Integer.parseInt(sSelRange);
 
-	StringList slCntrlPhases = RDMServicesUtils.sortControllerPhases(RDMSession);
+	StringList slCntrlPhases = RDMServicesUtils.sortControllerPhases(RDMSession, sCntrlType);
 	StringList slCntrlSel = RDMSession.getControllersSelection(slCntrlPhases, 10);
 	if(slCntrlSel.size() == 0)
 	{
