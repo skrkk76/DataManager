@@ -13,17 +13,6 @@
 	String sDefParamType = request.getParameter("defParamType");
 	sDefParamType = ((sDefParamType == null || "".equals(sDefParamType)) ? "Default Product" : sDefParamType);
 
-	PLCServices client = null;
-	String sCntrlVersion = RDMSession.getControllerVersion(sController);
-	if(com.client.util.RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion))
-	{
-		client = new PLCServices_oldHW(RDMSession, sController);
-	}
-	else if(com.client.util.RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion))
-	{
-		client = new PLCServices_newHW(RDMSession, sController);
-	}
-
 	StringList slControllers = RDMSession.getControllers(u);	
 	ArrayList<String[]> alPhases = RDMServicesUtils.getControllerStages(sController);
 
@@ -32,7 +21,7 @@
 
 	DefParamValues defParamVals = new DefParamValues();
 	Map<String, String> mParams = defParamVals.getDefaultParamValues(sController, sDefParamType);
-	Map<String, String> mCntrlParams = client.getControllerParameters(sController);
+	Map<String, String> mCntrlParams = RDMSession.getControllerParameters(sController);
 
 	String sHeader = null;
 	StringList slHeaders = new StringList();
