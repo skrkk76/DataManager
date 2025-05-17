@@ -289,14 +289,13 @@ public class ServicesSession extends RDMServicesConstants {
 		PLCServices client = null;
 		if (bOld && RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion)) {
 		    client = new PLCServices_oldHW(this, controller);
-		    mOldCntrlParams = client.getControllerParameters(cntrlType);
+		    mOldCntrlParams = client.getControllerParameters();
 		    bOld = false;
 		} else if (bNew && RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion)) {
 		    client = new PLCServices_newHW(this, controller);
-		    mNewCntrlParams = client.getControllerParameters(cntrlType);
+		    mNewCntrlParams = client.getControllerParameters();
 		    bNew = false;
 		}
-
 	    } catch (Exception e) {
 		// do nothing
 	    }

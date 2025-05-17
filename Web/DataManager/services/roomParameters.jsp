@@ -12,14 +12,38 @@
 	String sController = request.getParameter("controller");
 	String sRole = u.getRole();
 
-	PLCServices client = new PLCServices(RDMSession, sController);
-	String sCntrlType = client.getControllerType();
+	PLCServices client = null;
+	String sCntrlVersion = RDMSession.getControllerVersion(sController);
+	if(com.client.util.RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion))
+	{
+		client = new PLCServices_oldHW(RDMSession, sController);
+	}
+	else if(com.client.util.RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion))
+	{
+		client = new PLCServices_newHW(RDMSession, sController);
+	}
 
 	StringList slControllers = RDMSession.getControllers(u);
+	try
+	{
+		client.isActive();
+	}
+	catch(Exception e)
+	{
+%>
+		<script language="javascript">
+			alert("<%= e.getMessage() %>");
+			document.location.href = "singleRoomView.jsp";
+		</script>
+<%
+		return;
+	}
+
 	ArrayList<String[]> alPhases = client.getControllerStages();
 	String emptyPhase = (alPhases.get(0)[0]).toLowerCase();
 	String startPhase = (alPhases.get(1)[0]).toLowerCase();
 
+	String sCntrlType = client.getControllerType();
 	Map<String, ParamSettings> mViewParams = RDMServicesUtils.getSingleRoomViewParamaters(sCntrlType);
 	ArrayList<String> alParams = RDMServicesUtils.getDisplayOrder(sCntrlType);
 

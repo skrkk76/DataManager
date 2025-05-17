@@ -2478,10 +2478,10 @@ public class DataQuery extends RDMServicesConstants {
 		String sCntrlVersion = RDMSession.getControllerVersion(sRoomId);
 		if (RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion)) {
 		    PLCServices_oldHW client = new PLCServices_oldHW(RDMSession, sRoomId);
-		    mCntrlParams = client.getControllerParameters(sCntrlType);
+		    mCntrlParams = client.getControllerParameters();
 		} else if (RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion)) {
 		    PLCServices_newHW client = new PLCServices_newHW(RDMSession, sRoomId);
-		    mCntrlParams = client.getControllerParameters(sCntrlType);
+		    mCntrlParams = client.getControllerParameters();
 		}
 
 		Iterator<String> itr = mCntrlParams.keySet().iterator();

@@ -10,7 +10,7 @@ import com.client.util.RDMServicesConstants;
 import com.client.util.User;
 
 public abstract class PLCServices extends RDMServicesConstants {
-    public abstract Map<String, String> getControllerParameters(String cntrlType) throws Exception;
+    public abstract Map<String, String> getControllerParameters() throws Exception;
 
     public abstract ArrayList<String[]> getControllerStages() throws Exception;
 
@@ -46,4 +46,6 @@ public abstract class PLCServices extends RDMServicesConstants {
     public abstract void updateBatchNo(String sBNo, String sDefType) throws Exception;
 
     public abstract void updateDefaultProduct(String sBNo, String sDefType) throws Exception;
+
+    public abstract boolean isActive() throws Exception;
 }

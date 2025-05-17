@@ -274,7 +274,7 @@ public class ServicesSession extends RDMServicesConstants {
 		    String controller = slControllers.get(i);
 
 		    PLCServices client = new PLCServices(this, controller);
-		    return client.getControllerParameters(cntrlType);
+		    return client.getControllerParameters();
 		} catch (Exception e) {
 		    // do nothing
 		}

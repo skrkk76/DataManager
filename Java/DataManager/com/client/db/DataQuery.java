@@ -2468,7 +2468,7 @@ public class DataQuery extends RDMServicesConstants {
 		StringList slParams = new StringList();
 
 		PLCServices client = new PLCServices(RDMSession, sRoomId);
-		Map<String, String> mCntrlParams = client.getControllerParameters(sCntrlType);
+		Map<String, String> mCntrlParams = client.getControllerParameters();
 
 		Iterator<String> itr = mCntrlParams.keySet().iterator();
 		while (itr.hasNext()) {

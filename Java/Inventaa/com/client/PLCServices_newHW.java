@@ -25,7 +25,6 @@ import com.client.util.ParamSettings;
 import com.client.util.RDMServicesUtils;
 import com.client.util.StringList;
 import com.client.util.User;
-
 import com.resourcedm.www.rdmplanttdb._2022._04._07.Alarm;
 import com.resourcedm.www.rdmplanttdb._2022._04._07.ArrayOfAlarm;
 import com.resourcedm.www.rdmplanttdb._2022._04._07.ArrayOfEvent;
@@ -69,6 +68,15 @@ public class PLCServices_newHW extends PLCServices {
 	slCompErrorParams = RDMServicesUtils.getCompErrorParams(sCntrlType);
     }
 
+    public boolean isActive() throws Exception {
+	if (session.checkConnectionIsAlive(sController)) {
+	    return true;
+	} else {
+	    throw new Exception(
+		    "Controller " + sController + " connection not available, please check with the Administrator");
+	}
+    }
+
     private RDMPlantTDBServicesSoapStub getStub(String controller) throws Exception {
 	if (session.checkConnectionIsAlive(controller)) {
 	    String IP = session.getControllerIP(controller);
@@ -86,49 +94,40 @@ public class PLCServices_newHW extends PLCServices {
 	}
     }
 
-    public Map<String, String> getControllerParameters(String cntrlType) throws Exception {
-	StringList slControllers = session.getAllControllers(cntrlType);
-	for (int i = 0, iSz = slControllers.size(); i < iSz; i++) {
-	    try {
-		String controller = slControllers.get(i);
+    public Map<String, String> getControllerParameters() throws Exception {
+	String realTime = RDMServicesUtils.getProperty("rdmservices.controller.realtime");
+	boolean isRealTime = !"false".equalsIgnoreCase(realTime);
+	if (isRealTime) {
+	    return getParameters(sController);
+	} else {
+	    String sParam = "";
+	    String sUnit = "";
+	    Map<String, String> mCntrlParams = new HashMap<String, String>();
 
-		String realTime = RDMServicesUtils.getProperty("rdmservices.controller.realtime");
-		boolean isRealTime = !"false".equalsIgnoreCase(realTime);
-		if (isRealTime) {
-		    return getParameters(controller);
-		} else {
-		    String sParam = "";
-		    String sUnit = "";
-		    Map<String, String> mCntrlParams = new HashMap<String, String>();
+	    Map<String, String[]> mParams = getControllerData(false);
+	    Iterator<String> itrParams = mParams.keySet().iterator();
+	    while (itrParams.hasNext()) {
+		sParam = itrParams.next();
+		sUnit = (mParams.get(sParam))[1];
+		sUnit = ("None".equalsIgnoreCase(sUnit) ? "" : sUnit);
+		if (!"".equals(sParam)) {
+		    mCntrlParams.put(sParam, sUnit);
+		}
+	    }
 
-		    Map<String, String[]> mParams = getControllerData(false);
-		    Iterator<String> itrParams = mParams.keySet().iterator();
-		    while (itrParams.hasNext()) {
-			sParam = itrParams.next();
-			sUnit = (mParams.get(sParam))[1];
-			sUnit = ("None".equalsIgnoreCase(sUnit) ? "" : sUnit);
-			if (!"".equals(sParam)) {
-			    mCntrlParams.put(sParam, sUnit);
-			}
-		    }
-
-		    if (!RDMServicesUtils.isGeneralController(controller)) {
-			Iterator<String> itr = SET_PARAMS.keySet().iterator();
-			while (itr.hasNext()) {
-			    sParam = itr.next();
-			    if (mCntrlParams.containsKey(sParam + " empty")
-				    || mCntrlParams.containsKey(sParam + " phase empty")) {
-				mCntrlParams.put(sParam, SET_PARAMS.get(sParam));
-			    }
-			}
+	    if (!RDMServicesUtils.isGeneralController(sController)) {
+		Iterator<String> itr = SET_PARAMS.keySet().iterator();
+		while (itr.hasNext()) {
+		    sParam = itr.next();
+		    if (mCntrlParams.containsKey(sParam + " empty")
+			    || mCntrlParams.containsKey(sParam + " phase empty")) {
+			mCntrlParams.put(sParam, SET_PARAMS.get(sParam));
 		    }
 		}
-	    } catch (Exception e) {
-		// do nothing
 	    }
-	}
 
-	return (new HashMap<String, String>());
+	    return mCntrlParams;
+	}
     }
 
     private Map<String, String> getParameters(String controller) throws Exception {
