@@ -21,6 +21,10 @@ public class RDMScheduler {
 
     public static void main(String[] args) throws Throwable {
 	try {
+	    if(args.length == 0) {
+        	throw new Exception("Missing args");
+	    }
+
 	    boolean licensed = VerifyLicense.verifyLicense();
 	    if (!licensed) {
 		throw new Exception("Unlicensed software, please contact the provider for license");
@@ -42,20 +46,18 @@ public class RDMScheduler {
 
     private Map<String, Map<String, String[]>> getControllerData(String[] args) throws Exception {
 	String sController = "";
-	StringList slControllers = null;
-	PLCServices client = null;
+	StringList slControllers = new StringList();
 	Map<String, String[]> mParams = null;
 	Map<String, Map<String, String[]>> mControllerParams = new HashMap<String, Map<String, String[]>>();
 	ServicesSession session = new ServicesSession();
-
-	int iCnt = args.length;
-	if (iCnt > 0) {
-	    slControllers = new StringList();
-	    for (int i = 0; i < iCnt; i++) {
-		slControllers.addAll(session.getAllControllers(args[i]));
-	    }
+	
+	if (args.length == 1) {
+	    slControllers.addAll(session.getAllControllers(args[0]));
 	} else {
-	    slControllers = session.getAllControllers();
+	    String[] controllers = args[1].split(",");
+	    for (String controller : controllers) {
+		slControllers.add(controller.trim());
+	    }
 	}
 
 	DataQuery query = new DataQuery();
@@ -66,6 +68,7 @@ public class RDMScheduler {
 
 	for (int i = 0, iSz = slControllers.size(); i < iSz; i++) {
 	    try {
+		PLCServices client = null;
 		sController = slControllers.get(i);
 		String sCntrlVersion = session.getControllerVersion(sController);
 		if (RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion)) {

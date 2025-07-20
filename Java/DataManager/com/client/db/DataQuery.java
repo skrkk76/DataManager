@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,7 +42,7 @@ public class DataQuery extends RDMServicesConstants {
     private DBConnectionPool connectionPool;
     private static String SCHEMA_NAME = null;
     private static DecimalFormat df = new DecimalFormat("#.####");
-    private static SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
+    private static SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
     public DataQuery() throws Exception {
 	SCHEMA_NAME = RDMServicesUtils.getProperty("rdmservices.db.schema");
@@ -786,7 +785,7 @@ public class DataQuery extends RDMServicesConstants {
 
 	    if (sbNewCols.length() > 0) {
 		String sQuery = "ALTER TABLE " + SCHEMA_NAME + "." + roomTable + " " + sbNewCols.toString();
-		addColumnParameters(sQuery);
+		addColumnParameters(sController, sQuery);
 	    }
 
 	    String sInsertStmt = "";
@@ -849,7 +848,7 @@ public class DataQuery extends RDMServicesConstants {
 	return slParams;
     }
 
-    public boolean addColumnParameters(String sQuery) throws SQLException, InterruptedException {
+    public boolean addColumnParameters(String sController, String sQuery) throws SQLException, InterruptedException {
 	Connection conn = null;
 	Statement stmt = null;
 
@@ -858,6 +857,8 @@ public class DataQuery extends RDMServicesConstants {
 	    stmt = conn.createStatement();
 
 	    stmt.executeUpdate(sQuery);
+	} catch(SQLException|InterruptedException e) {
+	    System.out.println("Exp in addColumnParameters [" + sController + "] : " + e.getMessage());
 	} finally {
 	    close(stmt, null);
 	    connectionPool.free(conn);
@@ -877,7 +878,7 @@ public class DataQuery extends RDMServicesConstants {
 	StringBuilder sbParamValues = new StringBuilder();
 
 	try {
-	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
 
 	    String sCntrlType = RDMServicesUtils.getControllerType(sController);
 	    boolean bIsNotGeneral = !sCntrlType.startsWith("General");
@@ -1265,8 +1266,8 @@ public class DataQuery extends RDMServicesConstants {
 	Connection conn = null;
 	Statement stmt = null;
 	StringBuilder sbUpdate = new StringBuilder();
-	SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-	SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+	SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy");
+	SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd");
 
 	try {
 	    conn = connectionPool.getConnection();
@@ -1381,6 +1382,14 @@ public class DataQuery extends RDMServicesConstants {
 		sbUpdate.append(HOME_PAGE + " = '" + mInfo.get(HOME_PAGE) + "'");
 		bFlag = true;
 	    }
+	    if (mInfo.containsKey(LOCALE)) {
+		if (bFlag) {
+		    sbUpdate.append(",");
+		}
+
+		sbUpdate.append(LOCALE + " = '" + mInfo.get(LOCALE) + "'");
+		bFlag = true;
+	    }
 	    if (mInfo.containsKey(MANAGE_USERS)) {
 		if (bFlag) {
 		    sbUpdate.append(",");
@@ -1393,14 +1402,6 @@ public class DataQuery extends RDMServicesConstants {
 		    sbUpdate.append(",");
 		}
 		sbUpdate.append(MANAGE_ALARMS + " = '" + mInfo.get(MANAGE_ALARMS) + "'");
-		bFlag = true;
-	    }
-	    if (mInfo.containsKey(LOCALE)) {
-		if (bFlag) {
-		    sbUpdate.append(",");
-		}
-
-		sbUpdate.append(LOCALE + " = '" + mInfo.get(LOCALE) + "'");
 		bFlag = true;
 	    }
 	    if (mInfo.containsKey(QUALIFICATION)) {
@@ -1436,8 +1437,8 @@ public class DataQuery extends RDMServicesConstants {
 	Statement stmt = null;
 	ResultSet rs = null;
 	StringBuilder sbInsert = new StringBuilder();
-	SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-	SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+	SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy");
+	SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd");
 
 	try {
 	    conn = connectionPool.getConnection();
@@ -1791,10 +1792,10 @@ public class DataQuery extends RDMServicesConstants {
 	StringList slControllers = null;
 
 	try {
-	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm", Locale.getDefault());
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 
-	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy");
+	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd");
 
 	    if (!"".equals(sFromDate)) {
 		sFromDate = output.format(input.parse(sFromDate));
@@ -1942,10 +1943,10 @@ public class DataQuery extends RDMServicesConstants {
 	Timestamp tsLastNotified = null;
 
 	try {
-	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm", Locale.getDefault());
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 
-	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy");
+	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd");
 
 	    if (!"".equals(sFromDate)) {
 		sFromDate = output.format(input.parse(sFromDate));
@@ -2532,10 +2533,10 @@ public class DataQuery extends RDMServicesConstants {
 	Map<String, String> mLog = null;
 
 	try {
-	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm", Locale.getDefault());
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 
-	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy");
+	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd");
 
 	    if (!"".equals(sFromDate)) {
 		sFromDate = output.format(input.parse(sFromDate));
@@ -2757,7 +2758,7 @@ public class DataQuery extends RDMServicesConstants {
 	    pstmt = conn.prepareStatement(sInsertStmt);
 
 	    Calendar cal = Calendar.getInstance();
-	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm", Locale.getDefault());
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 	    StringBuilder sbComments = new StringBuilder();
 
 	    String sComments = mInfo.get(REVIEW_COMMENTS).trim();
@@ -2853,7 +2854,7 @@ public class DataQuery extends RDMServicesConstants {
 		sComments = rs.getString(REVIEW_COMMENTS);
 	    }
 
-	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm", Locale.getDefault());
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 	    Calendar cal = Calendar.getInstance();
 
 	    Map<String, String> mUsers = RDMServicesUtils.getUserNames(false);
@@ -2982,7 +2983,7 @@ public class DataQuery extends RDMServicesConstants {
 	    String sProductType = getProductType(sController);
 
 	    Map<String, String[]> mColParam = RDMServicesUtils.getParamColNames(cntrlType);
-	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy", Locale.getDefault());
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
 
 	    String roomTable = sController.replace(" ", "") + "_param_data";
 
@@ -3060,7 +3061,7 @@ public class DataQuery extends RDMServicesConstants {
 	StringBuilder sbQuery = new StringBuilder();
 	MapList alOpenAlarms = new MapList();
 	try {
-	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm", Locale.getDefault());
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 
 	    sbQuery.append("select * from " + SCHEMA_NAME + ".ALARM_HISTORY");
 	    sbQuery.append(" where ");
@@ -4439,7 +4440,7 @@ public class DataQuery extends RDMServicesConstants {
 	MapList mlBatchNos = new MapList();
 
 	try {
-	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy hh:mm a", Locale.getDefault());
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy hh:mm a");
 	    Map<String, String> mBatchNo = null;
 	    boolean bIsEmpty = RDMServicesUtils.isNullOrEmpty(sCntrlType);
 
@@ -4818,8 +4819,8 @@ public class DataQuery extends RDMServicesConstants {
 
 	try {
 	    SimpleDateFormat sdf = null;
-	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy");
+	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd");
 
 	    if (!showInGraph) {
 		if (!"".equals(sFromDate)) {
@@ -4831,9 +4832,9 @@ public class DataQuery extends RDMServicesConstants {
 	    }
 
 	    if (showInGraph) {
-		sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+		sdf = new SimpleDateFormat("yyyy/MM/dd");
 	    } else {
-		sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
+		sdf = new SimpleDateFormat("MM/dd/yyyy");
 	    }
 
 	    StringBuilder sbQuery = new StringBuilder();
@@ -4985,8 +4986,8 @@ public class DataQuery extends RDMServicesConstants {
 	Statement stmt = null;
 	ResultSet rs = null;
 	try {
-	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy");
+	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd");
 	    sDate = output.format(input.parse(sDate));
 
 	    conn = connectionPool.getConnection();
@@ -5003,7 +5004,7 @@ public class DataQuery extends RDMServicesConstants {
 	    }
 
 	    if (!"".equals(sComments)) {
-		SimpleDateFormat sdfIn = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
+		SimpleDateFormat sdfIn = new SimpleDateFormat("MM/dd/yyyy HH:mm");
 		String sLogDate = sdfIn.format(new java.util.Date());
 		sComments = "<b>" + User.getDisplayName(sLoggedBy) + " on " + sLogDate + "</b>\n - " + sComments;
 
@@ -5370,8 +5371,8 @@ public class DataQuery extends RDMServicesConstants {
 	    String sAutoName = "";
 	    String sQuery = "SELECT nextval('" + SCHEMA_NAME + ".WBS_TASK_SEQ')";
 
-	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
-	    SimpleDateFormat output = new SimpleDateFormat("dd-MMM-yy hh:mm:ss a", Locale.getDefault());
+	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+	    SimpleDateFormat output = new SimpleDateFormat("dd-MMM-yy hh:mm:ss a");
 
 	    String sEstStart = output.format(input.parse(mTask.get(ESTIMATED_START)));
 	    String sEstEnd = output.format(input.parse(mTask.get(ESTIMATED_END)));
@@ -5405,7 +5406,7 @@ public class DataQuery extends RDMServicesConstants {
 
 	    String sSysLog = "";
 	    if (!sOwner.equals(sCreatedBy)) {
-		SimpleDateFormat sdfIn = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
+		SimpleDateFormat sdfIn = new SimpleDateFormat("MM/dd/yyyy HH:mm");
 		String sLogDate = sdfIn.format(new java.util.Date());
 		sSysLog = User.getDisplayName(sCreatedBy) + "[" + sLogDate + "]: Created for "
 			+ User.getDisplayName(sOwner);
@@ -5492,8 +5493,8 @@ public class DataQuery extends RDMServicesConstants {
 		}
 	    }
 
-	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
-	    SimpleDateFormat output = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss a", Locale.getDefault());
+	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+	    SimpleDateFormat output = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss a");
 	    Calendar cal = Calendar.getInstance();
 
 	    StringBuilder sbUpdate = new StringBuilder();
@@ -5555,7 +5556,7 @@ public class DataQuery extends RDMServicesConstants {
 		}
 	    }
 
-	    SimpleDateFormat sdfIn = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
+	    SimpleDateFormat sdfIn = new SimpleDateFormat("MM/dd/yyyy HH:mm");
 	    String sLogDate = sdfIn.format(new java.util.Date());
 	    String sSysLog = "\n" + User.getDisplayName(sUserId) + "[" + sLogDate + "]:";
 
@@ -5619,13 +5620,13 @@ public class DataQuery extends RDMServicesConstants {
 	    conn = connectionPool.getConnection();
 	    stmt = conn.createStatement();
 
-	    SimpleDateFormat output = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss a", Locale.getDefault());
+	    SimpleDateFormat output = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss a");
 	    Calendar cal = Calendar.getInstance();
 
 	    String sActStart = output.format(cal.getTime());
 	    String sDate = sActStart.substring(0, sActStart.indexOf(' '));
 
-	    SimpleDateFormat sdfIn = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
+	    SimpleDateFormat sdfIn = new SimpleDateFormat("MM/dd/yyyy HH:mm");
 	    String sLogDate = sdfIn.format(new java.util.Date());
 	    String sSysLog = "\n" + User.getDisplayName(sUserId) + "[" + sLogDate + "]: Status changed to Started";
 
@@ -5714,13 +5715,13 @@ public class DataQuery extends RDMServicesConstants {
 		    }
 		}
 
-		SimpleDateFormat output = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss a", Locale.getDefault());
+		SimpleDateFormat output = new SimpleDateFormat("yyyy/MM/dd hh:mm:ss a");
 		Calendar cal = Calendar.getInstance();
 
 		String sActEnd = output.format(cal.getTime());
 		String sDate = sActEnd.substring(0, sActEnd.indexOf(' '));
 
-		SimpleDateFormat sdfIn = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
+		SimpleDateFormat sdfIn = new SimpleDateFormat("MM/dd/yyyy HH:mm");
 		String sLogDate = sdfIn.format(new java.util.Date());
 		String sSysLog = "\n" + User.getDisplayName(sUserId) + "[" + sLogDate
 			+ "]: Status changed to Completed";
@@ -5794,9 +5795,9 @@ public class DataQuery extends RDMServicesConstants {
 	Map<String, String> mTask = null;
 
 	try {
-	    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
-	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+	    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy");
+	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd");
 
 	    StringBuilder sbQuery = new StringBuilder();
 
@@ -6199,7 +6200,7 @@ public class DataQuery extends RDMServicesConstants {
 	Map<String, String> mAdminTasks = RDMServicesUtils.listAdminTasks();
 
 	try {
-	    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
+	    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm");
 
 	    StringBuilder sbQuery = new StringBuilder();
 	    sbQuery.append("select * from " + SCHEMA_NAME
@@ -6285,7 +6286,7 @@ public class DataQuery extends RDMServicesConstants {
 
 	MapList mlDeliverables = new MapList();
 	try {
-	    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
+	    SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm");
 
 	    String sQuery = "SELECT *, (cast (a.ATTRIBUTE_VALUE as real) - " + "(select b.MAX_WEIGHT from "
 		    + SCHEMA_NAME + ".TASK_ATTRIBUTES_INFO b "
@@ -6507,7 +6508,7 @@ public class DataQuery extends RDMServicesConstants {
 	    stmt = conn.createStatement();
 	    stmt.execute(sQuery);
 
-	    SimpleDateFormat sdfIn = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
+	    SimpleDateFormat sdfIn = new SimpleDateFormat("MM/dd/yyyy HH:mm");
 	    String sLogDate = sdfIn.format(new java.util.Date());
 	    String sSysLog = "\n" + User.getDisplayName(sUserId) + "[" + sLogDate + "]: Deliverable " + sDeliverableId
 		    + " is deleted";
@@ -6947,7 +6948,7 @@ public class DataQuery extends RDMServicesConstants {
 	    stmt = conn.createStatement();
 	    stmt.executeUpdate(sbUpdate.toString());
 
-	    SimpleDateFormat sdfIn = new SimpleDateFormat("MM/dd/yyyy HH:mm", Locale.getDefault());
+	    SimpleDateFormat sdfIn = new SimpleDateFormat("MM/dd/yyyy HH:mm");
 	    String sLogDate = sdfIn.format(new java.util.Date());
 	    String sSysLog = "\n" + User.getDisplayName(sUserId) + "[" + sLogDate + "]: Deliverable(s) moved from Task "
 		    + sSrcTaskId;
@@ -7176,7 +7177,7 @@ public class DataQuery extends RDMServicesConstants {
 
 	Map<String, Map<String, MapList>> mLogs = new HashMap<String, Map<String, MapList>>();
 	try {
-	    SimpleDateFormat sdfIn = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+	    SimpleDateFormat sdfIn = new SimpleDateFormat("yyyy-MM-dd");
 	    SimpleDateFormat sdfOut = new SimpleDateFormat("dd-MMM-yyyy");
 
 	    boolean fg = false;
@@ -7362,7 +7363,7 @@ public class DataQuery extends RDMServicesConstants {
 
 	Map<java.util.Date, Map<String, String[]>> mLogs = new HashMap<java.util.Date, Map<String, String[]>>();
 	try {
-	    SimpleDateFormat sdfIn = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+	    SimpleDateFormat sdfIn = new SimpleDateFormat("yyyy-MM-dd");
 	    String sLogDate = sdfIn.format(new java.util.Date());
 
 	    sbQuery.append("select oid,* from " + SCHEMA_NAME + ".EMPLOYEE_IN_OUT");
@@ -8161,7 +8162,7 @@ public class DataQuery extends RDMServicesConstants {
 
 	Map<String, String> mAlarm = null;
 	MapList mlAlarms = new MapList();
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault());
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
 	try {
 	    StringBuilder sbQuery = new StringBuilder();
@@ -8981,8 +8982,8 @@ public class DataQuery extends RDMServicesConstants {
 	MapList mlReportRecords = new MapList();
 
 	try {
-	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy");
+	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd");
 
 	    sFromDate = output.format(input.parse(sFromDate));
 	    sToDate = output.format(input.parse(sToDate));
@@ -9026,8 +9027,8 @@ public class DataQuery extends RDMServicesConstants {
 	MapList mlRecords = new MapList();
 
 	try {
-	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy");
+	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd");
 
 	    boolean bFlag = false;
 	    String sColumn = null;
@@ -9145,8 +9146,8 @@ public class DataQuery extends RDMServicesConstants {
 	StringList slTimeStamps = new StringList();
 
 	try {
-	    SimpleDateFormat sdfOut = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
-	    SimpleDateFormat sdfIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+	    SimpleDateFormat sdfOut = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+	    SimpleDateFormat sdfIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	    Map<String, String> mRecord = new HashMap<String, String>();
 	    MapList mlRecords = getRecords(sReport, mSearchCriteria);
@@ -9172,7 +9173,7 @@ public class DataQuery extends RDMServicesConstants {
 	try {
 	    String sColumn = null;
 	    String sQuery = "select * from " + SCHEMA_NAME + "." + sReport.replace(" ", "_") + " where Column1 = ?";
-	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.getDefault());
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
 	    StringList slColumns = getReportColumns(sReport);
 	    int iSz = slColumns.size();
@@ -9206,7 +9207,7 @@ public class DataQuery extends RDMServicesConstants {
 	StringList slTimeStamps = new StringList();
 
 	try {
-	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 	    String sQuery = "select \"time\"(Column1) as logTime from " + SCHEMA_NAME + "." + sReport.replace(" ", "_")
 		    + " where date(Column1) = ? ORDER BY Column1 DESC";
 
@@ -9629,10 +9630,10 @@ public class DataQuery extends RDMServicesConstants {
 	Timestamp tsLog = null;
 
 	try {
-	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm", Locale.getDefault());
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 
-	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+	    SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy");
+	    SimpleDateFormat output = new SimpleDateFormat("yyyy-MM-dd");
 
 	    if (!"".equals(sFromDate)) {
 		sFromDate = output.format(input.parse(sFromDate));
@@ -9864,7 +9865,7 @@ public class DataQuery extends RDMServicesConstants {
 	    String sValue = "";
 
 	    Calendar cal = Calendar.getInstance();
-	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm", Locale.getDefault());
+	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 
 	    String cntrlType = RDMServicesUtils.getControllerType(sController);
 

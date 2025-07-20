@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.TreeMap;
 
 import org.apache.axis2.client.Options;
@@ -209,7 +208,7 @@ public class PLCServices_newHW extends PLCServices {
 		}
 	    }
 
-	    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MMM-yyyy HH:mm", Locale.getDefault());
+	    java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MMM-yyyy HH:mm");
 	    String sDate = sdf.format(Calendar.getInstance().getTime());
 
 	    mParams.put("Last Refresh", new String[] { sDate, "" });
@@ -609,14 +608,11 @@ public class PLCServices_newHW extends PLCServices {
 	}
 
 	SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-	TimeZone tz = TimeZone.getDefault();
-	sdf.setTimeZone(tz);
-
-	Calendar cal = Calendar.getInstance(tz);
-	cal.add(Calendar.DAY_OF_MONTH, 1);
+	Calendar calendar = Calendar.getInstance();
+	calendar.add(Calendar.DAY_OF_MONTH, 1);
 
 	GetAlarmList getAlarmList = new GetAlarmList();
-	getAlarmList.setStartTime(cal);
+	getAlarmList.setStartTime(calendar);
 	getAlarmList.setNumber(cnt);
 
 	GetAlarmListResponse getAlarmListResp = getStub(sController).getAlarmList(getAlarmList);
@@ -639,13 +635,15 @@ public class PLCServices_newHW extends PLCServices {
 	    alarm = alarms[i];
 	    serialNo = alarm.getSerial();
 
-	    cal = alarm.getOccurred();
-	    cal.add(Calendar.HOUR_OF_DAY, -1);
+	    Calendar cal = alarm.getOccurred();
+	    cal.add(Calendar.HOUR_OF_DAY, -4);
+	    cal.add(Calendar.MINUTE, -30);
 	    occured = sdf.format(cal.getTime());
 
 	    if (alarm.getCleared() != null) {
 		cal = alarm.getCleared();
-		cal.add(Calendar.HOUR_OF_DAY, -1);
+		cal.add(Calendar.HOUR_OF_DAY, -4);
+		cal.add(Calendar.MINUTE, -30);
 		cleared = sdf.format(cal.getTime());
 
 		if (bUpdate && alOpenAlarms.contains(serialNo)) {
@@ -657,7 +655,8 @@ public class PLCServices_newHW extends PLCServices {
 
 	    if (alarm.getAccepted() != null) {
 		cal = alarm.getAccepted();
-		cal.add(Calendar.HOUR_OF_DAY, -1);
+		cal.add(Calendar.HOUR_OF_DAY, -4);
+		cal.add(Calendar.MINUTE, -30);
 		accepted = sdf.format(cal.getTime());
 	    } else {
 		accepted = "";
@@ -739,9 +738,6 @@ public class PLCServices_newHW extends PLCServices {
 	Event[] arrEvent = arrOfEvent.getEvent();
 
 	SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-	TimeZone tz = TimeZone.getDefault();
-	sdf.setTimeZone(tz);
-	Calendar cal = Calendar.getInstance(tz);
 
 	String[] saLog = null;
 	Event event = null;
@@ -752,8 +748,10 @@ public class PLCServices_newHW extends PLCServices {
 
 	for (int i = 0; i < arrEvent.length; i++) {
 	    event = arrEvent[i];
-	    cal = event.getTime();
-	    cal.add(Calendar.HOUR_OF_DAY, -1);
+
+	    Calendar cal = event.getTime();
+	    cal.add(Calendar.HOUR_OF_DAY, -4);
+	    cal.add(Calendar.MINUTE, -30);
 
 	    saLog = new String[2];
 	    saLog[0] = sdf.format(cal.getTime());
@@ -903,7 +901,7 @@ public class PLCServices_newHW extends PLCServices {
 	double dPhaseSeq = 0.0;
 	double dCurrPhase = 0.0;
 	Calendar cal = Calendar.getInstance();
-	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm", Locale.getDefault());
+	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 
 	if (mCntrlData.containsKey("current phase")) {
 	    dCurrPhase = Double.parseDouble(mCntrlData.get("current phase")[0]);

@@ -15,7 +15,7 @@
 	<link type="text/css" href="../styles/dygraph.css" rel="stylesheet" />
 	<link type="text/css" href="../styles/calendar.css" rel="stylesheet" />
 	<script language="javaScript" type="text/javascript" src="../scripts/calendar.js"></script>
-	<script language="javascript">	
+	<script language="javascript">
 		function searchUsers()
 		{
 			document.frm.target = "results";

@@ -1,5 +1,6 @@
 package com.client.notify;
 
+import java.net.URI;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -7,12 +8,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 
 import com.client.db.DataQuery;
 import com.client.rules.RuleEngine;
@@ -21,17 +18,18 @@ import com.client.util.MapList;
 import com.client.util.RDMServicesConstants;
 import com.client.util.RDMServicesUtils;
 import com.client.util.StringList;
-
-import com.twilio.sdk.TwilioRestClient;
-import com.twilio.sdk.resource.factory.CallFactory;
-import com.twilio.sdk.resource.factory.MessageFactory;
-import com.twilio.sdk.resource.instance.Call;
-import com.twilio.sdk.resource.instance.Message;
+import com.twilio.Twilio;
+import com.twilio.exception.ApiException;
+import com.twilio.http.TwilioRestClient;
+import com.twilio.rest.api.v2010.account.Call;
+import com.twilio.rest.api.v2010.account.CallCreator;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.rest.api.v2010.account.MessageCreator;
+import com.twilio.type.PhoneNumber;
 
 public class NotifyAlarms extends RDMServicesConstants {
     private static SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm", Locale.getDefault());
     private static Map<String, MapList> NOTIFY_ALARMS = null;
-    private static LabelResourceBundle resourceBundle = new LabelResourceBundle(Locale.getDefault());
 
     public NotifyAlarms() {
 
@@ -156,13 +154,6 @@ public class NotifyAlarms extends RDMServicesConstants {
 	Map<String, String> mNotify = null;
 	MapList mlUpdateAlarms = new MapList();
 
-	Map<String, String> mAcctCredentials = RDMServicesUtils.getAccountCredentials();
-	String ACCOUNT_SID = mAcctCredentials.get(ACCT_SID);
-	String AUTH_TOKEN = mAcctCredentials.get(AUTH_CODE);
-	String REG_NUM = mAcctCredentials.get(REG_NUMBER);
-
-	TwilioRestClient client = new TwilioRestClient(ACCOUNT_SID, AUTH_TOKEN);
-
 	for (int i = 0; i < mlNotifyAlarms.size(); i++) {
 	    mAlarm = mlNotifyAlarms.get(i);
 	    sAlarm = mAlarm.get(ALARM_TEXT);
@@ -245,72 +236,73 @@ public class NotifyAlarms extends RDMServicesConstants {
 	    mUsers.put(mUser.get(USER_ID), mUser.get(CONTACT_NO));
 	}
 
+	sendNotifications(hsCallUsers, mSMSUsers, mlAlarms, mUsers);
+    }
+
+    private void sendNotifications(HashSet<String> hsCallUsers, Map<String, MapList> mSMSUsers, MapList mlAlarms,
+	    Map<String, String> mUsers) throws Exception {
 	Locale locale = Locale.getDefault();
+	LabelResourceBundle resourceBundle = new LabelResourceBundle(locale);
 	String language = locale.getLanguage() + "-" + locale.getCountry();
+
+	Map<String, String> mAcctCredentials = RDMServicesUtils.getAccountCredentials();
+	String ACCOUNT_SID = mAcctCredentials.get(ACCT_SID);
+	String AUTH_TOKEN = mAcctCredentials.get(AUTH_CODE);
+	String REG_NUM = "+" + mAcctCredentials.get(REG_NUMBER);
+
+	Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
+	TwilioRestClient client = Twilio.getRestClient();
 
 	String sCallMessage = "<Response><Say language=\"" + language + "\">"
 		+ resourceBundle.getProperty("DataManager.DisplayText.Call_Message") + "</Say></Response>";
 	sCallMessage = URLEncoder.encode(sCallMessage, "UTF-8").replace("+", "%20");
 	String sUrl = "http://twimlets.com/echo?Twiml=" + sCallMessage;
 
-	String sContact = null;
 	Iterator<String> itrUsers = hsCallUsers.iterator();
 	while (itrUsers.hasNext()) {
+	    String sNotifyUser = itrUsers.next();
 	    try {
-		sNotifyUser = itrUsers.next();
-		sContact = mUsers.get(sNotifyUser);
-
-		if (sContact != null && !"".equals(sContact)) {
-		    List<NameValuePair> params = new ArrayList<NameValuePair>();
-		    params.add(new BasicNameValuePair("Url", sUrl));
-		    params.add(new BasicNameValuePair("To", "+" + sContact));
-		    params.add(new BasicNameValuePair("From", "+" + REG_NUM));
-
+		String sContact = mUsers.get(sNotifyUser);
+		if (RDMServicesUtils.isNotNullAndNotEmpty(sContact)) {
 		    System.out.println("calling " + sNotifyUser + " - " + sContact);
-		    CallFactory callFactory = client.getAccount().getCallFactory();
-		    Call call = callFactory.create(params);
-		    System.out.println("Call Status : " + call.getStatus());
+		    CallCreator creator = Call.creator(new PhoneNumber("+" + sContact), new PhoneNumber(REG_NUM),
+			    new URI(sUrl));
+		    Call call = creator.create(client);
+		    System.out.println("Call Status : " + call.getSid() + " - " + call.getStatus());
 		}
-	    } catch (Exception e) {
+	    } catch (final ApiException e) {
 		System.out.println("Err while making call to user " + sNotifyUser + " : " + e.getMessage());
 	    }
 	}
 
-	String sMessage = null;
 	itrUsers = mSMSUsers.keySet().iterator();
 	while (itrUsers.hasNext()) {
+	    String sMessage = "";
+	    String sNotifyUser = itrUsers.next();
 	    try {
-		sMessage = "";
-		sNotifyUser = itrUsers.next();
-		sContact = mUsers.get(sNotifyUser);
-
-		if (sContact != null && !"".equals(sContact)) {
+		String sContact = mUsers.get(sNotifyUser);
+		if (RDMServicesUtils.isNotNullAndNotEmpty(sContact)) {
 		    mlAlarms = mSMSUsers.get(sNotifyUser);
 		    for (int i = 0; i < mlAlarms.size(); i++) {
-			mAlarm = mlAlarms.get(i);
+			Map<String, String> mAlarm = mlAlarms.get(i);
 			if (i > 0) {
 			    sMessage += "\n";
 			}
 
 			sMessage += resourceBundle
 				.getProperty("DataManager.DisplayText."
-					+ RDMServicesUtils.getControllerType(mAlarm.get(ROOM_ID)))
-				+ " - " + mAlarm.get(ROOM_ID) + " - " + mAlarm.get(OCCURED_ON) + " - "
-				+ mAlarm.get(ALARM_TEXT);
+					+ RDMServicesUtils.getControllerType(mAlarm.get(RDMServicesConstants.ROOM_ID)))
+				+ " - " + mAlarm.get(RDMServicesConstants.ROOM_ID) + " - "
+				+ mAlarm.get(RDMServicesConstants.OCCURED_ON) + " - "
+				+ mAlarm.get(RDMServicesConstants.ALARM_TEXT);
 		    }
 
-		    if (sMessage != null && !"".equals(sMessage)) {
-			List<NameValuePair> params = new ArrayList<NameValuePair>();
-			params.add(new BasicNameValuePair("Url", "https://demo.twilio.com/welcome/sms/reply/"));
-			params.add(new BasicNameValuePair("Body", sMessage));
-			params.add(new BasicNameValuePair("To", "+" + sContact));
-			params.add(new BasicNameValuePair("From", "+" + REG_NUM));
-
+		    if (RDMServicesUtils.isNotNullAndNotEmpty(sMessage)) {
 			System.out.println("sending SMS to " + sNotifyUser + " - " + sContact);
-			MessageFactory messageFactory = client.getAccount().getMessageFactory();
-			Message message = messageFactory.create(params);
-			System.out
-				.println("SMS Status : " + message.getErrorCode() + " - " + message.getErrorMessage());
+			MessageCreator creator = Message.creator(new PhoneNumber("+" + sContact),
+				new PhoneNumber(REG_NUM), sMessage);
+			Message message = creator.create(client);
+			System.out.println("SMS Status : " + message.getSid() + " - " + message.getStatus());
 		    }
 		}
 	    } catch (Exception e) {

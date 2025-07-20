@@ -54,7 +54,7 @@
 	<title></title>
 	<link type="text/css" href="../styles/dygraph.css" rel="stylesheet" />
 	<script language="javascript">
-		if (!String.prototype.trim) 
+		if (!String.prototype.trim)
 		{
 			String.prototype.trim = function() {
 				return this.replace(/^\s+|\s+$/g,'');

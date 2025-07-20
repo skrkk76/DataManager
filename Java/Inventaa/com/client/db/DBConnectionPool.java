@@ -34,7 +34,8 @@ public class DBConnectionPool implements Runnable {
     public synchronized Connection getConnection() throws SQLException, InterruptedException {
 	try {
 	    if (!availableConnections.isEmpty() && (availableConnections.size() > 0)) {
-		Connection existingConnection = (Connection) availableConnections.lastElement();
+		int idx = availableConnections.size() - 1;
+		Connection existingConnection = (Connection) availableConnections.elementAt(idx);
 		if (existingConnection == null) {
 		    notifyAll();
 		    this.wait(1000);
@@ -46,7 +47,9 @@ public class DBConnectionPool implements Runnable {
 			return getConnection();
 		    } else {
 			busyConnections.addElement(existingConnection);
-			availableConnections.removeElementAt(availableConnections.size() - 1);
+			if (availableConnections.size() > idx) {
+			    availableConnections.removeElementAt(idx);
+			}
 			notifyAll();
 			return existingConnection;
 		    }

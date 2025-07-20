@@ -267,21 +267,25 @@ public class ServicesSession extends RDMServicesConstants {
     }
 
     public Map<String, String> getControllerParameters(String cntrlType) throws Exception {
-	StringList slControllers = mActiveControllers.get(cntrlType);
-	if (slControllers != null) {
-	    for (int i = 0, iSz = slControllers.size(); i < iSz; i++) {
-		try {
-		    String controller = slControllers.get(i);
+	Map<String, String> mCntrlParams = new HashMap<String, String>();
 
-		    PLCServices client = new PLCServices(this, controller);
-		    return client.getControllerParameters();
-		} catch (Exception e) {
-		    // do nothing
-		}
+	StringList slControllers = mActiveControllers.get(cntrlType);
+	if (slControllers == null) {
+	    return mCntrlParams;
+	}
+
+	for (int i = 0, iSz = slControllers.size(); i < iSz; i++) {
+	    try {
+		String controller = slControllers.get(i);
+
+		PLCServices client = new PLCServices(this, controller);
+		mCntrlParams = client.getControllerParameters();
+	    } catch (Exception e) {
+		// do nothing
 	    }
 	}
 
-	return new HashMap<String, String>();
+	return mCntrlParams;
     }
 
     public String getControllerIP(String sController) throws Exception {

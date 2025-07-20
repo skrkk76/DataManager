@@ -16,11 +16,9 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.TimeZone;
 
 import com.client.ServicesSession;
 import com.client.db.DataQuery;
@@ -1536,7 +1534,7 @@ public class RDMServicesUtils extends RDMServicesConstants {
 
     public static String timeToShortString(Date tm) {
 	String sTime = "";
-	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
 	if (tm != null) {
 	    sTime = sdf.format(tm);
@@ -1547,7 +1545,7 @@ public class RDMServicesUtils extends RDMServicesConstants {
 
     public static String dateToShortString(Date dt) {
 	String sDate = "";
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.getDefault());
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 
 	if (dt != null) {
 	    sDate = sdf.format(dt);
@@ -1558,7 +1556,7 @@ public class RDMServicesUtils extends RDMServicesConstants {
 
     public static String dateToLongString(Date dt) {
 	String sDate = "";
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
 	if (dt != null) {
 	    sDate = sdf.format(dt);
@@ -1567,7 +1565,7 @@ public class RDMServicesUtils extends RDMServicesConstants {
     }
 
     public static java.sql.Date getDate() {
-	DateFormat sqlDateFormatter = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+	DateFormat sqlDateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
 	java.util.Date dt = new java.util.Date();
 	return java.sql.Date.valueOf(sqlDateFormatter.format(dt));
@@ -1596,16 +1594,14 @@ public class RDMServicesUtils extends RDMServicesConstants {
     public static ArrayList<Date[]> getDateRangesBetween(String sStartDate, String sEndDate) throws ParseException {
 	ArrayList<Date[]> datesBetween = new ArrayList<Date[]>();
 
-	DateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
-	TimeZone tz = TimeZone.getDefault();
-	dateformat.setTimeZone(tz);
+	DateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
-	Calendar start = Calendar.getInstance(tz);
+	Calendar start = Calendar.getInstance();
 	Date sdate = (Date) dateformat.parse(sStartDate);
 	start.setTime(sdate);
 	start.add(Calendar.HOUR_OF_DAY, -1);
 
-	Calendar end = Calendar.getInstance(tz);
+	Calendar end = Calendar.getInstance();
 	Date edate = (Date) dateformat.parse(sEndDate);
 	end.setTime(edate);
 	end.add(Calendar.HOUR_OF_DAY, -1);
@@ -1643,8 +1639,8 @@ public class RDMServicesUtils extends RDMServicesConstants {
 	    sStartDate = sEndDate;
 	}
 
-	SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-	SimpleDateFormat output = new SimpleDateFormat(format, Locale.getDefault());
+	SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy");
+	SimpleDateFormat output = new SimpleDateFormat(format);
 
 	Calendar start = Calendar.getInstance();
 	Date sdate = input.parse(sStartDate);
@@ -1666,8 +1662,8 @@ public class RDMServicesUtils extends RDMServicesConstants {
     }
 
     public static String convertToSQLDate(String strDate) throws IOException, ParseException {
-	SimpleDateFormat sdfSource = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
-	SimpleDateFormat sdfDestination = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+	SimpleDateFormat sdfSource = new SimpleDateFormat("dd-MM-yyyy");
+	SimpleDateFormat sdfDestination = new SimpleDateFormat("yyyy-MM-dd");
 
 	Date date = sdfSource.parse(strDate);
 	strDate = sdfDestination.format(date);
@@ -1696,7 +1692,7 @@ public class RDMServicesUtils extends RDMServicesConstants {
 	try {
 	    Date dtStart = null;
 	    Date dtEnd = null;
-	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+	    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
 	    if (sStartTime.isEmpty()) {
 		return 0;
