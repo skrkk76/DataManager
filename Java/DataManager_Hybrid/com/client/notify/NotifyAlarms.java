@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.http.impl.client.HttpClientBuilder;
+
 import com.client.db.DataQuery;
 import com.client.rules.RuleEngine;
 import com.client.util.LabelResourceBundle;
@@ -18,8 +20,8 @@ import com.client.util.MapList;
 import com.client.util.RDMServicesConstants;
 import com.client.util.RDMServicesUtils;
 import com.client.util.StringList;
-import com.twilio.Twilio;
 import com.twilio.exception.ApiException;
+import com.twilio.http.NetworkHttpClient;
 import com.twilio.http.TwilioRestClient;
 import com.twilio.rest.api.v2010.account.Call;
 import com.twilio.rest.api.v2010.account.CallCreator;
@@ -250,8 +252,11 @@ public class NotifyAlarms extends RDMServicesConstants {
 	String AUTH_TOKEN = mAcctCredentials.get(AUTH_CODE);
 	String REG_NUM = "+" + mAcctCredentials.get(REG_NUMBER);
 
-	Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-	TwilioRestClient client = Twilio.getRestClient();
+	HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
+	NetworkHttpClient customHttpClient = new NetworkHttpClient(httpClientBuilder);
+
+	TwilioRestClient twilioRestClient = new TwilioRestClient.Builder(ACCOUNT_SID, AUTH_TOKEN)
+		.httpClient(customHttpClient).build();
 
 	String sCallMessage = "<Response><Say language=\"" + language + "\">"
 		+ resourceBundle.getProperty("DataManager.DisplayText.Call_Message") + "</Say></Response>";
@@ -265,9 +270,9 @@ public class NotifyAlarms extends RDMServicesConstants {
 		String sContact = mUsers.get(sNotifyUser);
 		if (RDMServicesUtils.isNotNullAndNotEmpty(sContact)) {
 		    System.out.println("calling " + sNotifyUser + " - " + sContact);
-		    CallCreator creator = Call.creator(new PhoneNumber("+" + sContact), new PhoneNumber(REG_NUM),
+		    CallCreator callCreator = Call.creator(new PhoneNumber("+" + sContact), new PhoneNumber(REG_NUM),
 			    new URI(sUrl));
-		    Call call = creator.create(client);
+		    Call call = callCreator.create(twilioRestClient);
 		    System.out.println("Call Status : " + call.getSid() + " - " + call.getStatus());
 		}
 	    } catch (final ApiException e) {
@@ -299,9 +304,9 @@ public class NotifyAlarms extends RDMServicesConstants {
 
 		    if (RDMServicesUtils.isNotNullAndNotEmpty(sMessage)) {
 			System.out.println("sending SMS to " + sNotifyUser + " - " + sContact);
-			MessageCreator creator = Message.creator(new PhoneNumber("+" + sContact),
+			MessageCreator msgCreator = Message.creator(new PhoneNumber("+" + sContact),
 				new PhoneNumber(REG_NUM), sMessage);
-			Message message = creator.create(client);
+			Message message = msgCreator.create(twilioRestClient);
 			System.out.println("SMS Status : " + message.getSid() + " - " + message.getStatus());
 		    }
 		}

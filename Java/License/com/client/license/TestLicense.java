@@ -9,14 +9,17 @@ public class TestLicense {
 	    String encrypt = endecrypt.encrypt(text);
 	    System.out.println("encrypt3 : " + encrypt);
 
-	    String decrypt = endecrypt.decrypt("HGQNk32Nv70=");
-	    System.out.println("decrypt3 : " + decrypt);
-
 	    System.out.println("Valid License : " + VerifyLicense.verifyLicense(encrypt));
 
 	    System.out.println("Room Count : " + VerifyLicense.getLicenseRoomCount(encrypt));
 
 	    System.out.println("Expiry Date : " + VerifyLicense.verifyLicenseExpiry(encrypt));
+
+	    String decrypt = endecrypt.decrypt("6/oQsNS3SKKJfMv6H07dTg==");
+	    System.out.println("decrypt3 : " + decrypt);
+	    
+	    String sEncryted = endecrypt.encryptWithSHA(decrypt);
+	    System.out.println("sEncryted : " + sEncryted);
 	} catch (Exception e) {
 	    e.printStackTrace(System.out);
 	}

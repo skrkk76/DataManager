@@ -6,7 +6,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.KeySpec;
-import java.util.Base64;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -54,10 +54,10 @@ public class EncryptDecrypt {
 	if (mode == Cipher.ENCRYPT_MODE) {
 	    cipher.init(Cipher.ENCRYPT_MODE, aesKey);
 	    byte[] encrypted = cipher.doFinal(s.getBytes());
-	    sRet = new String(Base64.getEncoder().encode(encrypted));
+	    sRet = new String(Base64.encodeBase64(encrypted));
 	} else if (mode == Cipher.DECRYPT_MODE) {
 	    cipher.init(Cipher.DECRYPT_MODE, aesKey);
-	    byte[] in = Base64.getDecoder().decode(s);
+	    byte[] in = Base64.decodeBase64(s.getBytes());
 	    byte[] out = cipher.doFinal(in);
 	    sRet = new String(out);
 	}
@@ -76,10 +76,10 @@ public class EncryptDecrypt {
 	if (mode == Cipher.ENCRYPT_MODE) {
 	    cipher.init(Cipher.ENCRYPT_MODE, desKey);
 	    byte[] encrypted = cipher.doFinal(s.getBytes());
-	    sRet = new String(Base64.getEncoder().encode(encrypted));
+	    sRet = new String(Base64.encodeBase64(encrypted));
 	} else if (mode == Cipher.DECRYPT_MODE) {
 	    cipher.init(Cipher.DECRYPT_MODE, desKey);
-	    byte[] in = Base64.getDecoder().decode(s);
+	    byte[] in = Base64.decodeBase64(s.getBytes());
 	    byte[] out = cipher.doFinal(in);
 	    sRet = new String(out);
 	}
@@ -99,10 +99,10 @@ public class EncryptDecrypt {
 	    cipher.init(Cipher.ENCRYPT_MODE, secretKey, paramSpec);
 	    byte[] in = s.getBytes();
 	    byte[] out = cipher.doFinal(in);
-	    sRet = new String(Base64.getEncoder().encode(out));
+	    sRet = new String(Base64.encodeBase64(out));
 	} else if (mode == Cipher.DECRYPT_MODE) {
 	    cipher.init(Cipher.DECRYPT_MODE, secretKey, paramSpec);
-	    byte[] in = Base64.getDecoder().decode(s);
+	    byte[] in = Base64.decodeBase64(s.getBytes());
 	    byte[] out = cipher.doFinal(in);
 	    sRet = new String(out);
 	}

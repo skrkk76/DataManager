@@ -666,11 +666,11 @@ CREATE TABLE rdm_admin.user_info (
     home_page character varying(30),
     locale character varying(3) NOT NULL,
     training character(1),
-    manage_users character(1),
-    manage_alarms character(1),
     group_name character varying,
     qualification character varying(15),
-    designation character varying(20)
+    designation character varying(20),
+    manage_users character(1) NOT NULL,
+    manage_alarms character(1) NOT NULL
 );
 
 

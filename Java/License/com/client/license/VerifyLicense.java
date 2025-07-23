@@ -8,10 +8,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.Locale;
 
-import com.client.util.RDMServicesConstants;
-import com.client.util.RDMServicesUtils;
-
-public class VerifyLicense extends RDMServicesConstants {
+public class VerifyLicense {
     private static final SimpleDateFormat sdf1 = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
     private static final SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
