@@ -1,109 +1,50 @@
 package com.client.license;
 
 import java.io.BufferedReader;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Locale;
 
+import javax0.license3j.License;
+import javax0.license3j.io.LicenseReader;
+
 public class VerifyLicense {
-    private static final SimpleDateFormat sdf1 = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
-    private static final SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
-    public static boolean verifyLicense(String s) throws Exception {
-	try {
-	    EncryptDecrypt decrypt = new EncryptDecrypt();
-	    String decryptedValue = decrypt.decrypt(s);
-	    String[] saDecryptValues = decryptedValue.split("~");
-	    if (saDecryptValues.length < 4) {
-		return false;
-	    }
+    public static void main(String[] args) throws Exception {
+	System.out.print("License File Path: ");
+	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	String sLicenseFile = br.readLine().trim();
 
-	    String OS = System.getProperty("os.name").toLowerCase();
-
-	    InetAddress addr = InetAddress.getLocalHost();
-	    String sHostName = addr.getHostName();
-
-	    Date todayDate = new Date();
-	    Date expiryDate = sdf1.parse(saDecryptValues[2]);
-
-	    boolean bFlag = sHostName.equals(saDecryptValues[0])
-		    && (todayDate.before(expiryDate) || todayDate.equals(expiryDate));
-
-	    if (OS.indexOf("win") >= 0) {
-		Enumeration<NetworkInterface> networks = NetworkInterface.getNetworkInterfaces();
-		while (networks.hasMoreElements()) {
-		    NetworkInterface network = networks.nextElement();
-		    byte[] mac = network.getHardwareAddress();
-
-		    if (mac != null) {
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < mac.length; i++) {
-			    sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-			}
-
-			String sMacAddr = sb.toString();
-			if (sMacAddr.equals(saDecryptValues[1]) && bFlag) {
-			    return true;
-			}
-		    }
-		}
-	    } else if (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") >= 0) {
-		Process p = Runtime.getRuntime().exec("ifconfig");
-		BufferedReader in = new BufferedReader(new java.io.InputStreamReader(p.getInputStream()));
-		String line = in.readLine().trim();
-
-		String sMacAddr = line.substring(line.lastIndexOf(" "));
-		if (sMacAddr.equals(saDecryptValues[1]) && bFlag) {
-		    return true;
-		}
-	    }
-	} catch (Exception e) {
-	    e.printStackTrace(System.out);
-	    return false;
+	if ("".equals(sLicenseFile)) {
+	    System.out.print("Please enter License File Path");
+	    return;
 	}
 
-	return false;
+	verifyLicense(sLicenseFile);
     }
 
-    public static int getLicenseRoomCount(String s) throws Exception {
-	EncryptDecrypt decrypt = new EncryptDecrypt();
-	String decryptedValue = decrypt.decrypt(s);
-	String[] saDecryptValues = decryptedValue.split("~");
-
-	int iCnt = 10;
-	if (saDecryptValues.length == 4) {
-	    try {
-		iCnt = Integer.parseInt(saDecryptValues[3]);
-	    } catch (NumberFormatException e) {
-		iCnt = 10;
-	    }
+    private static void verifyLicense(String sLicenseFile) throws Exception {
+	License license;
+	try (LicenseReader reader = new LicenseReader(sLicenseFile)) {
+	    license = reader.read();
+	} catch (IOException e) {
+	    throw new RuntimeException("Error reading license file " + e);
 	}
 
-	return iCnt;
-    }
-
-    public static String verifyLicenseExpiry(String s) throws Exception {
-	EncryptDecrypt decrypt = new EncryptDecrypt();
-	String decryptedValue = decrypt.decrypt(s);
-	String[] saDecryptValues = decryptedValue.split("~");
-
-	if (saDecryptValues.length == 4) {
-	    Date todayDate = new Date();
-	    Date expiryDate = sdf1.parse(saDecryptValues[2]);
-
-	    if (todayDate.before(expiryDate)) {
-		long diff = expiryDate.getTime() - todayDate.getTime();
-		long diffDays = diff / (24 * 60 * 60 * 1000);
-
-		if (diffDays <= 15) {
-		    return sdf2.format(expiryDate);
-		}
-	    }
+	if (!license.isOK(LicenseKeys.public_key)) {
+	    System.out.println("Invalid License");
+	    return;
 	}
 
-	return "";
+	String UUID = license.get(LicenseKeys.COMPUTER_UUID).getString();
+	Date expDate = license.get(LicenseKeys.EXPIRY_DATE).getDate();
+	int rooms = license.get(LicenseKeys.ROOM_COUNT).getInt();
+
+	System.out.println("Computer Id : " + UUID);
+	System.out.println("Expiry Date : " + sdf.format(expDate));
+	System.out.println("Room Count  : " + rooms);
     }
 }

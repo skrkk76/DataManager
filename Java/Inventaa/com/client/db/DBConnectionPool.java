@@ -5,9 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Vector;
 
-import com.client.license.VerifyLicense;
 import com.client.license.EncryptDecrypt;
-import com.client.util.RDMServicesConstants;
+import com.client.license.VerifyLicense;
+import com.client.util.RDMServicesConstants.ALGORITHM;
 import com.client.util.RDMServicesUtils;
 
 public class DBConnectionPool implements Runnable {
@@ -25,7 +25,7 @@ public class DBConnectionPool implements Runnable {
 		driver = RDMServicesUtils.getProperty("rdmservices.db.driver");
 		url = RDMServicesUtils.getProperty("rdmservices.db.url");
 		username = RDMServicesUtils.getProperty("rdmservices.db.user");
-		password = new EncryptDecrypt().decrypt(RDMServicesUtils.getPassword(RDMServicesConstants.DATABASE));
+		password = new EncryptDecrypt().decrypt(RDMServicesUtils.getDBPassword(), ALGORITHM.DES);
 		initialized = true;
 	    }
 	}

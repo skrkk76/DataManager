@@ -857,7 +857,7 @@ public class DataQuery extends RDMServicesConstants {
 	    stmt = conn.createStatement();
 
 	    stmt.executeUpdate(sQuery);
-	} catch(SQLException|InterruptedException e) {
+	} catch (SQLException | InterruptedException e) {
 	    System.out.println("Exp in addColumnParameters [" + sController + "] : " + e.getMessage());
 	} finally {
 	    close(stmt, null);
@@ -9548,7 +9548,7 @@ public class DataQuery extends RDMServicesConstants {
 		sKey = itr.next();
 		sVal = mAcctCredentials.get(sKey);
 		if (CNTRL_PWD.equals(sKey) || MAILID_PWD.equals(sKey)) {
-		    sVal = encrypt.encrypt(sVal);
+		    sVal = encrypt.encrypt(sVal, ALGORITHM.DES);
 		}
 
 		pstmt.setString(1, sVal);
@@ -9584,7 +9584,7 @@ public class DataQuery extends RDMServicesConstants {
 		sVal = rs.getString(ACCT_KEY_VAL);
 
 		if (CNTRL_PWD.equals(sKey) || MAILID_PWD.equals(sKey)) {
-		    sVal = encrypt.decrypt(sVal);
+		    sVal = encrypt.decrypt(sVal, ALGORITHM.DES);
 		}
 		mAcctCredentials.put(sKey, sVal);
 	    }

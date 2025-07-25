@@ -101,13 +101,17 @@ public class RDMServicesUtils extends RDMServicesConstants {
 	return sPath;
     }
 
-    public static String getPassword(String type) throws IOException {
+    public static File getLicenseFile() throws IOException {
+	return new File(getClassLoaderpath(), RDMServicesConstants.LICENSE);
+    }
+
+    public static String getDBPassword() throws IOException {
 	FileReader fr = null;
 	BufferedReader br = null;
 	String password = "";
 
 	try {
-	    File f = new File(getClassLoaderpath(), type);
+	    File f = new File(getClassLoaderpath(), RDMServicesConstants.DATABASE);
 	    fr = new FileReader(f);
 	    br = new BufferedReader(fr);
 	    password = br.readLine();

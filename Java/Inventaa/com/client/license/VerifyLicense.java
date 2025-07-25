@@ -1,109 +1,82 @@
 package com.client.license;
 
-import java.io.BufferedReader;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Locale;
 
 import com.client.util.RDMServicesConstants;
 import com.client.util.RDMServicesUtils;
 
+import javax0.license3j.License;
+import javax0.license3j.io.LicenseReader;
+
 public class VerifyLicense extends RDMServicesConstants {
-    private static final SimpleDateFormat sdf1 = new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault());
-    private static final SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
     public static boolean verifyLicense() throws Exception {
 	try {
-	    EncryptDecrypt decrypt = new EncryptDecrypt();
-	    String decryptedValue = decrypt.decrypt(RDMServicesUtils.getPassword(RDMServicesConstants.LICENSE));
-	    String[] saDecryptValues = decryptedValue.split("~");
-	    if (saDecryptValues.length < 4) {
+	    License license;
+	    try (LicenseReader reader = new LicenseReader(RDMServicesUtils.getLicenseFile())) {
+		license = reader.read();
+	    } catch (IOException e) {
+		throw new RuntimeException("Error reading license file " + e);
+	    }
+
+	    if (!license.isOK(public_key)) {
 		return false;
 	    }
 
-	    String OS = System.getProperty("os.name").toLowerCase();
-
-	    InetAddress addr = InetAddress.getLocalHost();
-	    String sHostName = addr.getHostName();
+	    String computerUUId = license.get(COMPUTER_UUID).getString();
+	    Date expiryDate = license.get(EXPIRY_DATE).getDate();
 
 	    Date todayDate = new Date();
-	    Date expiryDate = sdf1.parse(saDecryptValues[2]);
+	    String systemId = GetComputerID.getSystemUUID();
 
-	    boolean bFlag = sHostName.equals(saDecryptValues[0])
-		    && (todayDate.before(expiryDate) || todayDate.equals(expiryDate));
-
-	    if (OS.indexOf("win") >= 0) {
-		Enumeration<NetworkInterface> networks = NetworkInterface.getNetworkInterfaces();
-		while (networks.hasMoreElements()) {
-		    NetworkInterface network = networks.nextElement();
-		    byte[] mac = network.getHardwareAddress();
-
-		    if (mac != null) {
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < mac.length; i++) {
-			    sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-			}
-
-			String sMacAddr = sb.toString();
-			if (sMacAddr.equals(saDecryptValues[1]) && bFlag) {
-			    return true;
-			}
-		    }
-		}
-	    } else if (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") >= 0) {
-		Process p = Runtime.getRuntime().exec("ifconfig");
-		BufferedReader in = new BufferedReader(new java.io.InputStreamReader(p.getInputStream()));
-		String line = in.readLine().trim();
-
-		String sMacAddr = line.substring(line.lastIndexOf(" "));
-		if (sMacAddr.equals(saDecryptValues[1]) && bFlag) {
-		    return true;
-		}
-	    }
+	    return systemId.equals(computerUUId) && (todayDate.before(expiryDate) || todayDate.equals(expiryDate));
 	} catch (Exception e) {
 	    e.printStackTrace(System.out);
-	    return false;
 	}
 
 	return false;
     }
 
     public static int getLicenseRoomCount() throws Exception {
-	EncryptDecrypt decrypt = new EncryptDecrypt();
-	String decryptedValue = decrypt.decrypt(RDMServicesUtils.getPassword(RDMServicesConstants.LICENSE));
-	String[] saDecryptValues = decryptedValue.split("~");
-
-	int iCnt = 10;
-	if (saDecryptValues.length == 4) {
-	    try {
-		iCnt = Integer.parseInt(saDecryptValues[3]);
-	    } catch (NumberFormatException e) {
-		iCnt = 10;
-	    }
+	License license;
+	try (LicenseReader reader = new LicenseReader(RDMServicesUtils.getLicenseFile())) {
+	    license = reader.read();
+	} catch (IOException e) {
+	    throw new RuntimeException("Error reading license file " + e);
 	}
 
-	return iCnt;
+	if (!license.isOK(public_key)) {
+	    throw new RuntimeException("Invalid License");
+	}
+
+	return license.get(ROOM_COUNT).getInt();
     }
 
     public static String verifyLicenseExpiry() throws Exception {
-	EncryptDecrypt decrypt = new EncryptDecrypt();
-	String decryptedValue = decrypt.decrypt(RDMServicesUtils.getPassword(RDMServicesConstants.LICENSE));
-	String[] saDecryptValues = decryptedValue.split("~");
+	License license;
+	try (LicenseReader reader = new LicenseReader(RDMServicesUtils.getLicenseFile())) {
+	    license = reader.read();
+	} catch (IOException e) {
+	    throw new RuntimeException("Error reading license file " + e);
+	}
 
-	if (saDecryptValues.length == 4) {
-	    Date todayDate = new Date();
-	    Date expiryDate = sdf1.parse(saDecryptValues[2]);
+	if (!license.isOK(public_key)) {
+	    throw new RuntimeException("Invalid License");
+	}
 
-	    if (todayDate.before(expiryDate)) {
-		long diff = expiryDate.getTime() - todayDate.getTime();
-		long diffDays = diff / (24 * 60 * 60 * 1000);
+	Date todayDate = new Date();
+	Date expiryDate = license.get(EXPIRY_DATE).getDate();
 
-		if (diffDays <= 15) {
-		    return sdf2.format(expiryDate);
-		}
+	if (todayDate.before(expiryDate)) {
+	    long diff = expiryDate.getTime() - todayDate.getTime();
+	    long diffDays = diff / (24 * 60 * 60 * 1000);
+
+	    if (diffDays <= 15) {
+		return sdf.format(expiryDate);
 	    }
 	}
 

@@ -1,22 +1,28 @@
 package com.client.license;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
+
+import javax0.license3j.Feature;
+import javax0.license3j.License;
+import javax0.license3j.crypto.LicenseKeyPair;
+import javax0.license3j.io.IOFormat;
+import javax0.license3j.io.LicenseWriter;
 
 public class CreateLicense {
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
     public static void main(String[] args) throws Exception {
-	System.out.print("License File Path: ");
+	System.out.print("Computer ID: ");
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	String sUUID = br.readLine().trim();
+
+	System.out.print("License Folder Path: ");
+	br = new BufferedReader(new InputStreamReader(System.in));
 	String sPath = br.readLine().trim();
 
 	System.out.print("Number of Rooms [0 for no limit, default 10]: ");
@@ -27,8 +33,13 @@ public class CreateLicense {
 	br = new BufferedReader(new InputStreamReader(System.in));
 	String sEval = br.readLine().trim();
 
+	if ("".equals(sUUID)) {
+	    System.out.print("Please enter Computer ID");
+	    return;
+	}
+
 	if ("".equals(sPath)) {
-	    System.out.print("Please enter License File Path");
+	    System.out.print("Please enter License Folder Path");
 	    return;
 	}
 
@@ -36,96 +47,61 @@ public class CreateLicense {
 	    sEval = "Y";
 	}
 
-	if ("".equals(sRooms)) {
-	    sRooms = "10";
+	int rooms = 10;
+	if (!"".equals(sRooms)) {
+	    rooms = Integer.parseInt(sRooms);
 	}
 
-	sRooms = ("Y".equalsIgnoreCase(sEval) ? "5" : sRooms);
-
-	int iNoDays = 60;
+	Date expDate = null;
 	if ("Y".equalsIgnoreCase(sEval)) {
-	    System.out.print("Specify trial period [no of days, default 90]: ");
+	    rooms = 2;
+
+	    System.out.print("Specify trial period [no of days, default 60]: ");
 	    br = new BufferedReader(new InputStreamReader(System.in));
 	    String sNoDays = br.readLine().trim();
+
+	    int iNoDays = 60;
 	    if (!"".equals(sNoDays)) {
 		iNoDays = Integer.parseInt(sNoDays);
 	    }
+
+	    Calendar cal = Calendar.getInstance();
+	    cal.add(Calendar.DAY_OF_YEAR, iNoDays);
+	    expDate = cal.getTime();
+	} else {
+	    expDate = sdf.parse("2035-12-31");
 	}
 
 	File file = new File(sPath);
 	if (file.isDirectory()) {
-	    StringBuilder sb = new StringBuilder();
-	    InetAddress addr = InetAddress.getLocalHost();
+	    /*
+	    LicenseKeyPair keyPair = LicenseKeyPair.Create.from("RSA", 2048);
+	    byte[] publicKey = keyPair.getPublic();
+	    byte[] privateKey = keyPair.getPrivate();
+	    */
 
-	    String OS = System.getProperty("os.name").toLowerCase();
-	    if (OS.indexOf("win") >= 0) {
-		NetworkInterface network = NetworkInterface.getByInetAddress(addr);
-		byte[] mac = network.getHardwareAddress();
+	    createLicense(sUUID, expDate, rooms);
 
-		sb.append(addr.getHostName()).append("~");
-		for (int i = 0; i < mac.length; i++) {
-		    sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-		}
-	    } else if (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") >= 0) {
-		Process p = Runtime.getRuntime().exec("ifconfig");
-		BufferedReader in = new BufferedReader(new java.io.InputStreamReader(p.getInputStream()));
-		String line = in.readLine().trim();
-
-		String macAddr = line.substring(line.lastIndexOf(" "));
-		sb.append(addr.getHostName()).append("~").append(macAddr);
-	    }
-
-	    String sDate = "";
-	    if ("Y".equalsIgnoreCase(sEval)) {
-		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.ENGLISH);
-
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DAY_OF_YEAR, iNoDays);
-
-		Date dt = cal.getTime();
-		sDate = sdf.format(dt);
-	    } else {
-		sDate = "12/31/2030";
-	    }
-
-	    sb.append("~").append(sDate).append("~").append(sRooms);
-	    String sLicenseString = sb.toString();
-
-	    EncryptDecrypt encrypt = new EncryptDecrypt();
-	    String sEncryptLicense = encrypt.encrypt(sLicenseString);
-	    writeToFile(sEncryptLicense, sPath);
-
-	    if ("Y".equalsIgnoreCase(sEval)) {
-		System.out.println("Trail license created for " + sRooms + " controllers, will be expired on " + sDate);
-	    } else {
-		System.out.println("Product license created for " + sRooms + " controllers");
-	    }
+	    System.out.println(("Y".equalsIgnoreCase(sEval) ? "Trail " : "") + "License created for " + sRooms
+		    + " controllers, will be expired on " + sdf.format(expDate));
 	} else {
 	    System.out.println("Folder does not exists, enter correct file path");
 	}
     }
 
-    private static void writeToFile(String sLicense, String file) {
-	BufferedWriter bw = null;
-	FileWriter fw = null;
+    private static void createLicense(String UUID, Date expDate, int rooms) throws Exception {
+	License created = new License();
+	created.add(Feature.Create.stringFeature(LicenseKeys.COMPUTER_UUID, UUID));
+	created.add(Feature.Create.dateFeature(LicenseKeys.EXPIRY_DATE, expDate));
+	created.add(Feature.Create.intFeature(LicenseKeys.ROOM_COUNT, rooms));
 
-	try {
-	    fw = new FileWriter(new File(file, "LICENSE"));
-	    bw = new BufferedWriter(fw);
-	    bw.write(sLicense);
-	} catch (IOException e) {
-	    e.printStackTrace();
-	} finally {
-	    try {
-		if (bw != null) {
-		    bw.close();
-		}
-		if (fw != null) {
-		    fw.close();
-		}
-	    } catch (IOException ex) {
-		ex.printStackTrace();
-	    }
+	LicenseKeyPair lkp = LicenseKeyPair.Create.from(LicenseKeys.private_key, LicenseKeys.public_key);
+	created.sign(lkp.getPair().getPrivate(), "SHA-512");
+
+	try (LicenseWriter writer = new LicenseWriter(LicenseKeys.LICENSE)) {
+	    writer.write(created, IOFormat.BINARY);
+	} catch (Exception e) {
+	    throw new RuntimeException(e);
 	}
     }
 }

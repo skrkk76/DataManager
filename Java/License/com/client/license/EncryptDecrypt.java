@@ -6,7 +6,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.KeySpec;
-import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -16,37 +15,78 @@ import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.apache.commons.codec.binary.Base64;
+
 public class EncryptDecrypt {
-    private String key = "~!@#$%^&*()_+|-={}[]:;'<>?,./";
+    private static enum ALGORITHM {
+	AES, DES, MD5withDES
+    };
 
-    private int iterationCount = 25;
-    private byte[] pk = { (byte) 0x53, (byte) 0x4B, (byte) 0x61, (byte) 0x72, (byte) 0x54, (byte) 0x68, (byte) 0x69,
-	    (byte) 0x4B };
+    private static int iterationCount = 25;
+    private static String key = "~!@#$%^&*()_+|-={}[]:;'<>?,./";
+    private static byte[] pk = { (byte) 0x53, (byte) 0x4B, (byte) 0x61, (byte) 0x72, (byte) 0x54, (byte) 0x68,
+	    (byte) 0x69, (byte) 0x4B };
 
-    public EncryptDecrypt() {
+    public static void main(String[] args) {
+	try {
+	    String text = "RaviSadineni~2C-DB-07-2D-37-1E~12/31/2030~20";
+
+	    String encrypt = encrypt(text, ALGORITHM.DES);
+	    System.out.println("Encrypt : " + encrypt);
+
+	    String decrypt = decrypt(encrypt, ALGORITHM.DES);
+	    System.out.println("Decrypt : " + decrypt);
+
+	    String sEncryted = encryptWithSHA(decrypt);
+	    System.out.println("SHA Encryted : " + sEncryted);
+	} catch (Exception e) {
+	    e.printStackTrace(System.out);
+	}
     }
 
-    public String encrypt(String text) throws Exception {
+    public static String encrypt(String text, ALGORITHM algorithm) throws Exception {
 	if (text == null || "".equals(text.trim())) {
 	    return null;
 	}
 
-	// return aesEncryptDecrypt(Cipher.ENCRYPT_MODE, text);
-	return desEncryptDecrypt(Cipher.ENCRYPT_MODE, text);
-	// return withMD5AndDESEncryptDecrypt(Cipher.ENCRYPT_MODE, text);
+	String encrypted = "";
+	switch (algorithm) {
+	case AES:
+	    encrypted = aesEncryptDecrypt(Cipher.ENCRYPT_MODE, text);
+	    break;
+	case DES:
+	    encrypted = desEncryptDecrypt(Cipher.ENCRYPT_MODE, text);
+	    break;
+	case MD5withDES:
+	    encrypted = MD5AndDESEncryptDecrypt(Cipher.ENCRYPT_MODE, text);
+	    break;
+	}
+
+	return encrypted;
     }
 
-    public String decrypt(String text) throws Exception {
+    public static String decrypt(String text, ALGORITHM algorithm) throws Exception {
 	if (text == null || "".equals(text.trim())) {
 	    return null;
 	}
 
-	// return aesEncryptDecrypt(Cipher.DECRYPT_MODE, text);
-	return desEncryptDecrypt(Cipher.DECRYPT_MODE, text);
-	// return withMD5AndDESEncryptDecrypt(Cipher.DECRYPT_MODE, text);
+	String decrypted = "";
+	switch (algorithm) {
+	case AES:
+	    decrypted = aesEncryptDecrypt(Cipher.DECRYPT_MODE, text);
+	    break;
+	case DES:
+	    decrypted = desEncryptDecrypt(Cipher.DECRYPT_MODE, text);
+	    break;
+	case MD5withDES:
+	    decrypted = MD5AndDESEncryptDecrypt(Cipher.DECRYPT_MODE, text);
+	    break;
+	}
+
+	return decrypted;
     }
 
-    private String aesEncryptDecrypt(int mode, String s) throws Exception {
+    private static String aesEncryptDecrypt(int mode, String s) throws Exception {
 	String sRet = null;
 
 	Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
@@ -65,7 +105,7 @@ public class EncryptDecrypt {
 	return sRet;
     }
 
-    private String desEncryptDecrypt(int mode, String s) throws Exception {
+    private static String desEncryptDecrypt(int mode, String s) throws Exception {
 	String sRet = null;
 
 	DESKeySpec dks = new DESKeySpec(key.getBytes());
@@ -87,7 +127,7 @@ public class EncryptDecrypt {
 	return sRet;
     }
 
-    public String withMD5AndDESEncryptDecrypt(int mode, String s) throws Exception {
+    private static String MD5AndDESEncryptDecrypt(int mode, String s) throws Exception {
 	String sRet = null;
 
 	KeySpec keySpec = new PBEKeySpec(key.toCharArray(), pk, iterationCount);
@@ -109,7 +149,7 @@ public class EncryptDecrypt {
 	return sRet;
     }
 
-    public String encryptWithSHA(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
+    public static String encryptWithSHA(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {
 	MessageDigest md = MessageDigest.getInstance("SHA-1");
 	byte[] sha1hash = new byte[40];
 	md.update(text.getBytes("iso-8859-1"), 0, text.length());
