@@ -17,13 +17,17 @@ public class CreateLicense {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     public static void main(String[] args) throws Exception {
-	System.out.print("Computer ID: ");
-	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	String sUUID = br.readLine().trim();
-
 	System.out.print("License Folder Path: ");
-	br = new BufferedReader(new InputStreamReader(System.in));
+	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	String sPath = br.readLine().trim();
+
+	System.out.print("Machine Id: ");
+	br = new BufferedReader(new InputStreamReader(System.in));
+	String machineId = br.readLine().trim();
+
+	System.out.print("MAC Address: ");
+	br = new BufferedReader(new InputStreamReader(System.in));
+	String macAddress = br.readLine().trim();
 
 	System.out.print("Number of Rooms [0 for no limit, default 10]: ");
 	br = new BufferedReader(new InputStreamReader(System.in));
@@ -33,13 +37,18 @@ public class CreateLicense {
 	br = new BufferedReader(new InputStreamReader(System.in));
 	String sEval = br.readLine().trim();
 
-	if ("".equals(sUUID)) {
-	    System.out.print("Please enter Computer ID");
+	if ("".equals(sPath)) {
+	    System.out.print("Please enter License Folder Path");
 	    return;
 	}
 
-	if ("".equals(sPath)) {
-	    System.out.print("Please enter License Folder Path");
+	if ("".equals(machineId)) {
+	    System.out.print("Please enter Machine Id");
+	    return;
+	}
+
+	if ("".equals(macAddress)) {
+	    System.out.print("Please enter MAC Address");
 	    return;
 	}
 
@@ -52,7 +61,7 @@ public class CreateLicense {
 	    rooms = Integer.parseInt(sRooms);
 	}
 
-	Date expDate = null;
+	Date expiryDate = null;
 	if ("Y".equalsIgnoreCase(sEval)) {
 	    rooms = 2;
 
@@ -67,32 +76,28 @@ public class CreateLicense {
 
 	    Calendar cal = Calendar.getInstance();
 	    cal.add(Calendar.DAY_OF_YEAR, iNoDays);
-	    expDate = cal.getTime();
+	    expiryDate = cal.getTime();
 	} else {
-	    expDate = sdf.parse("2035-12-31");
+	    expiryDate = sdf.parse("2035-12-31");
 	}
 
 	File file = new File(sPath);
 	if (file.isDirectory()) {
-	    /*
-	    LicenseKeyPair keyPair = LicenseKeyPair.Create.from("RSA", 2048);
-	    byte[] publicKey = keyPair.getPublic();
-	    byte[] privateKey = keyPair.getPrivate();
-	    */
-
-	    createLicense(sUUID, expDate, rooms);
+	    createLicense(machineId, macAddress, expiryDate, rooms);
 
 	    System.out.println(("Y".equalsIgnoreCase(sEval) ? "Trail " : "") + "License created for " + sRooms
-		    + " controllers, will be expired on " + sdf.format(expDate));
+		    + " controllers, will be expired on " + sdf.format(expiryDate));
 	} else {
 	    System.out.println("Folder does not exists, enter correct file path");
 	}
     }
 
-    private static void createLicense(String UUID, Date expDate, int rooms) throws Exception {
+    private static void createLicense(String machineId, String macAddress, Date expiryDate, int rooms)
+	    throws Exception {
 	License created = new License();
-	created.add(Feature.Create.stringFeature(LicenseKeys.COMPUTER_UUID, UUID));
-	created.add(Feature.Create.dateFeature(LicenseKeys.EXPIRY_DATE, expDate));
+	created.add(Feature.Create.stringFeature(LicenseKeys.MACHINE_ID, machineId));
+	created.add(Feature.Create.stringFeature(LicenseKeys.MAC_ADDRESS, macAddress));
+	created.add(Feature.Create.dateFeature(LicenseKeys.EXPIRY_DATE, expiryDate));
 	created.add(Feature.Create.intFeature(LicenseKeys.ROOM_COUNT, rooms));
 
 	LicenseKeyPair lkp = LicenseKeyPair.Create.from(LicenseKeys.private_key, LicenseKeys.public_key);
@@ -102,6 +107,28 @@ public class CreateLicense {
 	    writer.write(created, IOFormat.BINARY);
 	} catch (Exception e) {
 	    throw new RuntimeException(e);
+	}
+    }
+
+    private static void createKeys() throws Exception {
+	LicenseKeyPair keyPair = LicenseKeyPair.Create.from("RSA", 2048);
+
+	System.out.println("byte[] public_key = {");
+	dump(keyPair.getPublic());
+	System.out.println("};");
+	System.out.println("");
+
+	System.out.println("byte[] private_key = {");
+	dump(keyPair.getPrivate());
+	System.out.println("};");
+    }
+
+    private static void dump(final byte[] bytes) {
+	for (int i = 0; i < bytes.length; i++) {
+	    System.out.printf("(byte)0x%02X, ", bytes[i]);
+	    if (i % 8 == 0) {
+		System.out.println();
+	    }
 	}
     }
 }

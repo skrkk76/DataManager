@@ -2,7 +2,8 @@ package com.client.license;
 
 public class LicenseKeys {
     public final static String LICENSE = "LICENSE";
-    public final static String COMPUTER_UUID = "ComputerUUID";
+    public final static String MACHINE_ID = "MachineId";
+    public final static String MAC_ADDRESS = "MacAddress";
     public final static String EXPIRY_DATE = "ExpiryDate";
     public final static String ROOM_COUNT = "RoomCount";
 

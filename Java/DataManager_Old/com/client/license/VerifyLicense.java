@@ -27,13 +27,17 @@ public class VerifyLicense extends RDMServicesConstants {
 		return false;
 	    }
 
-	    String computerUUId = license.get(COMPUTER_UUID).getString();
+	    String machineId = license.get(MACHINE_ID).getString();
+	    String macAddress = license.get(MAC_ADDRESS).getString();
 	    Date expiryDate = license.get(EXPIRY_DATE).getDate();
 
 	    Date todayDate = new Date();
-	    String systemId = GetComputerID.getSystemUUID();
+	    String[] systemInfo = LicenseServer.getSystemInfo();
+	    String sMachineId = systemInfo[0];
+	    String sMacAddress = systemInfo[1];
 
-	    return systemId.equals(computerUUId) && (todayDate.before(expiryDate) || todayDate.equals(expiryDate));
+	    return sMachineId.equals(machineId) && sMacAddress.equals(macAddress)
+		    && (todayDate.before(expiryDate) || todayDate.equals(expiryDate));
 	} catch (Exception e) {
 	    e.printStackTrace(System.out);
 	}

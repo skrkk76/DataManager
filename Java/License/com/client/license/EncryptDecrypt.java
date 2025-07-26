@@ -18,7 +18,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base64;
 
 public class EncryptDecrypt {
-    private static enum ALGORITHM {
+    public static enum ALGORITHM {
 	AES, DES, MD5withDES
     };
 
