@@ -2,7 +2,6 @@ package com.client.db;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -2499,7 +2498,7 @@ public class DataQuery extends RDMServicesConstants {
 			slParams.add(sParam);
 		    }
 		}
-	    } catch (RemoteException re) {
+	    } catch (Exception e) {
 		// do nothing
 	    }
 
