@@ -80,6 +80,76 @@
 		
 		function saveChanges()
 		{
+			var elements = document.getElementsByName("CHECK_ALL");
+			for (var i=0; i<elements.length; i++)
+			{
+				elements[i].disabled = true;
+			}
+			
+			if(!document.getElementById("batchNo").checked)
+			{
+				document.getElementById("batchNo").disabled = true;
+				document.getElementById("DISPLAY_ORDER_BatchNo").disabled = true;
+				document.getElementById("ROOMS_OVERVIEW_BatchNo").disabled = true;
+				document.getElementById("MULTIROOMS_VIEW_BatchNo").disabled = true;
+				document.getElementById("SINGLEROOM_VIEW_BatchNo").disabled = true;
+				document.getElementById("GRAPH_VIEW_BatchNo").disabled = true;
+			}
+			
+			if(!document.getElementById("product").checked)
+			{
+				document.getElementById("product").disabled = true;
+				document.getElementById("DISPLAY_ORDER_Product").disabled = true;
+				document.getElementById("ROOMS_OVERVIEW_Product").disabled = true;
+				document.getElementById("MULTIROOMS_VIEW_Product").disabled = true;
+				document.getElementById("SINGLEROOM_VIEW_Product").disabled = true;
+				document.getElementById("GRAPH_VIEW_Product").disabled = true;
+			}
+			
+			if(!document.getElementById("image").checked)
+			{
+				document.getElementById("image").disabled = true;
+				document.getElementById("ROOMS_OVERVIEW_ViewImage").disabled = true;
+				document.getElementById("MULTIROOMS_VIEW_ViewImage").disabled = true;
+				document.getElementById("SINGLEROOM_VIEW_ViewImage").disabled = true;
+				document.getElementById("GRAPH_VIEW_ViewImage").disabled = true;
+			}
+			
+			var cnt = document.getElementById('PARAM_COUNT').value;
+			for (var i=0; i<cnt; i++)
+			{
+				if(!document.getElementById("CHECK_" + i).checked)
+				{
+					document.getElementById("CHECK_" + i).disabled = true;
+					document.getElementById("DISPLAY_ORDER_" + i).disabled = true;
+					document.getElementById("GRAPH_SCALE_" + i).disabled = true;
+					document.getElementById("ON_OFF_" + i).disabled = true;
+					document.getElementById("RESET_VALUE_" + i).disabled = true;
+					document.getElementById("ROOMS_OVERVIEW_" + i).disabled = true;
+					document.getElementById("MULTIROOMS_VIEW_" + i).disabled = true;
+					document.getElementById("SINGLEROOM_VIEW_" + i).disabled = true;
+					document.getElementById("GRAPH_VIEW_" + i).disabled = true;
+					document.getElementById("HELPER_READ_" + i).disabled = true;
+					document.getElementById("HELPER_WRITE_" + i).disabled = true;
+					document.getElementById("SUPERVISOR_READ_" + i).disabled = true;
+					document.getElementById("SUPERVISOR_WRITE_" + i).disabled = true;
+					document.getElementById("MANAGER_READ_" + i).disabled = true;
+					document.getElementById("MANAGER_WRITE_" + i).disabled = true;
+					document.getElementById("ADMIN_READ_" + i).disabled = true;
+					document.getElementById("ADMIN_WRITE_" + i).disabled = true;
+					document.getElementById("PARAM_NAME_" + i).disabled = true;
+					document.getElementById("ACTION_" + i).disabled = true;
+					document.getElementById("PARAM_GROUP_" + i).disabled = true;
+					document.getElementById("PARAM_UNIT_" + i).disabled = true;
+					
+					var stage = document.getElementById("STAGE_NAME_" + i);
+					for (var x=0; x<stage.options.length; x++) {
+						stage.options[x].disabled = true;
+					}
+					stage.disabled = true;
+				}
+			}
+			
 			document.forms[0].submit();
 		}
 		
@@ -537,7 +607,7 @@
 							<input type="checkbox" id="SINGLEROOM_VIEW_<%= idx %>" name="SINGLEROOM_VIEW_<%= idx %>" value="<%= sSingleRoomView %>" <%= ("Y".equals(sSingleRoomView) ? "checked" : "") %> onClick="javacript:checkOne('SINGLEROOM_VIEW_<%= idx %>', this.checked)">
 						</td>
 						<td align="center" width="4%">
-							<input type="checkbox" id="GRAPH_VIEW_<%= idx %>"  name="GRAPH_VIEW_<%= idx %>" value="<%= sGraphView %>" <%= ("Y".equals(sGraphView) ? "checked" : "") %> onClick="javacript:checkOne('GRAPH_VIEW_<%= idx %>', this.checked)">
+							<input type="checkbox" id="GRAPH_VIEW_<%= idx %>" name="GRAPH_VIEW_<%= idx %>" value="<%= sGraphView %>" <%= ("Y".equals(sGraphView) ? "checked" : "") %> onClick="javacript:checkOne('GRAPH_VIEW_<%= idx %>', this.checked)">
 						</td>
 						<td align="center" width="3%">
 							<input type="checkbox" id="HELPER_READ_<%= idx %>" name="HELPER_READ_<%= idx %>" value="<%= sViewerRead %>" <%= ("Y".equals(sViewerRead) ? "checked" : "") %> onClick="javacript:checkOne('HELPER_READ_<%= idx %>', this.checked)">
@@ -565,10 +635,10 @@
 						</td>
 						<td align="center" style="border:#FFFFFF" width="1%">&nbsp;</td>
 						
-						<input type="hidden" name="PARAM_NAME_<%= idx %>" value="<%= sName %>"/>
-						<input type="hidden" name="ACTION_<%= idx %>" value="update"/>
-						<input type="hidden" name="PARAM_GROUP_<%= idx %>" value="<%= sParamGroup %>"/>
-						<input type="hidden" name="PARAM_UNIT_<%= idx %>" value="<%=  sUnit %>"/>
+						<input type="hidden" id="PARAM_NAME_<%= idx %>" name="PARAM_NAME_<%= idx %>" value="<%= sName %>"/>
+						<input type="hidden" id="ACTION_<%= idx %>" name="ACTION_<%= idx %>" value="update"/>
+						<input type="hidden" id="PARAM_GROUP_<%= idx %>" name="PARAM_GROUP_<%= idx %>" value="<%= sParamGroup %>"/>
+						<input type="hidden" id="PARAM_UNIT_<%= idx %>" name="PARAM_UNIT_<%= idx %>" value="<%=  sUnit %>"/>
 					</tr>
 <%				
 					idx++;
@@ -685,10 +755,10 @@
 						</td>
 						<td align="center" style="border:#FFFFFF" width="1%">
 						
-						<input type="hidden" name="PARAM_NAME_<%= idx %>" value="<%= sName %>"/>
-						<input type="hidden" name="ACTION_<%= idx %>" value="insert"/>
-						<input type="hidden" name="PARAM_GROUP_<%= idx %>" value="<%= sParamGroup %>"/>
-						<input type="hidden" name="PARAM_UNIT_<%= idx %>" value="<%= sUnit %>"/>
+						<input type="hidden" id="PARAM_NAME_<%= idx %>" name="PARAM_NAME_<%= idx %>" value="<%= sName %>"/>
+						<input type="hidden" id="ACTION_<%= idx %>" name="ACTION_<%= idx %>" value="insert"/>
+						<input type="hidden" id="PARAM_GROUP_<%= idx %>" name="PARAM_GROUP_<%= idx %>" value="<%= sParamGroup %>"/>
+						<input type="hidden" id="PARAM_GROUP_<%= idx %>" name="PARAM_UNIT_<%= idx %>" value="<%= sUnit %>"/>
 					</tr>
 <%
 					idx++;

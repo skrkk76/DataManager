@@ -83,7 +83,7 @@ public class CreateLicense {
 
 	File file = new File(sPath);
 	if (file.isDirectory()) {
-	    createLicense(machineId, macAddress, expiryDate, rooms);
+	    createLicense(machineId, macAddress, expiryDate, rooms, sPath);
 
 	    System.out.println(("Y".equalsIgnoreCase(sEval) ? "Trail " : "") + "License created for " + sRooms
 		    + " controllers, will be expired on " + sdf.format(expiryDate));
@@ -92,7 +92,7 @@ public class CreateLicense {
 	}
     }
 
-    private static void createLicense(String machineId, String macAddress, Date expiryDate, int rooms)
+    private static void createLicense(String machineId, String macAddress, Date expiryDate, int rooms, String sPath)
 	    throws Exception {
 	License created = new License();
 	created.add(Feature.Create.stringFeature(LicenseKeys.MACHINE_ID, machineId));
@@ -103,7 +103,7 @@ public class CreateLicense {
 	LicenseKeyPair lkp = LicenseKeyPair.Create.from(LicenseKeys.private_key, LicenseKeys.public_key);
 	created.sign(lkp.getPair().getPrivate(), "SHA-512");
 
-	try (LicenseWriter writer = new LicenseWriter(LicenseKeys.LICENSE)) {
+	try (LicenseWriter writer = new LicenseWriter(new File(sPath, LicenseKeys.LICENSE))) {
 	    writer.write(created, IOFormat.BINARY);
 	} catch (Exception e) {
 	    throw new RuntimeException(e);

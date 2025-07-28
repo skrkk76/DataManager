@@ -384,16 +384,16 @@
 						}
 						else
 						{
-							if(java.util.regex.Pattern.matches("[0-9,.-]+", sValue))
+							try
 							{
-								try
+								if(java.util.regex.Pattern.matches("[0-9,.-]+", sValue))
 								{
 									sValue = decimalFormat.format(decimalFormat.parse(sValue));
 								}
-								catch(Exception e)
-								{
-									//do nothing
-								}
+							}
+							catch(Exception e)
+							{
+								//do nothing
 							}
 						}
 %>

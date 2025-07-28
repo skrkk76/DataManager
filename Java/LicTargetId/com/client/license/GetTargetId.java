@@ -46,28 +46,35 @@ public class GetTargetId {
 	    sMacAddress = line.substring(line.lastIndexOf(" "));
 	}
 
-	return sMacAddress;
+	return sMacAddress.trim();
     }
 
-    private static String getMachineId(String OS) throws IOException {
+    private static String getMachineId(String OS) throws InterruptedException, IOException {
 	String sMachineId = null;
 
 	if (OS.indexOf("win") >= 0) {
-	    Process process = Runtime.getRuntime().exec("wmic csproduct get UUID");
+	    ProcessBuilder builder = new ProcessBuilder("powershell.exe", "-Command",
+		    "(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID");
+	    builder.redirectErrorStream(true);
+	    Process process = builder.start();
+
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 	    String line;
 	    while ((line = reader.readLine()) != null) {
-		if (!line.contains("UUID") && !line.trim().isEmpty()) {
-		    sMachineId = line.trim();
+		String value = line.trim();
+		if (!(value.isEmpty() || value.contains("Guid") || value.contains("--"))) {
+		    sMachineId = value;
 		    break;
 		}
 	    }
+
+	    process.waitFor();
 	} else if (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") >= 0) {
 	    Process process = Runtime.getRuntime().exec("cat /etc/machine-id");
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 	    sMachineId = reader.readLine();
 	}
 
-	return sMachineId;
+	return sMachineId.trim();
     }
 }

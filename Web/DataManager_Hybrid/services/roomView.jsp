@@ -750,16 +750,16 @@ if(iSelRange > -1)
 							}
 							else
 							{
-								if(java.util.regex.Pattern.matches("[0-9,.-]+", sValue))
+								try
 								{
-									try
+									if(java.util.regex.Pattern.matches("[0-9,.-]+", sValue))
 									{
 										sValue = decimalFormat.format(decimalFormat.parse(sValue));
 									}
-									catch(Exception e)
-									{
-										//do nothing
-									}
+								}
+								catch(Exception e)
+								{
+									//do nothing
 								}
 %>
 								<input type="text" id="<%= sParamName %>" name="<%= sParamName %>" value="<%= sValue %>" style="background:<%= bgColor %>" size="8" onBlur="javascript:unselectDiv('<%= sName %>'); setValue('<%= sParamName %>', '<%= sName %>', this);" onclick="javascript:selectDiv('<%= sName %>'); this.focus();this.select()">
@@ -795,16 +795,16 @@ if(iSelRange > -1)
 							}
 							else
 							{
-								if(java.util.regex.Pattern.matches("[0-9,.-]+", sValue))
+								try
 								{
-									try
+									if(java.util.regex.Pattern.matches("[0-9,.-]+", sValue))
 									{
 										sValue = decimalFormat.format(decimalFormat.parse(sValue));
 									}
-									catch(Exception e)
-									{
-										//do nothing
-									}
+								}
+								catch(Exception e)
+								{
+									//do nothing
 								}
 							}
 %>

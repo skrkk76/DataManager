@@ -482,16 +482,17 @@
 						}
 						else
 						{
-							if(java.util.regex.Pattern.matches("[0-9,.-]+", sValue))
+							try
 							{
-								try
+								if(java.util.regex.Pattern.matches("[0-9,.-]+", sValue))
 								{
+								
 									sValue = decimalFormat.format(decimalFormat.parse(sValue));
 								}
-								catch(Exception e)
-								{
-									//do nothing
-								}
+							}
+							catch(Exception e)
+							{
+								//do nothing
 							}
 						}
 						
@@ -523,16 +524,16 @@
 					}
 					else if(sCurrPhase.equals(sPhaseSeq) || sCurrPhaseSeq.equals(sPhaseSeq))
 					{
-						if(java.util.regex.Pattern.matches("[0-9,.-]+", sCurrentVal))
+						try
 						{
-							try
+							if(java.util.regex.Pattern.matches("[0-9,.-]+", sCurrentVal))
 							{
 								sCurrentVal = decimalFormat.format(decimalFormat.parse(sCurrentVal));
 							}
-							catch(Exception e)
-							{
-								//do nothing
-							}
+						}
+						catch(Exception e)
+						{
+							//do nothing
 						}
 						
 						tdColor = "#FFFF33";

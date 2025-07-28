@@ -59,7 +59,7 @@
 			
 			if("Yes".equals(sSelected) && !mParams.isEmpty())
 			{
-				client = new PLCServices(RDMSession, sController);				
+				client = new PLCServices(RDMSession, sController);
 				client.setParameters(u, mParams);
 			}
 		}

@@ -79,6 +79,36 @@
 		
 		function saveChanges()
 		{
+			var elements = document.getElementsByName("CHECK_ALL");
+			for (var i=0; i<elements.length; i++)
+			{
+				elements[i].disabled = true;
+			}
+			
+			var cnt = document.getElementById('PARAM_COUNT').value;
+			for (var i=0; i<cnt; i++)
+			{
+				if(!document.getElementById("CHECK_" + i).checked)
+				{
+					document.getElementById("CHECK_" + i).disabled = true;
+					document.getElementById("DISPLAY_ORDER_" + i).disabled = true;
+					document.getElementById("GRAPH_SCALE_" + i).disabled = true;
+					document.getElementById("ON_OFF_" + i).disabled = true;
+					document.getElementById("GRAPH_VIEW_" + i).disabled = true;
+					document.getElementById("HELPER_READ_" + i).disabled = true;
+					document.getElementById("HELPER_WRITE_" + i).disabled = true;
+					document.getElementById("SUPERVISOR_READ_" + i).disabled = true;
+					document.getElementById("SUPERVISOR_WRITE_" + i).disabled = true;
+					document.getElementById("MANAGER_READ_" + i).disabled = true;
+					document.getElementById("MANAGER_WRITE_" + i).disabled = true;
+					document.getElementById("ADMIN_READ_" + i).disabled = true;
+					document.getElementById("ADMIN_WRITE_" + i).disabled = true;
+					document.getElementById("PARAM_NAME_" + i).disabled = true;
+					document.getElementById("ACTION_" + i).disabled = true;
+					document.getElementById("PARAM_UNIT_" + i).disabled = true;
+				}
+			}
+			
 			document.forms[0].submit();
 		}
 		
@@ -262,7 +292,7 @@
 							<input type="checkbox" id="ON_OFF_<%= idx %>" name="ON_OFF_<%= idx %>" value="<%= sOnOffValue %>" <%= ("Y".equals(sOnOffValue) ? "checked" : "") %> onClick="javacript:checkOne('ON_OFF_<%= idx %>', this.checked)">
 						</td>
 						<td align="center" width="5%">
-							<input type="checkbox" id="GRAPH_VIEW_<%= idx %>"  name="GRAPH_VIEW_<%= idx %>" value="<%= sGraphView %>" <%= ("Y".equals(sGraphView) ? "checked" : "") %> onClick="javacript:checkOne('GRAPH_VIEW_<%= idx %>', this.checked)">
+							<input type="checkbox" id="GRAPH_VIEW_<%= idx %>" name="GRAPH_VIEW_<%= idx %>" value="<%= sGraphView %>" <%= ("Y".equals(sGraphView) ? "checked" : "") %> onClick="javacript:checkOne('GRAPH_VIEW_<%= idx %>', this.checked)">
 						</td>
 						<td align="center" width="4%">
 							<input type="checkbox" id="HELPER_READ_<%= idx %>" name="HELPER_READ_<%= idx %>" value="<%= sViewerRead %>" <%= ("Y".equals(sViewerRead) ? "checked" : "") %> onClick="javacript:checkOne('HELPER_READ_<%= idx %>', this.checked)">
@@ -290,9 +320,9 @@
 						</td>
 						<td align="center" style="border:#FFFFFF" width="1%">&nbsp;</th>
 						
-						<input type="hidden" name="PARAM_NAME_<%= idx %>" value="<%= sName %>">
-						<input type="hidden" name="ACTION_<%= idx %>" value="update">
-						<input type="hidden" name="PARAM_UNIT_<%= idx %>" value="<%= mGenParams.get(sName) %>">
+						<input type="hidden" id="PARAM_NAME_<%= idx %>" name="PARAM_NAME_<%= idx %>" value="<%= sName %>">
+						<input type="hidden" id="ACTION_<%= idx %>" name="ACTION_<%= idx %>" value="update">
+						<input type="hidden" id="PARAM_UNIT_<%= idx %>" name="PARAM_UNIT_<%= idx %>" value="<%= mGenParams.get(sName) %>">
 					</tr>
 <%				
 					idx++;
@@ -313,7 +343,7 @@
 						bShowHeader = false;
 %>
 						<tr>
-							<td class="stage" align="center" colspan="13">
+							<td class="stage" align="center" colspan="14">
 								<%= resourceBundle.getProperty("DataManager.DisplayText.New_Parameters") %>
 							</td>
 						</tr>
@@ -363,9 +393,9 @@
 						</td>
 						<td align="center" style="border:#FFFFFF" width="1%">&nbsp;</th>
 						
-						<input type="hidden" name="PARAM_NAME_<%= idx %>" value="<%= sName %>">
-						<input type="hidden" name="ACTION_<%= idx %>" value="insert">
-						<input type="hidden" name="PARAM_UNIT_<%= idx %>" value="<%= mGenParams.get(sName) %>">
+						<input type="hidden" id="PARAM_NAME_<%= idx %>" name="PARAM_NAME_<%= idx %>" value="<%= sName %>">
+						<input type="hidden" id="ACTION_<%= idx %>" name="ACTION_<%= idx %>" value="insert">
+						<input type="hidden" id="PARAM_UNIT_<%= idx %>" name="PARAM_UNIT_<%= idx %>" value="<%= mGenParams.get(sName) %>">
 					</tr>
 <%
 					idx++;

@@ -58,6 +58,10 @@ public class VerifyLicense {
 	    String sMachineId = getMachineId(OS);
 	    String sMacAddress = getMacAddress(OS);
 
+	    System.out.println("sMachineId  : " + sMachineId);
+	    System.out.println("sMacAddress : " + sMacAddress);
+	    System.out.println("todayDate   : " + sdf.format(todayDate));
+
 	    return sMachineId.equals(machineId) && sMacAddress.equals(macAddress)
 		    && (todayDate.before(expiryDate) || todayDate.equals(expiryDate));
 	} catch (Exception e) {
@@ -75,7 +79,6 @@ public class VerifyLicense {
 	    while (networks.hasMoreElements()) {
 		NetworkInterface network = networks.nextElement();
 		byte[] mac = network.getHardwareAddress();
-
 		if (mac != null) {
 		    StringBuilder sb = new StringBuilder();
 		    for (int i = 0; i < mac.length; i++) {
@@ -94,23 +97,31 @@ public class VerifyLicense {
 	return sMacAddress;
     }
 
-    private static String getMachineId(String OS) throws IOException {
+    private static String getMachineId(String OS) throws IOException, InterruptedException {
 	String sMachineId = null;
 
 	if (OS.indexOf("win") >= 0) {
-	    Process process = Runtime.getRuntime().exec("wmic csproduct get UUID");
+	    ProcessBuilder builder = new ProcessBuilder("powershell.exe", "-Command",
+		    "(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID");
+	    builder.redirectErrorStream(true);
+	    Process process = builder.start();
+
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 	    String line;
 	    while ((line = reader.readLine()) != null) {
-		if (!line.contains("UUID") && !line.trim().isEmpty()) {
-		    sMachineId = line.trim();
+		String value = line.trim();
+		if (!(value.isEmpty() || value.contains("Guid") || value.contains("--"))) {
+		    sMachineId = value;
 		    break;
 		}
 	    }
+
+	    process.waitFor();
 	} else if (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") >= 0) {
 	    Process process = Runtime.getRuntime().exec("cat /etc/machine-id");
 	    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-	    sMachineId = reader.readLine();
+	    String line = reader.readLine();
+	    sMachineId = line.trim();
 	}
 
 	return sMachineId;

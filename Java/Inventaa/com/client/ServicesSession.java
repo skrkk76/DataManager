@@ -91,7 +91,9 @@ public class ServicesSession extends RDMServicesConstants {
 	    throw new ConnectException("Controller " + controller + " does not exists, please add the controller");
 	}
 
-	return RDMServicesUtils.checkConnectionIsAlive(IP);
+	String realTime = RDMServicesUtils.getProperty("rdmservices.controller.realtime");
+	boolean isRealTime = !"false".equalsIgnoreCase(realTime);
+	return (isRealTime ? RDMServicesUtils.checkConnectionIsAlive(IP) : true);
     }
 
     public StringList getAllControllers() {

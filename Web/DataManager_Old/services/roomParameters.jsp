@@ -14,7 +14,6 @@
 
 	PLCServices client = new PLCServices(RDMSession, sController);
 
-
 	StringList slControllers = RDMSession.getControllers(u);
 	try
 	{
@@ -33,7 +32,6 @@
 
 	ArrayList<String[]> alPhases = client.getControllerStages();
 	String emptyPhase = (alPhases.get(0)[0]).toLowerCase();
-	String startPhase = (alPhases.get(1)[0]).toLowerCase();
 
 	String sCntrlType = client.getControllerType();
 	Map<String, ParamSettings> mViewParams = RDMServicesUtils.getSingleRoomViewParamaters(sCntrlType);
@@ -951,6 +949,11 @@
 								}
 							}
 
+							if(sValue == null)
+							{
+								sValue = "";
+							}
+							
 							if(RDMServicesConstants.ACCESS_WRITE.equals(sCurrentAcc))
 							{
 								bShowSaveReset = true;
@@ -1104,16 +1107,17 @@
 									}
 									else
 									{
-										if(java.util.regex.Pattern.matches("[0-9,.-]+", sValue))
+										try
 										{
-											try
+											if(java.util.regex.Pattern.matches("[0-9,.-]+", sValue))
 											{
+											
 												sValue = decimalFormat.format(decimalFormat.parse(sValue));
 											}
-											catch(Exception e)
-											{
-												//do nothing
-											}
+										}
+										catch(Exception e)
+										{
+											//do nothing
 										}
 %>
 										<input type="text" id="<%= sParam %>" name="<%= sParam %>" value="<%= sValue %>" style="background:<%= bgColor %>" size="8" onBlur="javascript:unselectDiv('<%= sParamGroup %>_PG');setValue('<%= sParam %>', '<%= sParamGroup %>_PG', this)" onclick="javascript:selectDiv('<%= sParamGroup %>_PG');this.focus();this.select()">
@@ -1149,16 +1153,16 @@
 									}
 									else
 									{
-										if(java.util.regex.Pattern.matches("[0-9,.-]+", sValue))
+										try
 										{
-											try
+											if(java.util.regex.Pattern.matches("[0-9,.-]+", sValue))
 											{
 												sValue = decimalFormat.format(decimalFormat.parse(sValue));
 											}
-											catch(Exception e)
-											{
-												//do nothing
-											}
+										}
+										catch(Exception e)
+										{
+											//do nothing
 										}
 									}
 %>
@@ -1206,16 +1210,17 @@
 									}
 									else
 									{
-										if(java.util.regex.Pattern.matches("[0-9,.-]+", sCurrentVal))
+										try
 										{
-											try
+											if(java.util.regex.Pattern.matches("[0-9,.-]+", sCurrentVal))
 											{
+											
 												sCurrentVal = decimalFormat.format(decimalFormat.parse(sCurrentVal));
 											}
-											catch(Exception e)
-											{
-												//do nothing
-											}
+										}
+										catch(Exception e)
+										{
+											//do nothing
 										}
 %>
 										<input type="text" id="<%= sParamGroup %>" name="<%= sParamGroup %>" value="<%= sCurrentVal %>" style="background:<%= currBgColor %>" size="8" onBlur="javascript:unselectDiv('<%= sParamGroup %>_PG');setValue('<%= sParamGroup %>', '<%= sParamGroup %>_PG', this)" onclick="javascript:selectDiv('<%= sParamGroup %>_PG');this.focus();this.select()">
@@ -1227,16 +1232,17 @@
 								}
 								else if(RDMServicesConstants.ACCESS_READ.equals(sCurrentAcc))
 								{
-									if(java.util.regex.Pattern.matches("[0-9,.-]+", sCurrentVal))
+									try
 									{
-										try
+										if(java.util.regex.Pattern.matches("[0-9,.-]+", sCurrentVal))
 										{
+										
 											sCurrentVal = decimalFormat.format(decimalFormat.parse(sCurrentVal));
 										}
-										catch(Exception e)
-										{
-											//do nothing
-										}
+									}
+									catch(Exception e)
+									{
+										//do nothing
 									}
 %>
 									<label><%= sCurrentVal %></label>
