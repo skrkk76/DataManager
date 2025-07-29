@@ -786,7 +786,7 @@
 				{
 					sParam = (String)alParams.get(i);
 					paramSettings = mViewParams.get(sParam);
-					if(paramSettings == null)
+					if(paramSettings == null || "BatchNo".equals(sParam) || "Product".equals(sParam))
 					{
 						continue;
 					}
