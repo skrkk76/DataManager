@@ -42,10 +42,24 @@
 				}
 			}
 			
-			mlUpdateSettings.add(updateGeneralSettings(request, "BatchNo", sCntrlType));
-			mlUpdateSettings.add(updateGeneralSettings(request, "Product", sCntrlType));
-			mlUpdateSettings.add(updateGeneralSettings(request, "ViewImage", sCntrlType));
-		
+			isChecked = request.getParameter("batchNo");
+			if("Y".equals(isChecked))
+			{
+				mlUpdateSettings.add(updateGeneralSettings(request, "BatchNo", sCntrlType));
+			}
+			
+			isChecked = request.getParameter("product");
+			if("Y".equals(isChecked))
+			{
+				mlUpdateSettings.add(updateGeneralSettings(request, "Product", sCntrlType));
+			}
+			
+			isChecked = request.getParameter("image");
+			if("Y".equals(isChecked))
+			{
+				mlUpdateSettings.add(updateGeneralSettings(request, "ViewImage", sCntrlType));
+			}			
+			
 			DataQuery qry = new DataQuery();
 			if(mlInsertSettings.size() > 0)
 			{

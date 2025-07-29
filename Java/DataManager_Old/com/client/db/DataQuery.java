@@ -682,7 +682,7 @@ public class DataQuery extends RDMServicesConstants {
 	    String sParam = null;
 	    String selectString = "select PARAM_NAME,PARAM_GROUP from " + SCHEMA_NAME + ".CONTROLLER_PARAMS_ADMIN"
 		    + " where CNTRL_TYPE = '" + cntrlType
-		    + "' and (PARAM_NAME LIKE 'cooling%phase%' or PARAM_NAME LIKE 'steam%phase%') and PARAM_UNIT = ''";
+		    + "' and (PARAM_NAME LIKE 'cooling%' or PARAM_NAME LIKE 'steam%') and PARAM_UNIT = ''";
 	    rs = stmt.executeQuery(selectString);
 	    while (rs.next()) {
 		sParam = rs.getString(PARAM_GROUP);
