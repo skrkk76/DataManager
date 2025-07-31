@@ -49,6 +49,13 @@
 			}
 			*/
 			
+			var keyColumn = document.getElementById('keyColumn').value.trim();
+			if(keyColumn == "")
+			{
+				alert("<%= resourceBundle.getProperty("DataManager.DisplayText.Enter_KeyColumn") %>");
+				return;
+			}
+			
 			var headers = document.getElementById('headerRow').value.trim();
 			if(headers == "" || isNaN(headers))
 			{
@@ -178,6 +185,12 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="label" width="30%"><b><%= resourceBundle.getProperty("DataManager.DisplayText.manage_Report_KeyColumn") %></b></td>
+				<td class="input" width="70%" colspan="2">
+					<input type="text" id="keyColumn" name="keyColumn" value="<%= mReport.get(RDMServicesConstants.KEY_COLUMN) %>">
+				</td>
+			</tr>
+			<tr>
 				<td class="label" width="30%"><b><%= resourceBundle.getProperty("DataManager.DisplayText.manage_Report_Header_Row") %></b></td>
 				<td class="input" width="70%" colspan="2">
 					<input type="text" id="headerRow" name="headerRow" value="<%= mReport.get(RDMServicesConstants.HEADER_ROW) %>">
@@ -243,6 +256,7 @@
 					<input type="checkbox" id="addRecd" name="addRecd" value="<%= RDMServicesConstants.ROLE_MANAGER %>" <%= slWriteAccess.contains(RDMServicesConstants.ROLE_MANAGER) ? "checked" : "" %>><%= resourceBundle.getProperty("DataManager.DisplayText.Manager") %><br>
 					<input type="checkbox" id="addRecd" name="addRecd" value="<%= RDMServicesConstants.ROLE_SUPERVISOR %>" <%= slWriteAccess.contains(RDMServicesConstants.ROLE_SUPERVISOR) ? "checked" : "" %>><%= resourceBundle.getProperty("DataManager.DisplayText.Supervisor") %><br>
 					<input type="checkbox" id="addRecd" name="addRecd" value="<%= RDMServicesConstants.ROLE_HELPER %>" <%= slWriteAccess.contains(RDMServicesConstants.ROLE_HELPER) ? "checked" : "" %>><%= resourceBundle.getProperty("DataManager.DisplayText.Helper") %><br>
+					<input type="checkbox" id="addRecd" name="addRecd" value="<%= RDMServicesConstants.ROLE_TIMEKEEPER %>" <%= slWriteAccess.contains(RDMServicesConstants.ROLE_TIMEKEEPER) ? "checked" : "" %>><%= resourceBundle.getProperty("DataManager.DisplayText.TimeKeeper") %>
 				</td>
 				<td class="input" width="35%">
 					<select id="addDept" name="addDept" multiple size="5">
@@ -264,6 +278,7 @@
 					<input type="checkbox" id="updateRecd" name="updateRecd" value="<%= RDMServicesConstants.ROLE_MANAGER %>" <%= slModifyAccess.contains(RDMServicesConstants.ROLE_MANAGER) ? "checked" : "" %>><%= resourceBundle.getProperty("DataManager.DisplayText.Manager") %><br>
 					<input type="checkbox" id="updateRecd" name="updateRecd" value="<%= RDMServicesConstants.ROLE_SUPERVISOR %>" <%= slModifyAccess.contains(RDMServicesConstants.ROLE_SUPERVISOR) ? "checked" : "" %>><%= resourceBundle.getProperty("DataManager.DisplayText.Supervisor") %><br>
 					<input type="checkbox" id="updateRecd" name="updateRecd" value="<%= RDMServicesConstants.ROLE_HELPER %>" <%= slModifyAccess.contains(RDMServicesConstants.ROLE_HELPER) ? "checked" : "" %>><%= resourceBundle.getProperty("DataManager.DisplayText.Helper") %><br>
+					<input type="checkbox" id="updateRecd" name="updateRecd" value="<%= RDMServicesConstants.ROLE_TIMEKEEPER %>" <%= slModifyAccess.contains(RDMServicesConstants.ROLE_TIMEKEEPER) ? "checked" : "" %>><%= resourceBundle.getProperty("DataManager.DisplayText.TimeKeeper") %>
 				</td>
 				<td class="input" width="35%">
 					<select id="modifyDept" name="modifyDept" multiple size="5">
@@ -285,6 +300,7 @@
 					<input type="checkbox" id="downloadRecd" name="downloadRecd" value="<%= RDMServicesConstants.ROLE_MANAGER %>" <%= slReadAccess.contains(RDMServicesConstants.ROLE_MANAGER) ? "checked" : "" %>><%= resourceBundle.getProperty("DataManager.DisplayText.Manager") %><br>
 					<input type="checkbox" id="downloadRecd" name="downloadRecd" value="<%= RDMServicesConstants.ROLE_SUPERVISOR %>" <%= slReadAccess.contains(RDMServicesConstants.ROLE_SUPERVISOR) ? "checked" : "" %>><%= resourceBundle.getProperty("DataManager.DisplayText.Supervisor") %><br>
 					<input type="checkbox" id="downloadRecd" name="downloadRecd" value="<%= RDMServicesConstants.ROLE_HELPER %>" <%= slReadAccess.contains(RDMServicesConstants.ROLE_HELPER) ? "checked" : "" %>><%= resourceBundle.getProperty("DataManager.DisplayText.Helper") %><br>
+					<input type="checkbox" id="downloadRecd" name="downloadRecd" value="<%= RDMServicesConstants.ROLE_TIMEKEEPER %>" <%= slReadAccess.contains(RDMServicesConstants.ROLE_TIMEKEEPER) ? "checked" : "" %>><%= resourceBundle.getProperty("DataManager.DisplayText.TimeKeeper") %>
 				</td>
 				<td class="input" width="35%">
 					<select id="downloadDept" name="downloadDept" multiple size="5">

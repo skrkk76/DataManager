@@ -39,6 +39,13 @@
 				return;
 			}
 			
+			var keyColumn = document.getElementById('keyColumn').value.trim();
+			if(keyColumn == "")
+			{
+				alert("<%= resourceBundle.getProperty("DataManager.DisplayText.Enter_KeyColumn") %>");
+				return;
+			}
+			
 			var headers = document.getElementById('headerRow').value.trim();
 			if(headers == "" || isNaN(headers))
 			{
@@ -168,6 +175,12 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="label" width="30%"><b><%= resourceBundle.getProperty("DataManager.DisplayText.manage_Report_KeyColumn") %></b></td>
+				<td class="input" width="70%" colspan="2">
+					<input type="text" id="keyColumn" name="keyColumn" value="">
+				</td>
+			</tr>
+			<tr>
 				<td class="label" width="30%"><b><%= resourceBundle.getProperty("DataManager.DisplayText.manage_Report_Header_Row") %></b></td>
 				<td class="input" width="70%" colspan="2">
 					<input type="text" id="headerRow" name="headerRow" value="">
@@ -203,6 +216,7 @@
 					<input type="checkbox" id="addRecd" name="addRecd" value="<%= RDMServicesConstants.ROLE_MANAGER %>"><%= resourceBundle.getProperty("DataManager.DisplayText.Manager") %><br>
 					<input type="checkbox" id="addRecd" name="addRecd" value="<%= RDMServicesConstants.ROLE_SUPERVISOR %>"><%= resourceBundle.getProperty("DataManager.DisplayText.Supervisor") %><br>
 					<input type="checkbox" id="addRecd" name="addRecd" value="<%= RDMServicesConstants.ROLE_HELPER %>"><%= resourceBundle.getProperty("DataManager.DisplayText.Helper") %><br>
+					<input type="checkbox" id="addRecd" name="addRecd" value="<%= RDMServicesConstants.ROLE_TIMEKEEPER %>"><%= resourceBundle.getProperty("DataManager.DisplayText.TimeKeeper") %>
 				</td>
 				<td class="input" width="35%">
 					<select id="addDept" name="addDept" multiple size="5">
@@ -228,6 +242,7 @@
 					<input type="checkbox" id="updateRecd" name="updateRecd" value="<%= RDMServicesConstants.ROLE_MANAGER %>"><%= resourceBundle.getProperty("DataManager.DisplayText.Manager") %><br>
 					<input type="checkbox" id="updateRecd" name="updateRecd" value="<%= RDMServicesConstants.ROLE_SUPERVISOR %>"><%= resourceBundle.getProperty("DataManager.DisplayText.Supervisor") %><br>
 					<input type="checkbox" id="updateRecd" name="updateRecd" value="<%= RDMServicesConstants.ROLE_HELPER %>"><%= resourceBundle.getProperty("DataManager.DisplayText.Helper") %><br>
+					<input type="checkbox" id="updateRecd" name="updateRecd" value="<%= RDMServicesConstants.ROLE_TIMEKEEPER %>"><%= resourceBundle.getProperty("DataManager.DisplayText.TimeKeeper") %>
 				</td>
 				<td class="input" width="35%">
 					<select id="modifyDept" name="modifyDept" multiple size="5">
@@ -249,6 +264,7 @@
 					<input type="checkbox" id="downloadRecd" name="downloadRecd" value="<%= RDMServicesConstants.ROLE_MANAGER %>"><%= resourceBundle.getProperty("DataManager.DisplayText.Manager") %><br>
 					<input type="checkbox" id="downloadRecd" name="downloadRecd" value="<%= RDMServicesConstants.ROLE_SUPERVISOR %>"><%= resourceBundle.getProperty("DataManager.DisplayText.Supervisor") %><br>
 					<input type="checkbox" id="downloadRecd" name="downloadRecd" value="<%= RDMServicesConstants.ROLE_HELPER %>"><%= resourceBundle.getProperty("DataManager.DisplayText.Helper") %><br>
+					<input type="checkbox" id="downloadRecd" name="downloadRecd" value="<%= RDMServicesConstants.ROLE_TIMEKEEPER %>"><%= resourceBundle.getProperty("DataManager.DisplayText.TimeKeeper") %>
 				</td>
 				<td class="input" width="35%">
 					<select id="downloadDept" name="downloadDept" multiple size="5">

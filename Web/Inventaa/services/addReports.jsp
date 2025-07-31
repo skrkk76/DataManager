@@ -39,6 +39,13 @@
 				return;
 			}
 			
+			var keyColumn = document.getElementById('keyColumn').value.trim();
+			if(keyColumn == "")
+			{
+				alert("<%= resourceBundle.getProperty("DataManager.DisplayText.Enter_KeyColumn") %>");
+				return;
+			}
+			
 			var headers = document.getElementById('headerRow').value.trim();
 			if(headers == "" || isNaN(headers))
 			{
@@ -165,6 +172,12 @@
 				<td class="label" width="30%"><b><%= resourceBundle.getProperty("DataManager.DisplayText.Template") %></b></td>
 				<td class="input" width="70%" colspan="2">
 					<input type="file" id="template" name="template" accept="application/vnd.ms-excel">
+				</td>
+			</tr>
+			<tr>
+				<td class="label" width="30%"><b><%= resourceBundle.getProperty("DataManager.DisplayText.manage_Report_KeyColumn") %></b></td>
+				<td class="input" width="70%" colspan="2">
+					<input type="text" id="keyColumn" name="keyColumn" value="">
 				</td>
 			</tr>
 			<tr>

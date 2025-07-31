@@ -24,7 +24,8 @@
 	String sReport = "";
 	String sDesc = "";
 	String sAction = "";
-	String sTemplate = "";	
+	String sTemplate = "";
+	String sKeyColumn = "";
 	StringList slReadAccess = new StringList();
 	StringList slWriteAccess = new StringList();
 	StringList slModifyAccess = new StringList();
@@ -63,6 +64,10 @@
 					else if("mode".equals(sField))
 					{
 						sAction = item.getString();
+					}
+					else if("keyColumn".equals(sField))
+					{
+						sKeyColumn = item.getString();
 					}
 					else if("headerRow".equals(sField))
 					{
@@ -144,12 +149,12 @@
 		ReportDAO reportDAO = new ReportDAO();
 		if("add".equals(sAction))
 		{
-			reportDAO.addReport(sReport, sTemplate, sDesc, iHeader, iFormula, iRanges, iReadOnlyCols, 
+			reportDAO.addReport(sReport, sTemplate, sDesc, sKeyColumn, iHeader, iFormula, iRanges, iReadOnlyCols, 
 				slReadAccess, slReadDept, slWriteAccess, slWriteDept, slModifyAccess, slModifyDept, bAllowUpdates);
 		}
 		else if("edit".equals(sAction))
 		{
-			reportDAO.updateReport(sReport, sTemplate, sDesc, iHeader, iFormula, iRanges, iReadOnlyCols, 
+			reportDAO.updateReport(sReport, sTemplate, sDesc, sKeyColumn, iHeader, iFormula, iRanges, iReadOnlyCols, 
 				slReadAccess, slReadDept, slWriteAccess, slWriteDept, slModifyAccess, slModifyDept, bAllowUpdates);
 		}
 		else if("delete".equals(sAction))

@@ -2,12 +2,13 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 16.4
--- Dumped by pg_dump version 16.4
+-- Dumped from database version 17.5
+-- Dumped by pg_dump version 17.5
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -30,6 +31,7 @@ ALTER DATABASE "DataManager" OWNER TO "RDM_ADMIN";
 SET statement_timeout = 0;
 SET lock_timeout = 0;
 SET idle_in_transaction_session_timeout = 0;
+SET transaction_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SELECT pg_catalog.set_config('search_path', '', false);
@@ -408,6 +410,7 @@ CREATE TABLE rdm_admin.maintenance_reports (
     report character varying NOT NULL,
     template character varying NOT NULL,
     description character varying,
+    key_column character varying NOT NULL,
     column_header character varying NOT NULL,
     column_formula character varying,
     header_row integer,
@@ -962,6 +965,13 @@ ALTER TABLE ONLY rdm_admin.wbs_task_info
 
 
 --
+-- Name: wbs_task_info_date_idx; Type: INDEX; Schema: rdm_admin; Owner: RDM_ADMIN
+--
+
+CREATE INDEX wbs_task_info_date_idx ON rdm_admin.wbs_task_info USING btree (estimated_start, estimated_end, actual_start, actual_end);
+
+
+--
 -- Name: alarm_history alarm_history_acceptedby_fk; Type: FK CONSTRAINT; Schema: rdm_admin; Owner: RDM_ADMIN
 --
 
@@ -1111,6 +1121,27 @@ ALTER TABLE ONLY rdm_admin.wbs_task_info
 
 ALTER TABLE ONLY rdm_admin.wbs_task_info
     ADD CONSTRAINT wbs_task_owner_fk FOREIGN KEY (owner) REFERENCES rdm_admin.user_info(user_id) ON UPDATE CASCADE;
+
+
+--
+-- Name: DEFAULT PRIVILEGES FOR SEQUENCES; Type: DEFAULT ACL; Schema: rdm_admin; Owner: postgres
+--
+
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA rdm_admin GRANT ALL ON SEQUENCES TO "RDM_ADMIN";
+
+
+--
+-- Name: DEFAULT PRIVILEGES FOR FUNCTIONS; Type: DEFAULT ACL; Schema: rdm_admin; Owner: postgres
+--
+
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA rdm_admin GRANT ALL ON FUNCTIONS TO "RDM_ADMIN";
+
+
+--
+-- Name: DEFAULT PRIVILEGES FOR TABLES; Type: DEFAULT ACL; Schema: rdm_admin; Owner: postgres
+--
+
+ALTER DEFAULT PRIVILEGES FOR ROLE postgres IN SCHEMA rdm_admin GRANT ALL ON TABLES TO "RDM_ADMIN";
 
 
 --
