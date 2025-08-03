@@ -1,11 +1,16 @@
 package com.client.license;
 
 public class LicenseKeys {
-    public final static String LICENSE = "LICENSE";
+    public final static String LICENSE = "License.dat";
+    public final static String PUBLIC_KEY = "PublicKey.dat";
+
     public final static String MACHINE_ID = "MachineId";
     public final static String MAC_ADDRESS = "MacAddress";
     public final static String EXPIRY_DATE = "ExpiryDate";
     public final static String ROOM_COUNT = "RoomCount";
+
+    public final static String ALGORITHM_AES = "AES";
+    public final static String ALGORITHM_DES = "DES";
 
     public static final byte[] public_key = { (byte) 0x52, (byte) 0x53, (byte) 0x41, (byte) 0x00, (byte) 0x30,
 	    (byte) 0x82, (byte) 0x01, (byte) 0x22, (byte) 0x30, (byte) 0x0D, (byte) 0x06, (byte) 0x09, (byte) 0x2A,

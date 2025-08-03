@@ -23,6 +23,7 @@ public class VerifyLicense extends RDMServicesConstants {
 		throw new RuntimeException("Error reading license file " + e);
 	    }
 
+	    byte[] public_key = RDMServicesUtils.getPublicKey();
 	    if (!license.isOK(public_key)) {
 		return false;
 	    }
@@ -53,6 +54,7 @@ public class VerifyLicense extends RDMServicesConstants {
 	    throw new RuntimeException("Error reading license file " + e);
 	}
 
+	byte[] public_key = RDMServicesUtils.getPublicKey();
 	if (!license.isOK(public_key)) {
 	    throw new RuntimeException("Invalid License");
 	}
@@ -68,6 +70,7 @@ public class VerifyLicense extends RDMServicesConstants {
 	    throw new RuntimeException("Error reading license file " + e);
 	}
 
+	byte[] public_key = RDMServicesUtils.getPublicKey();
 	if (!license.isOK(public_key)) {
 	    throw new RuntimeException("Invalid License");
 	}
@@ -85,5 +88,16 @@ public class VerifyLicense extends RDMServicesConstants {
 	}
 
 	return "";
+    }
+
+    private static void dump(byte[] bytes) {
+	System.out.println("byte[] public_key = {");
+	for (int i = 0; i < bytes.length; i++) {
+	    System.out.printf("(byte)0x%02X, ", bytes[i]);
+	    if (i % 8 == 0) {
+		System.out.println();
+	    }
+	}
+	System.out.println("};");
     }
 }

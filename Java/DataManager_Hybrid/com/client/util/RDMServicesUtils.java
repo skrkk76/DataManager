@@ -22,6 +22,7 @@ import java.util.Set;
 
 import com.client.ServicesSession;
 import com.client.db.DataQuery;
+import com.client.license.EncryptDecrypt;
 
 public class RDMServicesUtils extends RDMServicesConstants {
     private static ArrayList<String[]> CONTROLLER_STAGES = null;
@@ -106,26 +107,27 @@ public class RDMServicesUtils extends RDMServicesConstants {
 	return new File(getClassLoaderpath(), RDMServicesConstants.LICENSE);
     }
 
-    public static String getDBPassword() throws IOException {
-	FileReader fr = null;
-	BufferedReader br = null;
-	String password = "";
+    public static byte[] getPublicKey() throws Exception {
+	File file = new File(getClassLoaderpath(), RDMServicesConstants.PUBLIC_KEY);
+	try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+	    String encPubKey = reader.readLine();
 
-	try {
-	    File f = new File(getClassLoaderpath(), RDMServicesConstants.DATABASE);
-	    fr = new FileReader(f);
-	    br = new BufferedReader(fr);
-	    password = br.readLine();
-	} finally {
-	    if (br != null) {
-		br.close();
-	    }
-	    if (fr != null) {
-		fr.close();
-	    }
+	    EncryptDecrypt decrypt = new EncryptDecrypt();
+	    return decrypt.decrypt(encPubKey.getBytes(), RDMServicesConstants.ALGORITHM_DES);
+	} catch (Exception e) {
+	    System.err.println("Error reading the Public Key: " + e.getMessage());
+	    throw e;
 	}
+    }
 
-	return password;
+    public static String getDBPassword() throws IOException {
+	File file = new File(getClassLoaderpath(), RDMServicesConstants.DATABASE);
+	try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+	    return reader.readLine();
+	} catch (Exception e) {
+	    System.err.println("Error reading the DB Passwrod: " + e.getMessage());
+	    throw e;
+	}
     }
 
     private static ArrayList<String[]> getControllerStages() throws Exception {

@@ -3,6 +3,7 @@ package com.client.reports;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -38,32 +39,32 @@ public class ReportDAO extends RDMServicesConstants {
 
     }
 
-    public void addReport(String sReport, String sTemplate, String sDesc, int iHeader, int iFormula, int iRanges,
-	    int iEditCols, StringList slReadAccess, StringList slReadDept, StringList slWriteAccess,
+    public void addReport(String sReport, String sTemplate, String sDesc, String sKeyColumn, int iHeader, int iFormula,
+	    int iRanges, int iEditCols, StringList slReadAccess, StringList slReadDept, StringList slWriteAccess,
 	    StringList slWriteDept, StringList slModifyAccess, StringList slModifyDept, boolean bAllowUpdates)
 	    throws Exception {
-	manageReport(sReport, sTemplate, sDesc, iHeader, iFormula, iRanges, iEditCols, slReadAccess, slReadDept,
-		slWriteAccess, slWriteDept, slModifyAccess, slModifyDept, bAllowUpdates, true);
+	manageReport(sReport, sTemplate, sDesc, sKeyColumn, iHeader, iFormula, iRanges, iEditCols, slReadAccess,
+		slReadDept, slWriteAccess, slWriteDept, slModifyAccess, slModifyDept, bAllowUpdates, true);
     }
 
-    public void updateReport(String sReport, String sTemplate, String sDesc, int iHeader, int iFormula, int iRanges,
-	    int iEditCols, StringList slReadAccess, StringList slReadDept, StringList slWriteAccess,
-	    StringList slWriteDept, StringList slModifyAccess, StringList slModifyDept, boolean bAllowUpdates)
-	    throws Exception {
+    public void updateReport(String sReport, String sTemplate, String sDesc, String sKeyColumn, int iHeader,
+	    int iFormula, int iRanges, int iEditCols, StringList slReadAccess, StringList slReadDept,
+	    StringList slWriteAccess, StringList slWriteDept, StringList slModifyAccess, StringList slModifyDept,
+	    boolean bAllowUpdates) throws Exception {
 	if (sTemplate != null && !"".equals(sTemplate)) {
-	    manageReport(sReport, sTemplate, sDesc, iHeader, iFormula, iRanges, iEditCols, slReadAccess, slReadDept,
-		    slWriteAccess, slWriteDept, slModifyAccess, slModifyDept, bAllowUpdates, false);
+	    manageReport(sReport, sTemplate, sDesc, sKeyColumn, iHeader, iFormula, iRanges, iEditCols, slReadAccess,
+		    slReadDept, slWriteAccess, slWriteDept, slModifyAccess, slModifyDept, bAllowUpdates, false);
 	} else {
 	    DataQuery query = new DataQuery();
-	    query.updateReport(sReport, sDesc, iHeader, iFormula, iRanges, iEditCols, slReadAccess, slReadDept,
-		    slWriteAccess, slWriteDept, slModifyAccess, slModifyDept, bAllowUpdates);
+	    query.updateReport(sReport, sDesc, sKeyColumn, iHeader, iFormula, iRanges, iEditCols, slReadAccess,
+		    slReadDept, slWriteAccess, slWriteDept, slModifyAccess, slModifyDept, bAllowUpdates);
 	}
     }
 
-    private void manageReport(String sReport, String sTemplate, String sDesc, int iHeader, int iFormula, int iRanges,
-	    int iEditCols, StringList slReadAccess, StringList slReadDept, StringList slWriteAccess,
-	    StringList slWriteDept, StringList slModifyAccess, StringList slModifyDept, boolean bAllowUpdates,
-	    boolean bAdd) throws Exception {
+    private void manageReport(String sReport, String sTemplate, String sDesc, String sKeyColumn, int iHeader,
+	    int iFormula, int iRanges, int iEditCols, StringList slReadAccess, StringList slReadDept,
+	    StringList slWriteAccess, StringList slWriteDept, StringList slModifyAccess, StringList slModifyDept,
+	    boolean bAllowUpdates, boolean bAdd) throws Exception {
 	File file = null;
 	FileInputStream fis = null;
 
@@ -152,8 +153,7 @@ public class ReportDAO extends RDMServicesConstants {
 			if (BASEDON.equalsIgnoreCase(sFormula)) {
 			    sBasedOn = mColumnHeaders.get(slColumns.get(i));
 			} else {
-			    mFormulae.put(slColumns.get(i), getFormatedFormula(mColumnHeaders.get(slColumns.get(i)),
-				    sFormula, slColumns, mColumnHeaders));
+			    mFormulae.put(slColumns.get(i), getFormatedFormula(iHeader, sFormula));
 			}
 		    }
 		}
@@ -195,10 +195,13 @@ public class ReportDAO extends RDMServicesConstants {
 
 	    fis.close();
 
+	    String sColumnName = mColumnHeaders.get(sKeyColumn);
+	    String[] saKeyColumn = new String[] { sKeyColumn, sColumnName };
+
 	    DataQuery query = new DataQuery();
-	    query.manageReport(sReport, sTemplate, sDesc, slColumns, mColumnHeaders, slSearchCols, mFormulae, mRanges,
-		    slReadOnlyCols, sBasedOn, iHeader, iFormula, iRanges, iEditCols, slReadAccess, slReadDept,
-		    slWriteAccess, slWriteDept, slModifyAccess, slModifyDept, bAllowUpdates, bAdd);
+	    query.manageReport(sReport, sTemplate, sDesc, saKeyColumn, slColumns, mColumnHeaders, slSearchCols,
+		    mFormulae, mRanges, slReadOnlyCols, sBasedOn, iHeader, iFormula, iRanges, iEditCols, slReadAccess,
+		    slReadDept, slWriteAccess, slWriteDept, slModifyAccess, slModifyDept, bAllowUpdates, bAdd);
 	} catch (IOException e) {
 	    fis.close();
 	    file.delete();
@@ -248,6 +251,14 @@ public class ReportDAO extends RDMServicesConstants {
 	    MapList mlRecords = new MapList();
 
 	    DataQuery query = new DataQuery();
+
+	    String[] saColumn = query.getReportKeyColumn(sReport);
+	    String sKeyColumn = saColumn[0];
+	    String sColumnName = saColumn[1];
+	    if ("".equals(sKeyColumn) || "".equals(sColumnName)) {
+		throw new SQLException("Missing Column name for Record Entry Time");
+	    }
+
 	    Map<String, String> mReportCols = query.getReportColumnHeaders(sReport, false);
 	    String sLoggedByCol = mReportCols.get(LOGGEDBY);
 
@@ -340,7 +351,7 @@ public class ReportDAO extends RDMServicesConstants {
 	    if (sbError.length() > 1) {
 		throw new Exception(sbError.toString());
 	    } else {
-		query.insertReportRecord(sReport, mlRecords);
+		query.insertReportRecord(sReport, sColumnName, mlRecords);
 	    }
 	} finally {
 	    fis.close();
@@ -349,39 +360,64 @@ public class ReportDAO extends RDMServicesConstants {
     }
 
     public void insertRecord(String sUser, String sReport, Map<String, String> mRecord) throws Exception {
+	DataQuery query = new DataQuery();
+
+	String[] saColumn = query.getReportKeyColumn(sReport);
+	String sKeyColumn = saColumn[0];
+	String sColumnName = saColumn[1];
+	if ("".equals(sKeyColumn) || "".equals(sColumnName)) {
+	    throw new SQLException("Missing Column name for Record Entry Time");
+	}
+
 	Calendar cal = Calendar.getInstance();
 	String sLogTime = sdf.format(cal.getTime());
-	mRecord.put("Column1", sLogTime);
+	mRecord.put(sColumnName, sLogTime);
 
-	DataQuery query = new DataQuery();
 	Map<String, String> mReportCols = query.getReportColumnHeaders(sReport, false);
 	mRecord.put(mReportCols.get(LOGGEDBY), sUser);
 
-	mRecord = getPreviousRecord(sReport, mRecord);
+	mRecord = getPreviousRecord(sReport, sColumnName, mRecord);
 
 	MapList mlRecords = new MapList();
 	mlRecords.add(mRecord);
 
-	query.insertReportRecord(sReport, mlRecords);
+	query.insertReportRecord(sReport, sColumnName, mlRecords);
     }
 
     public void updateRecord(String sUser, String sReport, Map<String, String> mRecord) throws Exception {
-	mRecord = getPreviousRecord(sReport, mRecord);
-
 	DataQuery query = new DataQuery();
+
+	String[] saColumn = query.getReportKeyColumn(sReport);
+	String sKeyColumn = saColumn[0];
+	String sColumnName = saColumn[1];
+	if ("".equals(sKeyColumn) || "".equals(sColumnName)) {
+	    throw new SQLException("Missing Column name for Record Entry Time");
+	}
+
+	mRecord = getPreviousRecord(sReport, sColumnName, mRecord);
+
 	Map<String, String> mReportCols = query.getReportColumnHeaders(sReport, false);
 	mRecord.put(mReportCols.get(MODIFIEDBY), sUser);
 	mRecord.put(mReportCols.get(MODIFIEDON), sdf.format(Calendar.getInstance().getTime()));
 
-	query.updateReportRecord(sReport, mRecord);
+	query.updateReportRecord(sReport, sColumnName, mRecord);
     }
 
     public void deleteRecord(String sReport, String sDateTime) throws Exception {
 	DataQuery query = new DataQuery();
-	query.deleteReportRecord(sReport, sDateTime);
+
+	String[] saColumn = query.getReportKeyColumn(sReport);
+	String sKeyColumn = saColumn[0];
+	String sColumnName = saColumn[1];
+	if ("".equals(sKeyColumn) || "".equals(sColumnName)) {
+	    throw new SQLException("Missing Column name for Record Entry Time");
+	}
+
+	query.deleteReportRecord(sReport, sColumnName, sDateTime);
     }
 
-    private Map<String, String> getPreviousRecord(String sReport, Map<String, String> mRecord) throws Exception {
+    private Map<String, String> getPreviousRecord(String sReport, String sKeyColumn, Map<String, String> mRecord)
+	    throws Exception {
 	String sColumn = null;
 	DataQuery query = new DataQuery();
 
@@ -390,8 +426,8 @@ public class ReportDAO extends RDMServicesConstants {
 	sBasedOnCol = (sBasedOnCol == null ? "" : sBasedOnCol);
 	String sBasedOnVal = (!"".equals(sBasedOnCol) ? mRecord.get(sBasedOnCol) : "");
 
-	Map<String, String> mValues = query.getReportLastRecord(sReport, mRecord.get("Column1"), sBasedOnCol,
-		sBasedOnVal);
+	Map<String, String> mValues = query.getReportLastRecord(sReport, sKeyColumn, mRecord.get(sKeyColumn),
+		sBasedOnCol, sBasedOnVal);
 	Iterator<String> itr = mRecord.keySet().iterator();
 	while (itr.hasNext()) {
 	    sColumn = itr.next();
@@ -512,53 +548,66 @@ public class ReportDAO extends RDMServicesConstants {
 	return mColumns;
     }
 
-    private String getFormatedFormula(String sColumn, String sFormula, StringList slColumns,
-	    Map<String, String> mColumns) {
-	String operand = "";
-	if (sFormula.contains("-")) {
-	    operand = "-";
-	} else if (sFormula.contains("+")) {
-	    operand = "+";
-	} else if (sFormula.contains("*")) {
-	    operand = "*";
-	} else if (sFormula.contains("/")) {
-	    operand = "/";
+    private static String getFormatedFormula(int iHeader, String sFormula) {
+	int i = 1;
+	int idx = iHeader + 2;
+	String sResolvedFormula = sFormula.toUpperCase();
+	for (char ch = 'A'; ch <= 'Z'; ++ch) {
+	    String currRef1 = "" + ch + idx;
+	    String currRef2 = "A" + ch + idx;
+	    String currColumn = "'CURR.Column" + i + "'";
+
+	    if (sResolvedFormula.contains(currRef1)) {
+		sResolvedFormula = sResolvedFormula.replace(currRef1, currColumn);
+	    } else if (sResolvedFormula.contains(currRef2)) {
+		sResolvedFormula = sResolvedFormula.replace(currRef2, currColumn);
+	    } else {
+		currRef1 = "" + ch + (idx - 1);
+		currRef2 = "A" + ch + (idx - 1);
+
+		if (sResolvedFormula.contains(currRef1)) {
+		    sResolvedFormula = sResolvedFormula.replace(currRef1, currColumn);
+		} else if (sResolvedFormula.contains(currRef2)) {
+		    sResolvedFormula = sResolvedFormula.replace(currRef2, currColumn);
+		}
+	    }
+
+	    String prevRef1 = "" + ch + (idx - 2);
+	    String prevRef2 = "A" + ch + (idx - 2);
+	    String prevColumn = "'PREV.Column" + i + "'";
+
+	    if (sResolvedFormula.contains(prevRef1)) {
+		sResolvedFormula = sResolvedFormula.replace(prevRef1, prevColumn);
+	    } else if (sResolvedFormula.contains(prevRef2)) {
+		sResolvedFormula = sResolvedFormula.replace(prevRef2, prevColumn);
+	    } else {
+		prevRef1 = "" + ch + (idx - 1);
+		prevRef2 = "A" + ch + (idx - 1);
+
+		if (sResolvedFormula.contains(prevRef1)) {
+		    sResolvedFormula = sResolvedFormula.replace(prevRef1, prevColumn);
+		} else if (sResolvedFormula.contains(prevRef2)) {
+		    sResolvedFormula = sResolvedFormula.replace(prevRef2, prevColumn);
+		}
+	    }
+
+	    i++;
 	}
 
-	String[] saExpr = sFormula.split("\\" + operand);
-	String leftExpr = isNumeric(saExpr[0]) ? saExpr[0] : mColumns.get(slColumns.get(getColumnIndex(saExpr[0])));
-	String rightExpr = isNumeric(saExpr[1]) ? saExpr[1] : mColumns.get(slColumns.get(getColumnIndex(saExpr[1])));
-
-	if (leftExpr.equals(rightExpr)) {
-	    leftExpr = isNumeric(leftExpr) ? leftExpr : "'CURR." + leftExpr + "'";
-	    rightExpr = isNumeric(rightExpr) ? rightExpr : "'PREV." + rightExpr + "'";
-	} else {
-	    leftExpr = (isNumeric(leftExpr) ? leftExpr
-		    : ((sColumn.equals(leftExpr) ? "'PREV." : "'CURR.") + leftExpr + "'"));
-	    rightExpr = (isNumeric(rightExpr) ? rightExpr
-		    : ((sColumn.equals(rightExpr) ? "'PREV." : "'CURR.") + rightExpr + "'"));
+	if (sResolvedFormula.contains("+")) {
+	    sResolvedFormula = sResolvedFormula.replace("+", " + ");
+	}
+	if (sResolvedFormula.contains("-")) {
+	    sResolvedFormula = sResolvedFormula.replace("-", " - ");
+	}
+	if (sResolvedFormula.contains("*")) {
+	    sResolvedFormula = sResolvedFormula.replace("*", " * ");
+	}
+	if (sResolvedFormula.contains("/")) {
+	    sResolvedFormula = sResolvedFormula.replace("/", " / ");
 	}
 
-	StringBuilder sbExpr = new StringBuilder();
-	sbExpr.append(leftExpr).append(" ").append(operand).append(" ").append(rightExpr);
-	return sbExpr.toString();
-    }
-
-    private int getColumnIndex(String sExpr) {
-	int idx = 0;
-	if (sExpr.length() > 2) {
-	    char c = sExpr.charAt(1);
-	    idx = (26 + (c - 'A'));
-	} else {
-	    char c = sExpr.charAt(0);
-	    idx = (c - 'A');
-	}
-
-	return idx;
-    }
-
-    private boolean isNumeric(String str) {
-	return str.matches("-?\\d+(\\.\\d+)?");
+	return sResolvedFormula.trim();
     }
 
     private String evalFormula(String sFormula, Map<String, String> mValues) {

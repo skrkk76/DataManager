@@ -17,7 +17,7 @@ public class CreateLicense {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     public static void main(String[] args) throws Exception {
-	System.out.print("License Folder Path: ");
+	System.out.print("License File Path: ");
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	String sPath = br.readLine().trim();
 
@@ -38,7 +38,7 @@ public class CreateLicense {
 	String sEval = br.readLine().trim();
 
 	if ("".equals(sPath)) {
-	    System.out.print("Please enter License Folder Path");
+	    System.out.print("Please enter License File Path");
 	    return;
 	}
 
@@ -88,7 +88,7 @@ public class CreateLicense {
 	    System.out.println(("Y".equalsIgnoreCase(sEval) ? "Trail " : "") + "License created for " + sRooms
 		    + " controllers, will be expired on " + sdf.format(expiryDate));
 	} else {
-	    System.out.println("Folder does not exists, enter correct file path");
+	    System.out.println("Path does not exists, enter correct file path");
 	}
     }
 

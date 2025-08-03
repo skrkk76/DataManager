@@ -1552,7 +1552,6 @@ public class DataQuery extends RDMServicesConstants {
 	return true;
     }
 
-    @SuppressWarnings("deprecation")
     public void saveAlarmLogs(String sController, MapList mControllerAlarms) throws Exception {
 	Connection conn = null;
 	PreparedStatement pstmt = null;
@@ -1715,7 +1714,6 @@ public class DataQuery extends RDMServicesConstants {
 	}
     }
 
-    @SuppressWarnings("deprecation")
     public void saveSysLogs(String sUserId, String sController, ArrayList<String[]> alSysLog) throws Exception {
 	Connection conn = null;
 	PreparedStatement pstmt = null;
@@ -3130,7 +3128,6 @@ public class DataQuery extends RDMServicesConstants {
 	}
     }
 
-    @SuppressWarnings("deprecation")
     public void closeOpenAlarms(String sUser, String sRoom, Map<String, String> mCloseAlarms)
 	    throws SQLException, InterruptedException {
 	Connection conn = null;
@@ -3177,7 +3174,6 @@ public class DataQuery extends RDMServicesConstants {
 	}
     }
 
-    @SuppressWarnings("deprecation")
     public void muteOpenAlarm(String sUser, String sRoom, String sSerialId, String sMutedOn)
 	    throws SQLException, InterruptedException {
 	Connection conn = null;
@@ -5081,7 +5077,6 @@ public class DataQuery extends RDMServicesConstants {
 	return true;
     }
 
-    @SuppressWarnings("deprecation")
     public boolean deleteYield(String sUserId, String sController, String sDate) throws Exception {
 	Connection conn = null;
 	Statement stmt = null;
@@ -5363,7 +5358,6 @@ public class DataQuery extends RDMServicesConstants {
 	return slParams;
     }
 
-    @SuppressWarnings("deprecation")
     public StringList createUserTask(Map<String, String> mTask, String[] saAssignees) throws Exception {
 	Connection conn = null;
 	PreparedStatement pstmt = null;
@@ -8541,7 +8535,7 @@ public class DataQuery extends RDMServicesConstants {
 	return mPhaseDurations;
     }
 
-    public void manageReport(String sReport, String sTemplate, String sDesc, StringList slColumns,
+    public void manageReport(String sReport, String sTemplate, String sDesc, String[] saKeyColumn, StringList slColumns,
 	    Map<String, String> mColumnHeaders, StringList slSearchCols, Map<String, String> mFormulae,
 	    Map<String, String> mRanges, StringList slReadOnlyCols, String sBasedOn, int iHeader, int iFormula,
 	    int iRanges, int iEditCols, StringList slReadAccess, StringList slReadDept, StringList slWriteAccess,
@@ -8627,9 +8621,9 @@ public class DataQuery extends RDMServicesConstants {
 		sbQuery.append("TEMPLATE,DESCRIPTION,COLUMN_HEADER,COLUMN_FORMULA,COLUMN_RANGES,READ_ONLY_COLUMN");
 		sbQuery.append(",SEARCH_COLUMNS,HEADER_ROW,FORMULA_ROW,RANGES_ROW,EDITABLE_ROW,CALC_BASED_ON");
 		sbQuery.append(",READ_ACCESS,READ_DEPT,WRITE_ACCESS,WRITE_DEPT,MODIFY_ACCESS,MODIFY_DEPT");
-		sbQuery.append(",ALLOW_MULTIPLE_UPDATES,REPORT");
+		sbQuery.append(",KEY_COLUMN,ALLOW_MULTIPLE_UPDATES,REPORT");
 		sbQuery.append(") values (");
-		sbQuery.append("?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?");
+		sbQuery.append("?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?");
 		sbQuery.append(")");
 	    } else {
 		sbQuery.append("update " + SCHEMA_NAME + ".MAINTENANCE_REPORTS set ");
@@ -8651,6 +8645,7 @@ public class DataQuery extends RDMServicesConstants {
 		sbQuery.append("WRITE_DEPT = ?, ");
 		sbQuery.append("MODIFY_ACCESS = ?, ");
 		sbQuery.append("MODIFY_DEPT = ?, ");
+		sbQuery.append("KEY_COLUMN = ?, ");
 		sbQuery.append("ALLOW_MULTIPLE_UPDATES = ?");
 		sbQuery.append(" where ");
 		sbQuery.append("REPORT = ?");
@@ -8677,15 +8672,16 @@ public class DataQuery extends RDMServicesConstants {
 	    pstmt.setString(16, slWriteDept.join('|'));
 	    pstmt.setString(17, slModifyAccess.join('|'));
 	    pstmt.setString(18, slModifyDept.join('|'));
-	    pstmt.setBoolean(19, bAllowUpdates);
-	    pstmt.setString(20, sReport);
+	    pstmt.setString(19, saKeyColumn[0]);
+	    pstmt.setBoolean(20, bAllowUpdates);
+	    pstmt.setString(21, sReport);
 
 	    pstmt.executeUpdate();
 
 	    if (bAdd) {
-		createReportTable(sReportTab, slNewColumns);
+		createReportTable(sReportTab, saKeyColumn[1], slNewColumns);
 	    } else if (!(slNewColumns.isEmpty() && slReportCols.isEmpty())) {
-		updateReportTable(sReportTab, slNewColumns, slReportCols);
+		updateReportTable(sReportTab, saKeyColumn[1], slNewColumns, slReportCols);
 	    }
 	} finally {
 	    close(pstmt, rs);
@@ -8693,9 +8689,9 @@ public class DataQuery extends RDMServicesConstants {
 	}
     }
 
-    public void updateReport(String sReport, String sDesc, int iHeader, int iFormula, int iRanges, int iEditCols,
-	    StringList slReadAccess, StringList slReadDept, StringList slWriteAccess, StringList slWriteDept,
-	    StringList slModifyAccess, StringList slModifyDept, boolean bAllowUpdates)
+    public void updateReport(String sReport, String sDesc, String sKeyColumn, int iHeader, int iFormula, int iRanges,
+	    int iEditCols, StringList slReadAccess, StringList slReadDept, StringList slWriteAccess,
+	    StringList slWriteDept, StringList slModifyAccess, StringList slModifyDept, boolean bAllowUpdates)
 	    throws SQLException, InterruptedException {
 	Connection conn = null;
 	PreparedStatement pstmt = null;
@@ -8715,6 +8711,7 @@ public class DataQuery extends RDMServicesConstants {
 	    sbQuery.append("WRITE_DEPT = ?, ");
 	    sbQuery.append("MODIFY_ACCESS = ?, ");
 	    sbQuery.append("MODIFY_DEPT = ?, ");
+	    sbQuery.append("KEY_COLUMN = ?, ");
 	    sbQuery.append("ALLOW_MULTIPLE_UPDATES = ?");
 	    sbQuery.append(" where ");
 	    sbQuery.append("REPORT = ?");
@@ -8733,8 +8730,9 @@ public class DataQuery extends RDMServicesConstants {
 	    pstmt.setString(9, slWriteDept.join('|'));
 	    pstmt.setString(10, slModifyAccess.join('|'));
 	    pstmt.setString(11, slModifyDept.join('|'));
-	    pstmt.setBoolean(12, bAllowUpdates);
-	    pstmt.setString(13, sReport);
+	    pstmt.setString(12, sKeyColumn);
+	    pstmt.setBoolean(13, bAllowUpdates);
+	    pstmt.setString(14, sReport);
 
 	    pstmt.executeUpdate();
 	} finally {
@@ -8777,6 +8775,47 @@ public class DataQuery extends RDMServicesConstants {
 	}
 
 	return slColumns;
+    }
+
+    public String[] getReportKeyColumn(String sReport) throws SQLException, InterruptedException {
+	Connection conn = null;
+	Statement stmt = null;
+	ResultSet rs = null;
+	String sKeyColumn = "";
+	String sColumnName = "";
+
+	try {
+	    conn = connectionPool.getConnection();
+	    stmt = conn.createStatement();
+
+	    StringBuilder sbQuery = new StringBuilder();
+	    sbQuery.append("select KEY_COLUMN,COLUMN_HEADER from " + SCHEMA_NAME + ".MAINTENANCE_REPORTS");
+	    sbQuery.append(" where REPORT = '" + sReport + "'");
+
+	    rs = stmt.executeQuery(sbQuery.toString());
+	    if (rs.next()) {
+		sKeyColumn = rs.getString(KEY_COLUMN);
+		String columnName = rs.getString(COLUMN_HEADER);
+
+		if (columnName != null) {
+		    String[] saColumns = columnName.split("\\|");
+		    for (int i = 0; i < saColumns.length; i++) {
+			if (saColumns[i].contains("=")) {
+			    String[] column = saColumns[i].split("=");
+			    if (column[1].equals(sKeyColumn)) {
+				sColumnName = column[0];
+				break;
+			    }
+			}
+		    }
+		}
+	    }
+	} finally {
+	    close(stmt, rs);
+	    connectionPool.free(conn);
+	}
+
+	return new String[] { sKeyColumn, sColumnName };
     }
 
     public Map<String, String> getReportColumnHeaders(String sReport, boolean bColumnKey)
@@ -8899,7 +8938,6 @@ public class DataQuery extends RDMServicesConstants {
 			    mReportCols.put(sSelect, saColumn[1].trim());
 			} else {
 			    mReportCols.put(sSelect, saColumns[i].trim());
-			    mlReportCols.add(mReportCols);
 			}
 
 			mlReportCols.add(mReportCols);
@@ -8985,6 +9023,7 @@ public class DataQuery extends RDMServicesConstants {
 		mReport.put(REPORT, rs.getString(REPORT));
 		mReport.put(TEMPLATE, rs.getString(TEMPLATE));
 		mReport.put(DESCRIPTION, rs.getString(DESCRIPTION));
+		mReport.put(KEY_COLUMN, rs.getString(KEY_COLUMN));
 		mReport.put(COLUMN_HEADER, rs.getString(COLUMN_HEADER));
 		mReport.put(COLUMN_FORMULA, rs.getString(COLUMN_FORMULA));
 		mReport.put(COLUMN_RANGES, rs.getString(COLUMN_RANGES));
@@ -9027,6 +9066,7 @@ public class DataQuery extends RDMServicesConstants {
 		mReport.put(REPORT, rs.getString(REPORT));
 		mReport.put(TEMPLATE, rs.getString(TEMPLATE));
 		mReport.put(DESCRIPTION, rs.getString(DESCRIPTION));
+		mReport.put(KEY_COLUMN, rs.getString(KEY_COLUMN));
 		mReport.put(COLUMN_HEADER, rs.getString(COLUMN_HEADER));
 		mReport.put(COLUMN_FORMULA, rs.getString(COLUMN_FORMULA));
 		mReport.put(COLUMN_RANGES, rs.getString(COLUMN_RANGES));
@@ -9052,7 +9092,8 @@ public class DataQuery extends RDMServicesConstants {
 	return mReport;
     }
 
-    private void createReportTable(String sReportTab, StringList slColumns) throws SQLException, InterruptedException {
+    private void createReportTable(String sReportTab, String sKeyColumn, StringList slColumns)
+	    throws SQLException, InterruptedException {
 	Connection conn = null;
 	Statement stmt = null;
 
@@ -9074,9 +9115,9 @@ public class DataQuery extends RDMServicesConstants {
 	    }
 
 	    sbCols.append("is_updated boolean, ");
-	    sbCols.append("CONSTRAINT " + sReportTab + "_uk UNIQUE (Column1)");
+	    sbCols.append("CONSTRAINT " + sReportTab + "_uk UNIQUE (" + sKeyColumn + ")");
 
-	    String sQuery = "CREATE TABLE " + SCHEMA_NAME + "." + sReportTab + " ( " + sbCols.toString() + " )";
+	    String sQuery = "CREATE TABLE " + SCHEMA_NAME + "." + sReportTab + " " + sbCols.toString();
 	    stmt.executeUpdate(sQuery);
 	} finally {
 	    close(stmt, null);
@@ -9084,8 +9125,8 @@ public class DataQuery extends RDMServicesConstants {
 	}
     }
 
-    private void updateReportTable(String sReportTab, StringList slNewColumns, StringList slDelColumns)
-	    throws SQLException, InterruptedException {
+    private void updateReportTable(String sReportTab, String sKeyColumn, StringList slNewColumns,
+	    StringList slDelColumns) throws SQLException, InterruptedException {
 	Connection conn = null;
 	Statement stmt = null;
 
@@ -9120,14 +9161,18 @@ public class DataQuery extends RDMServicesConstants {
 
 	    String sQuery = "ALTER TABLE " + SCHEMA_NAME + "." + sReportTab + " " + sbCols.toString();
 	    stmt.executeUpdate(sQuery);
+
+	    sQuery = "ALTER TABLE " + SCHEMA_NAME + "." + sReportTab + " DROP CONSTRAINT " + sReportTab
+		    + "_uk, ADD CONSTRAINT " + sReportTab + "_uk UNIQUE (" + sKeyColumn + ")";
+	    stmt.executeUpdate(sQuery);
 	} finally {
 	    close(stmt, null);
 	    connectionPool.free(conn);
 	}
     }
 
-    @SuppressWarnings("deprecation")
-    public void insertReportRecord(String sReport, MapList mlRecords) throws SQLException, InterruptedException {
+    public void insertReportRecord(String sReport, String sKeyColumn, MapList mlRecords)
+	    throws SQLException, InterruptedException {
 	Connection conn = null;
 	PreparedStatement pstmt = null;
 
@@ -9150,14 +9195,17 @@ public class DataQuery extends RDMServicesConstants {
 	    }
 	    sbInsert.append(")");
 
+	    int idx = slColumns.indexOf(sKeyColumn);
+
 	    conn = connectionPool.getConnection();
 	    pstmt = conn.prepareStatement(sbInsert.toString());
 
 	    for (int i = 0; i < mlRecords.size(); i++) {
 		mRecord = mlRecords.get(i);
 		for (int j = 0, iSz = slColumns.size(); j < iSz; j++) {
-		    if (j == 0) {
-			pstmt.setTimestamp(1, new java.sql.Timestamp(Date.parse(mRecord.get(slColumns.get(j)).trim())));
+		    if (j == idx) {
+			pstmt.setTimestamp(j + 1,
+				new java.sql.Timestamp(Date.parse(mRecord.get(slColumns.get(j)).trim())));
 		    } else {
 			pstmt.setString(j + 1, mRecord.get(slColumns.get(j)).replace("'", "''").trim());
 		    }
@@ -9172,7 +9220,7 @@ public class DataQuery extends RDMServicesConstants {
 	}
     }
 
-    public void updateReportRecord(String sReport, Map<String, String> mRecord)
+    public void updateReportRecord(String sReport, String sKeyColumn, Map<String, String> mRecord)
 	    throws SQLException, InterruptedException {
 	Connection conn = null;
 	Statement stmt = null;
@@ -9191,8 +9239,8 @@ public class DataQuery extends RDMServicesConstants {
 		sbUpdate.append("'");
 	    }
 	    sbUpdate.append(" where ");
-	    sbUpdate.append("Column1 = '");
-	    sbUpdate.append(mRecord.get("Column1").trim());
+	    sbUpdate.append(sKeyColumn + " = '");
+	    sbUpdate.append(mRecord.get(sKeyColumn).trim());
 	    sbUpdate.append("'");
 
 	    conn = connectionPool.getConnection();
@@ -9204,7 +9252,8 @@ public class DataQuery extends RDMServicesConstants {
 	}
     }
 
-    public void deleteReportRecord(String sReport, String sDateTime) throws SQLException, InterruptedException {
+    public void deleteReportRecord(String sReport, String sKeyColumn, String sDateTime)
+	    throws SQLException, InterruptedException {
 	Connection conn = null;
 	Statement stmt = null;
 
@@ -9212,7 +9261,7 @@ public class DataQuery extends RDMServicesConstants {
 	    StringBuilder sbQuery = new StringBuilder();
 	    sbQuery.append("delete from " + SCHEMA_NAME + "." + sReport.replace(" ", "_"));
 	    sbQuery.append(" where ");
-	    sbQuery.append("Column1 = '");
+	    sbQuery.append(sKeyColumn + " = '");
 	    sbQuery.append(sDateTime);
 	    sbQuery.append("'");
 
@@ -9244,11 +9293,18 @@ public class DataQuery extends RDMServicesConstants {
 	    Map<String, String> mRecord = null;
 	    String sColumn = null;
 
+	    String[] saColumn = getReportKeyColumn(sReport);
+	    String sKeyColumn = saColumn[0];
+	    String sColumnName = saColumn[1];
+	    if ("".equals(sKeyColumn) || "".equals(sColumnName)) {
+		throw new SQLException("Missing Column name for Record Entry Time");
+	    }
+
 	    StringBuilder sbQuery = new StringBuilder();
 	    sbQuery.append("select * from " + SCHEMA_NAME + "." + sReport.replace(" ", "_"));
 	    sbQuery.append(" where ");
-	    sbQuery.append("Column1 BETWEEN '" + sFromDate + " 12:00:00 AM' AND '" + sToDate + " 11:59:59 PM'");
-	    sbQuery.append(" ORDER BY Column1 ASC");
+	    sbQuery.append(sColumnName + " BETWEEN '" + sFromDate + " 12:00:00 AM' AND '" + sToDate + " 11:59:59 PM'");
+	    sbQuery.append(" ORDER BY " + sColumnName + " ASC");
 
 	    conn = connectionPool.getConnection();
 	    stmt = conn.createStatement();
@@ -9290,6 +9346,13 @@ public class DataQuery extends RDMServicesConstants {
 	    StringList slColumns = getReportColumns(sReport);
 	    Map<String, String> mRecord = null;
 	    int iSz = slColumns.size();
+
+	    String[] saColumn = getReportKeyColumn(sReport);
+	    String sKeyColumn = saColumn[0];
+	    String sColumnName = saColumn[1];
+	    if ("".equals(sKeyColumn) || "".equals(sColumnName)) {
+		throw new SQLException("Missing Column name for Record Entry Time");
+	    }
 
 	    StringBuilder sbQuery = new StringBuilder();
 	    sbQuery.append("select * from " + SCHEMA_NAME + "." + sReport.replace(" ", "_"));
@@ -9367,7 +9430,7 @@ public class DataQuery extends RDMServicesConstants {
 		}
 	    }
 
-	    sbQuery.append(" ORDER BY Column1 ASC");
+	    sbQuery.append(" ORDER BY " + sColumnName + " ASC");
 
 	    conn = connectionPool.getConnection();
 	    stmt = conn.createStatement();
@@ -9391,24 +9454,23 @@ public class DataQuery extends RDMServicesConstants {
 
     public StringList getRecordTimestamps(String sReport, Map<String, String> mSearchCriteria)
 	    throws SQLException, InterruptedException, ParseException {
-	Connection conn = null;
-	Statement stmt = null;
-	ResultSet rs = null;
 	StringList slTimeStamps = new StringList();
 
-	try {
-	    SimpleDateFormat sdfOut = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-	    SimpleDateFormat sdfIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	SimpleDateFormat sdfOut = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+	SimpleDateFormat sdfIn = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-	    Map<String, String> mRecord = new HashMap<String, String>();
-	    MapList mlRecords = getRecords(sReport, mSearchCriteria);
-	    for (int i = 0, iSz = mlRecords.size(); i < iSz; i++) {
-		mRecord = mlRecords.get(i);
-		slTimeStamps.add(sdfOut.format(sdfIn.parse(mRecord.get("Column1"))));
-	    }
-	} finally {
-	    close(stmt, rs);
-	    connectionPool.free(conn);
+	String[] saColumn = getReportKeyColumn(sReport);
+	String sKeyColumn = saColumn[0];
+	String sColumnName = saColumn[1];
+	if ("".equals(sKeyColumn) || "".equals(sColumnName)) {
+	    throw new SQLException("Missing Column name for Record Entry Time");
+	}
+
+	Map<String, String> mRecord = new HashMap<String, String>();
+	MapList mlRecords = getRecords(sReport, mSearchCriteria);
+	for (int i = 0, iSz = mlRecords.size(); i < iSz; i++) {
+	    mRecord = mlRecords.get(i);
+	    slTimeStamps.add(sdfOut.format(sdfIn.parse(mRecord.get(sColumnName))));
 	}
 
 	return slTimeStamps;
@@ -9422,8 +9484,16 @@ public class DataQuery extends RDMServicesConstants {
 	Map<String, String> mRecord = new HashMap<String, String>();
 
 	try {
+	    String[] saColumn = getReportKeyColumn(sReport);
+	    String sKeyColumn = saColumn[0];
+	    String sColumnName = saColumn[1];
+	    if ("".equals(sKeyColumn) || "".equals(sColumnName)) {
+		throw new SQLException("Missing Column name for Record Entry Time");
+	    }
+
 	    String sColumn = null;
-	    String sQuery = "select * from " + SCHEMA_NAME + "." + sReport.replace(" ", "_") + " where Column1 = ?";
+	    String sQuery = "select * from " + SCHEMA_NAME + "." + sReport.replace(" ", "_") + " where " + sColumnName
+		    + " = ?";
 	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
 
 	    StringList slColumns = getReportColumns(sReport);
@@ -9458,9 +9528,17 @@ public class DataQuery extends RDMServicesConstants {
 	StringList slTimeStamps = new StringList();
 
 	try {
+	    String[] saColumn = getReportKeyColumn(sReport);
+	    String sKeyColumn = saColumn[0];
+	    String sColumnName = saColumn[1];
+	    if ("".equals(sKeyColumn) || "".equals(sColumnName)) {
+		throw new SQLException("Missing Column name for Record Entry Time");
+	    }
+
 	    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-	    String sQuery = "select \"time\"(Column1) as logTime from " + SCHEMA_NAME + "." + sReport.replace(" ", "_")
-		    + " where date(Column1) = ? ORDER BY Column1 DESC";
+	    String sQuery = "select \"time\"(" + sColumnName + ") as logTime from " + SCHEMA_NAME + "."
+		    + sReport.replace(" ", "_") + " where date(" + sColumnName + ") = ? ORDER BY " + sColumnName
+		    + " DESC";
 
 	    conn = connectionPool.getConnection();
 	    pstmt = conn.prepareStatement(sQuery);
@@ -9478,8 +9556,8 @@ public class DataQuery extends RDMServicesConstants {
 	return slTimeStamps;
     }
 
-    public Map<String, String> getReportLastRecord(String sReport, String sDate, String sBasedOnCol, String sBasedOnVal)
-	    throws Exception {
+    public Map<String, String> getReportLastRecord(String sReport, String sKeyColumn, String sDate, String sBasedOnCol,
+	    String sBasedOnVal) throws Exception {
 	Connection conn = null;
 	Statement stmt = null;
 	ResultSet rs = null;
@@ -9492,11 +9570,11 @@ public class DataQuery extends RDMServicesConstants {
 
 	    StringBuilder sbQuery = new StringBuilder();
 	    sbQuery.append("select * from " + SCHEMA_NAME + "." + sReport.replace(" ", "_"));
-	    sbQuery.append(" where Column1 < '" + sDate + "'");
+	    sbQuery.append(" where " + sKeyColumn + " < '" + sDate + "'");
 	    if (!"".equals(sBasedOnCol) && !"".equals(sBasedOnVal)) {
 		sbQuery.append(" and " + sBasedOnCol + " = '" + sBasedOnVal + "'");
 	    }
-	    sbQuery.append(" ORDER BY Column1 DESC LIMIT 1");
+	    sbQuery.append(" ORDER BY " + sKeyColumn + " DESC LIMIT 1");
 
 	    conn = connectionPool.getConnection();
 	    stmt = conn.createStatement();
@@ -9799,7 +9877,7 @@ public class DataQuery extends RDMServicesConstants {
 		sKey = itr.next();
 		sVal = mAcctCredentials.get(sKey);
 		if (CNTRL_PWD.equals(sKey) || MAILID_PWD.equals(sKey)) {
-		    sVal = encrypt.encrypt(sVal, ALGORITHM.DES);
+		    sVal = encrypt.encrypt(sVal, ALGORITHM_DES);
 		}
 
 		pstmt.setString(1, sVal);
@@ -9835,7 +9913,7 @@ public class DataQuery extends RDMServicesConstants {
 		sVal = rs.getString(ACCT_KEY_VAL);
 
 		if (CNTRL_PWD.equals(sKey) || MAILID_PWD.equals(sKey)) {
-		    sVal = encrypt.decrypt(sVal, ALGORITHM.DES);
+		    sVal = encrypt.decrypt(sVal, ALGORITHM_DES);
 		}
 		mAcctCredentials.put(sKey, sVal);
 	    }

@@ -4,133 +4,80 @@ import java.io.UnsupportedEncodingException;
 import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.spec.AlgorithmParameterSpec;
-import java.security.spec.KeySpec;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.PBEParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 
-import com.client.util.RDMServicesConstants.ALGORITHM;
+import com.client.util.RDMServicesConstants;
 
 public class EncryptDecrypt {
-    private int iterationCount = 25;
-    private String key = "~!@#$%^&*()_+|-={}[]:;'<>?,./";
-    private byte[] pk = { (byte) 0x53, (byte) 0x4B, (byte) 0x61, (byte) 0x72, (byte) 0x54, (byte) 0x68, (byte) 0x69,
-	    (byte) 0x4B };
+    private String key = "~!@#$%^&*()_+|-={}[]:;'<>?,./\t\r\n";
 
     public EncryptDecrypt() {
+
     }
 
-    public String encrypt(String text, ALGORITHM algorithm) throws Exception {
-	if (text == null || "".equals(text.trim())) {
-	    return null;
-	}
-
-	String encrypted = "";
-	switch (algorithm) {
-	case AES:
-	    encrypted = aesEncryptDecrypt(Cipher.ENCRYPT_MODE, text);
-	    break;
-	case DES:
-	    encrypted = desEncryptDecrypt(Cipher.ENCRYPT_MODE, text);
-	    break;
-	case MD5withDES:
-	    encrypted = MD5AndDESEncryptDecrypt(Cipher.ENCRYPT_MODE, text);
-	    break;
-	}
-
-	return encrypted;
+    public String encrypt(String text, String algorithm) throws Exception {
+	byte[] b = encrypt(text.getBytes(), algorithm);
+	return new String(Base64.encodeBase64(b));
     }
 
-    public String decrypt(String text, ALGORITHM algorithm) throws Exception {
-	if (text == null || "".equals(text.trim())) {
-	    return null;
+    public byte[] encrypt(byte[] bytes, String algorithm) throws Exception {
+	if (RDMServicesConstants.ALGORITHM_AES.equals(algorithm)) {
+	    return aesEncryptDecrypt(Cipher.ENCRYPT_MODE, bytes);
+	} else if (RDMServicesConstants.ALGORITHM_DES.equals(algorithm)) {
+	    return desEncryptDecrypt(Cipher.ENCRYPT_MODE, bytes);
 	}
-
-	String decrypted = "";
-	switch (algorithm) {
-	case AES:
-	    decrypted = aesEncryptDecrypt(Cipher.DECRYPT_MODE, text);
-	    break;
-	case DES:
-	    decrypted = desEncryptDecrypt(Cipher.DECRYPT_MODE, text);
-	    break;
-	case MD5withDES:
-	    decrypted = MD5AndDESEncryptDecrypt(Cipher.DECRYPT_MODE, text);
-	    break;
-	}
-
-	return decrypted;
+	return null;
     }
 
-    private String aesEncryptDecrypt(int mode, String s) throws Exception {
-	String sRet = null;
+    public String decrypt(String text, String algorithm) throws Exception {
+	byte[] b = decrypt(text.getBytes(), algorithm);
+	return new String(b);
+    }
 
-	Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-	Cipher cipher = Cipher.getInstance("AES");
+    public byte[] decrypt(byte[] bytes, String algorithm) throws Exception {
+	if (RDMServicesConstants.ALGORITHM_AES.equals(algorithm)) {
+	    return aesEncryptDecrypt(Cipher.DECRYPT_MODE, bytes);
+	} else if (RDMServicesConstants.ALGORITHM_DES.equals(algorithm)) {
+	    return desEncryptDecrypt(Cipher.DECRYPT_MODE, bytes);
+	}
+	return null;
+    }
+
+    private byte[] aesEncryptDecrypt(int mode, byte[] bytes) throws Exception {
+	Key aesKey = new SecretKeySpec(key.getBytes(), RDMServicesConstants.ALGORITHM_AES);
+	Cipher cipher = Cipher.getInstance(RDMServicesConstants.ALGORITHM_AES);
 	if (mode == Cipher.ENCRYPT_MODE) {
 	    cipher.init(Cipher.ENCRYPT_MODE, aesKey);
-	    byte[] encrypted = cipher.doFinal(s.getBytes());
-	    sRet = new String(Base64.encodeBase64(encrypted));
+	    return cipher.doFinal(bytes);
 	} else if (mode == Cipher.DECRYPT_MODE) {
 	    cipher.init(Cipher.DECRYPT_MODE, aesKey);
-	    byte[] in = Base64.decodeBase64(s.getBytes());
-	    byte[] out = cipher.doFinal(in);
-	    sRet = new String(out);
+	    byte[] in = Base64.decodeBase64(bytes);
+	    return cipher.doFinal(in);
 	}
-
-	return sRet;
+	return null;
     }
 
-    private String desEncryptDecrypt(int mode, String s) throws Exception {
-	String sRet = null;
-
+    private byte[] desEncryptDecrypt(int mode, byte[] bytes) throws Exception {
 	DESKeySpec dks = new DESKeySpec(key.getBytes());
-	SecretKeyFactory skf = SecretKeyFactory.getInstance("DES");
+	SecretKeyFactory skf = SecretKeyFactory.getInstance(RDMServicesConstants.ALGORITHM_DES);
 	SecretKey desKey = skf.generateSecret(dks);
-
-	Cipher cipher = Cipher.getInstance("DES");
+	Cipher cipher = Cipher.getInstance(RDMServicesConstants.ALGORITHM_DES);
 	if (mode == Cipher.ENCRYPT_MODE) {
 	    cipher.init(Cipher.ENCRYPT_MODE, desKey);
-	    byte[] encrypted = cipher.doFinal(s.getBytes());
-	    sRet = new String(Base64.encodeBase64(encrypted));
+	    return cipher.doFinal(bytes);
 	} else if (mode == Cipher.DECRYPT_MODE) {
 	    cipher.init(Cipher.DECRYPT_MODE, desKey);
-	    byte[] in = Base64.decodeBase64(s.getBytes());
-	    byte[] out = cipher.doFinal(in);
-	    sRet = new String(out);
+	    byte[] in = Base64.decodeBase64(bytes);
+	    return cipher.doFinal(in);
 	}
-
-	return sRet;
-    }
-
-    private String MD5AndDESEncryptDecrypt(int mode, String s) throws Exception {
-	String sRet = null;
-
-	KeySpec keySpec = new PBEKeySpec(key.toCharArray(), pk, iterationCount);
-	SecretKey secretKey = SecretKeyFactory.getInstance("PBEWithMD5AndDES").generateSecret(keySpec);
-	AlgorithmParameterSpec paramSpec = new PBEParameterSpec(pk, iterationCount);
-
-	Cipher cipher = Cipher.getInstance(secretKey.getAlgorithm());
-	if (mode == Cipher.ENCRYPT_MODE) {
-	    cipher.init(Cipher.ENCRYPT_MODE, secretKey, paramSpec);
-	    byte[] in = s.getBytes();
-	    byte[] out = cipher.doFinal(in);
-	    sRet = new String(Base64.encodeBase64(out));
-	} else if (mode == Cipher.DECRYPT_MODE) {
-	    cipher.init(Cipher.DECRYPT_MODE, secretKey, paramSpec);
-	    byte[] in = Base64.decodeBase64(s.getBytes());
-	    byte[] out = cipher.doFinal(in);
-	    sRet = new String(out);
-	}
-	return sRet;
+	return null;
     }
 
     public String encryptWithSHA(String text) throws NoSuchAlgorithmException, UnsupportedEncodingException {

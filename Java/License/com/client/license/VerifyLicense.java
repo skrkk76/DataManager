@@ -1,12 +1,11 @@
 package com.client.license;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.NetworkInterface;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.Locale;
 
 import javax0.license3j.License;
@@ -18,20 +17,20 @@ public class VerifyLicense {
     public static void main(String[] args) throws Exception {
 	System.out.print("License File Path: ");
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	String sLicenseFile = br.readLine().trim();
+	String sPath = br.readLine().trim();
 
-	if ("".equals(sLicenseFile)) {
+	if ("".equals(sPath)) {
 	    System.out.print("Please enter License File Path");
 	    return;
 	}
 
-	boolean isValid = verifyLicense(sLicenseFile);
+	boolean isValid = verifyLicense(sPath);
 	System.out.println(isValid ? "Valid license" : "Invalid license");
     }
 
-    private static boolean verifyLicense(String sLicenseFile) throws Exception {
+    private static boolean verifyLicense(String sPath) throws Exception {
 	License license;
-	try (LicenseReader reader = new LicenseReader(sLicenseFile)) {
+	try (LicenseReader reader = new LicenseReader(new File(sPath, LicenseKeys.LICENSE))) {
 	    license = reader.read();
 	} catch (IOException e) {
 	    throw new RuntimeException("Error reading license file " + e);
@@ -54,9 +53,9 @@ public class VerifyLicense {
 
 	try {
 	    Date todayDate = new Date();
-	    String OS = System.getProperty("os.name").toLowerCase();
-	    String sMachineId = getMachineId(OS);
-	    String sMacAddress = getMacAddress(OS);
+	    String[] systemInfo = LicenseServer.getSystemInfo();
+	    String sMachineId = systemInfo[0];
+	    String sMacAddress = systemInfo[1];
 
 	    System.out.println("sMachineId  : " + sMachineId);
 	    System.out.println("sMacAddress : " + sMacAddress);
@@ -69,61 +68,5 @@ public class VerifyLicense {
 	}
 
 	return false;
-    }
-
-    private static String getMacAddress(String OS) throws IOException {
-	String sMacAddress = null;
-
-	if (OS.indexOf("win") >= 0) {
-	    Enumeration<NetworkInterface> networks = NetworkInterface.getNetworkInterfaces();
-	    while (networks.hasMoreElements()) {
-		NetworkInterface network = networks.nextElement();
-		byte[] mac = network.getHardwareAddress();
-		if (mac != null) {
-		    StringBuilder sb = new StringBuilder();
-		    for (int i = 0; i < mac.length; i++) {
-			sb.append(String.format("%02X%s", mac[i], (i < mac.length - 1) ? "-" : ""));
-		    }
-		    sMacAddress = sb.toString();
-		}
-	    }
-	} else if (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") >= 0) {
-	    Process p = Runtime.getRuntime().exec("ifconfig");
-	    BufferedReader in = new BufferedReader(new java.io.InputStreamReader(p.getInputStream()));
-	    String line = in.readLine().trim();
-	    sMacAddress = line.substring(line.lastIndexOf(" "));
-	}
-
-	return sMacAddress;
-    }
-
-    private static String getMachineId(String OS) throws IOException, InterruptedException {
-	String sMachineId = null;
-
-	if (OS.indexOf("win") >= 0) {
-	    ProcessBuilder builder = new ProcessBuilder("powershell.exe", "-Command",
-		    "(Get-CimInstance -Class Win32_ComputerSystemProduct).UUID");
-	    builder.redirectErrorStream(true);
-	    Process process = builder.start();
-
-	    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-	    String line;
-	    while ((line = reader.readLine()) != null) {
-		String value = line.trim();
-		if (!(value.isEmpty() || value.contains("Guid") || value.contains("--"))) {
-		    sMachineId = value;
-		    break;
-		}
-	    }
-
-	    process.waitFor();
-	} else if (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") >= 0) {
-	    Process process = Runtime.getRuntime().exec("cat /etc/machine-id");
-	    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-	    String line = reader.readLine();
-	    sMachineId = line.trim();
-	}
-
-	return sMachineId;
     }
 }

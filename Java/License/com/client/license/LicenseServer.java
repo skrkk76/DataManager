@@ -42,7 +42,7 @@ public class LicenseServer {
 	return sMacAddress;
     }
 
-    private static String getMachineId(String OS) throws InterruptedException, IOException {
+    private static String getMachineId(String OS) throws IOException, InterruptedException {
 	String sMachineId = null;
 
 	if (OS.indexOf("win") >= 0) {
