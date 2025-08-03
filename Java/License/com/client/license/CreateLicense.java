@@ -63,8 +63,6 @@ public class CreateLicense {
 
 	Date expiryDate = null;
 	if ("Y".equalsIgnoreCase(sEval)) {
-	    rooms = 2;
-
 	    System.out.print("Specify trial period [no of days, default 60]: ");
 	    br = new BufferedReader(new InputStreamReader(System.in));
 	    String sNoDays = br.readLine().trim();
