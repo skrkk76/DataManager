@@ -39,6 +39,10 @@ public class LicenseServer {
 	    sMacAddress = line.substring(line.lastIndexOf(" "));
 	}
 
+	if (sMacAddress != null) {
+	    sMacAddress = sMacAddress.trim();
+	}
+
 	return sMacAddress;
     }
 

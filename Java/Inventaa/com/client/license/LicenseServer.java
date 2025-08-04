@@ -39,10 +39,14 @@ public class LicenseServer {
 	    sMacAddress = line.substring(line.lastIndexOf(" "));
 	}
 
+	if (sMacAddress != null) {
+	    sMacAddress = sMacAddress.trim();
+	}
+
 	return sMacAddress;
     }
 
-    private static String getMachineId(String OS) throws IOException, InterruptedException {
+    private static String getMachineId(String OS) throws InterruptedException, IOException {
 	String sMachineId = null;
 
 	if (OS.indexOf("win") >= 0) {

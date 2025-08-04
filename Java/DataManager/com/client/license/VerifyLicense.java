@@ -15,6 +15,7 @@ public class VerifyLicense extends RDMServicesConstants {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
 
     public static boolean verifyLicense() throws Exception {
+	boolean isLicValid = false;
 	try {
 	    License license;
 	    try (LicenseReader reader = new LicenseReader(RDMServicesUtils.getLicenseFile())) {
@@ -24,6 +25,8 @@ public class VerifyLicense extends RDMServicesConstants {
 	    }
 
 	    byte[] public_key = RDMServicesUtils.getPublicKey();
+	    // dump(public_key);
+
 	    if (!license.isOK(public_key)) {
 		return false;
 	    }
@@ -37,13 +40,13 @@ public class VerifyLicense extends RDMServicesConstants {
 	    String sMachineId = systemInfo[0];
 	    String sMacAddress = systemInfo[1];
 
-	    return sMachineId.equals(machineId) && sMacAddress.equals(macAddress)
+	    isLicValid = sMachineId.equals(machineId) && sMacAddress.equals(macAddress)
 		    && (todayDate.before(expiryDate) || todayDate.equals(expiryDate));
 	} catch (Exception e) {
 	    e.printStackTrace(System.out);
 	}
 
-	return false;
+	return isLicValid;
     }
 
     public static int getLicenseRoomCount() throws Exception {
