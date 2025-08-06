@@ -21,8 +21,8 @@ public class RDMScheduler {
 
     public static void main(String[] args) throws Throwable {
 	try {
-	    if(args.length == 0) {
-        	throw new Exception("Missing args");
+	    if (args.length == 0) {
+		throw new Exception("Missing args");
 	    }
 
 	    boolean licensed = VerifyLicense.verifyLicense();
@@ -50,7 +50,7 @@ public class RDMScheduler {
 	Map<String, String[]> mParams = null;
 	Map<String, Map<String, String[]>> mControllerParams = new HashMap<String, Map<String, String[]>>();
 	ServicesSession session = new ServicesSession();
-	
+
 	if (args.length == 1) {
 	    slControllers.addAll(session.getAllControllers(args[0]));
 	} else {

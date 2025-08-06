@@ -8646,7 +8646,7 @@ public class DataQuery extends RDMServicesConstants {
 	    sbCols.append("is_updated boolean, ");
 	    sbCols.append("CONSTRAINT " + sReportTab + "_uk UNIQUE (" + sKeyColumn + ")");
 
-	    String sQuery = "CREATE TABLE " + SCHEMA_NAME + "." + sReportTab + " " + sbCols.toString();
+	    String sQuery = "CREATE TABLE " + SCHEMA_NAME + "." + sReportTab + " ( " + sbCols.toString() + " ) ";
 	    stmt.executeUpdate(sQuery);
 	} finally {
 	    close(stmt, null);
