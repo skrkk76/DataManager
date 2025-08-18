@@ -19,7 +19,6 @@
 		String sType = request.getParameter("roomType");
 		String sStatus = request.getParameter("roomStatus");
 		String sGroup = request.getParameter("roomGroup");
-		String cntrlVersion = request.getParameter("cntrlVersion");
 		
 		Map<String, String> mRoomInfo = new HashMap<String, String>();
 		mRoomInfo.put(RDMServicesConstants.ROOM_ID, sRoomId);
@@ -27,7 +26,6 @@
 		mRoomInfo.put(RDMServicesConstants.CNTRL_TYPE, sType);
 		mRoomInfo.put(RDMServicesConstants.ROOM_STATUS, sStatus);
 		mRoomInfo.put(RDMServicesConstants.GROUP_NAME, sGroup);
-		mRoomInfo.put(RDMServicesConstants.CNTRL_VERSION, cntrlVersion);
 
 		if("add".equals(sAction))
 		{

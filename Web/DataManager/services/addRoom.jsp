@@ -128,16 +128,6 @@
 					</select>
 				</td>
 			</tr>
-
-			<tr>
-				<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.Controller_Version") %></b></td>
-				<td class="input">
-					<select id="cntrlVersion" name="cntrlVersion">
-						<option value="<%= RDMServicesConstants.CNTRL_VERSION_NEW %>" selected="selected"><%= resourceBundle.getProperty("DataManager.DisplayText.New") %></option>
-						<option value="<%= RDMServicesConstants.CNTRL_VERSION_OLD %>"><%= resourceBundle.getProperty("DataManager.DisplayText.Old") %></option>
-					</select>
-				</td>
-			</tr>
 			<tr>
 				<td colspan="2">
 					&nbsp;

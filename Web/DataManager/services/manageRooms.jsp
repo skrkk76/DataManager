@@ -42,9 +42,8 @@
 			
 			var roomType = document.getElementById(roomId+'_type'); 
 			var roomStatus = document.getElementById(roomId+'_status');
-			var cntrlVersion = document.getElementById(roomId+'_version');
 
-			parent.frames['hiddenFrame'].document.location.href = "manageRoomProcess.jsp?roomId="+roomId+"&roomIP="+roomIP.value+"&roomType="+roomType.value+"&roomStatus="+roomStatus.value+"&roomGroup="+roomGroup.value+"&cntrlVersion="+cntrlVersion.value+"&mode=edit";
+			parent.frames['hiddenFrame'].document.location.href = "manageRoomProcess.jsp?roomId="+roomId+"&roomIP="+roomIP.value+"&roomType="+roomType.value+"&roomStatus="+roomStatus.value+"&roomGroup="+roomGroup.value+"&mode=edit";
 		}
 		
 		function chgCredentials(roomId)
@@ -72,7 +71,6 @@
 				<th class="label" width="20%"><%= resourceBundle.getProperty("DataManager.DisplayText.Room_Type") %></th>
 				<th class="label" width="25%"><%= resourceBundle.getProperty("DataManager.DisplayText.Group") %></th>
 				<th class="label" width="10%"><%= resourceBundle.getProperty("DataManager.DisplayText.Status") %></th>
-				<th class="label" width="10%"><%= resourceBundle.getProperty("DataManager.DisplayText.Controller_Version") %></th>
 				<th class="label" width="5%"><%= resourceBundle.getProperty("DataManager.DisplayText.Actions") %></th>
 			</tr>
 <%
@@ -84,7 +82,6 @@
 			String roomGroup = null;
 			String cntrlGroup = null;
 			String sHeader = null;
-			String cntrlVersion = null;
 			StringList slHeaders = new StringList();
 			MapList mlRooms = RDMServicesUtils.getRoomsList();
 			mlRooms.sort(RDMServicesConstants.CNTRL_TYPE, RDMServicesConstants.ROOM_ID);
@@ -104,7 +101,6 @@
 				roomType = mInfo.get(RDMServicesConstants.CNTRL_TYPE);
 				roomStatus = mInfo.get(RDMServicesConstants.ROOM_STATUS);
 				roomGroup = mInfo.get(RDMServicesConstants.GROUP_NAME);
-				cntrlVersion = mInfo.get(RDMServicesConstants.CNTRL_VERSION);
 				
 				sHeader = (roomType.startsWith("General") ? "General" : roomType);
 				if(!slHeaders.contains(sHeader))
@@ -148,12 +144,6 @@
 						<select id="<%= roomId %>_status" name="<%= roomId %>_status">
 							<option value="<%= RDMServicesConstants.ACTIVE %>" <%= RDMServicesConstants.ACTIVE.equals(roomStatus) ? "Selected" : ""%>><%= resourceBundle.getProperty("DataManager.DisplayText.Active") %></option>
 							<option value="<%= RDMServicesConstants.INACTIVE %>" <%= RDMServicesConstants.INACTIVE.equals(roomStatus) ? "Selected" : ""%>><%= resourceBundle.getProperty("DataManager.DisplayText.Inactive") %></option>
-						</select>
-					</td>
-					<td class="input">
-						<select id="<%= roomId %>_version" name="<%= roomId %>_version">
-							<option value="<%= RDMServicesConstants.CNTRL_VERSION_NEW %>" <%= RDMServicesConstants.CNTRL_VERSION_NEW.equals(cntrlVersion) ? "Selected" : ""%>><%= resourceBundle.getProperty("DataManager.DisplayText.New") %></option>
-							<option value="<%= RDMServicesConstants.CNTRL_VERSION_OLD %>" <%= RDMServicesConstants.CNTRL_VERSION_OLD.equals(cntrlVersion) ? "Selected" : ""%>><%= resourceBundle.getProperty("DataManager.DisplayText.Old") %></option>
 						</select>
 					</td>
 					<td class="input" style="text-align:center">

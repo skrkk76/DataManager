@@ -64,7 +64,7 @@
 	<form name="frm">
 		<table align="center" border="0" cellpadding="2" cellspacing="1" width="<%= winWidth * 0.5 %>">
 			<tr>
-				<td colspan="6" style="text-align: right;"><input type="button" name="Add" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Add_Room") %>" onClick="addRoom()"></td>
+				<td colspan="7" style="text-align: right;"><input type="button" name="Add" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Add_Room") %>" onClick="addRoom()"></td>
 			</tr>
 			<tr>
 				<th class="label" width="20%"><%= resourceBundle.getProperty("DataManager.DisplayText.Room_Name") %></th>

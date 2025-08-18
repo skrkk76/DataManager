@@ -40,13 +40,29 @@ public class GetTargetId {
 		}
 	    }
 	} else if (OS.indexOf("nix") >= 0 || OS.indexOf("nux") >= 0 || OS.indexOf("aix") >= 0) {
-	    Process p = Runtime.getRuntime().exec("ifconfig");
-	    BufferedReader in = new BufferedReader(new java.io.InputStreamReader(p.getInputStream()));
-	    String line = in.readLine().trim();
-	    sMacAddress = line.substring(line.lastIndexOf(" "));
+	    Process process = Runtime.getRuntime().exec("ip link");
+	    BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+
+	    boolean b = false;
+	    String line;
+	    while ((line = reader.readLine()) != null) {
+		String value = line.trim();
+		if (value.contains("BROADCAST,MULTICAST,UP,LOWER_UP")) {
+		    b = true;
+		}
+
+		if (b && value.contains("link/ether")) {
+		    value = value.substring(value.indexOf(" ")).trim();
+		    sMacAddress = value.substring(0, value.indexOf(" ")).trim();
+		    break;
+		}
+	    }
 	}
 
-	return sMacAddress.trim();
+	if (sMacAddress != null) {
+	    sMacAddress = sMacAddress.trim();
+	}
+	return sMacAddress;
     }
 
     private static String getMachineId(String OS) throws InterruptedException, IOException {
@@ -75,6 +91,9 @@ public class GetTargetId {
 	    sMachineId = reader.readLine();
 	}
 
-	return sMachineId.trim();
+	if (sMachineId != null) {
+	    sMachineId = sMachineId.trim();
+	}
+	return sMachineId;
     }
 }

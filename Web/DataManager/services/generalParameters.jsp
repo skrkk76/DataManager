@@ -105,7 +105,6 @@
 	ParamSettings mParam = null;
 	
 	String sController = request.getParameter("controller");
-	String sCntrlVersion = RDMSession.getControllerVersion(sController);
 	
 	PLCServices client = new PLCServices(RDMSession, sController);
 	String sCntrlType = client.getControllerType();
