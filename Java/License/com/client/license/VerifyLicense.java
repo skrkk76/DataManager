@@ -29,44 +29,63 @@ public class VerifyLicense {
     }
 
     private static boolean verifyLicense(String sPath) throws Exception {
-	License license;
-	try (LicenseReader reader = new LicenseReader(new File(sPath, LicenseKeys.LICENSE))) {
-	    license = reader.read();
-	} catch (IOException e) {
-	    throw new RuntimeException("Error reading license file " + e);
-	}
-
-	if (!license.isOK(LicenseKeys.public_key)) {
-	    System.out.println("Invalid License");
-	    return false;
-	}
-
-	String machineId = license.get(LicenseKeys.MACHINE_ID).getString();
-	String macAddress = license.get(LicenseKeys.MAC_ADDRESS).getString();
-	Date expiryDate = license.get(LicenseKeys.EXPIRY_DATE).getDate();
-	int rooms = license.get(LicenseKeys.ROOM_COUNT).getInt();
-
-	System.out.println("Machine Id  : " + machineId);
-	System.out.println("MAC Address : " + macAddress);
-	System.out.println("Expiry Date : " + sdf.format(expiryDate));
-	System.out.println("Room Count  : " + rooms);
-
+	boolean isLicValid = false;
 	try {
+	    License license;
+	    try (LicenseReader reader = new LicenseReader(new File(sPath, LicenseKeys.LICENSE))) {
+		license = reader.read();
+	    } catch (IOException e) {
+		throw new RuntimeException("Error reading license file " + e);
+	    }
+
+	    byte[] public_key = LicenseKeys.public_key;
+	    // dump(public_key);
+
+	    if (!license.isOK(public_key)) {
+		System.out.println("Invalid License");
+		return false;
+	    }
+
+	    String machineId = license.get(LicenseKeys.MACHINE_ID).getString();
+	    String macAddress = license.get(LicenseKeys.MAC_ADDRESS).getString();
+	    Date expiryDate = license.get(LicenseKeys.EXPIRY_DATE).getDate();
+	    int rooms = license.get(LicenseKeys.ROOM_COUNT).getInt();
+
+	    System.out.println("License Details....");
+	    System.out.println("Machine Id  : " + machineId);
+	    System.out.println("MAC Address : " + macAddress);
+	    System.out.println("Expiry Date : " + sdf.format(expiryDate));
+	    System.out.println("Room Count  : " + rooms);
+	    System.out.println("");
+
 	    Date todayDate = new Date();
 	    String[] systemInfo = LicenseServer.getSystemInfo();
 	    String sMachineId = systemInfo[0];
 	    String sMacAddress = systemInfo[1];
 
+	    System.out.println("Machine Details....");
 	    System.out.println("sMachineId  : " + sMachineId);
 	    System.out.println("sMacAddress : " + sMacAddress);
 	    System.out.println("todayDate   : " + sdf.format(todayDate));
+	    System.out.println("");
 
-	    return sMachineId.equals(machineId) && sMacAddress.equals(macAddress)
+	    isLicValid = sMachineId.equals(machineId) && sMacAddress.contains(macAddress)
 		    && (todayDate.before(expiryDate) || todayDate.equals(expiryDate));
 	} catch (Exception e) {
 	    e.printStackTrace(System.out);
 	}
 
-	return false;
+	return isLicValid;
+    }
+
+    private static void dump(byte[] bytes) {
+	System.out.println("byte[] public_key = {");
+	for (int i = 0; i < bytes.length; i++) {
+	    System.out.printf("(byte)0x%02X, ", bytes[i]);
+	    if (i % 8 == 0) {
+		System.out.println();
+	    }
+	}
+	System.out.println("};");
     }
 }

@@ -40,7 +40,7 @@ public class VerifyLicense extends RDMServicesConstants {
 	    String sMachineId = systemInfo[0];
 	    String sMacAddress = systemInfo[1];
 
-	    isLicValid = sMachineId.equals(machineId) && sMacAddress.equals(macAddress)
+	    isLicValid = sMachineId.equals(machineId) && sMacAddress.contains(macAddress)
 		    && (todayDate.before(expiryDate) || todayDate.equals(expiryDate));
 	} catch (Exception e) {
 	    e.printStackTrace(System.out);
