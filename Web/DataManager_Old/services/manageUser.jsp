@@ -121,6 +121,11 @@
 				return false;
 			}
 
+			if(!checkContactNo())
+			{
+				return false;
+			}
+
 			if(!checkEmail())
 			{
 				return false;
@@ -242,6 +247,30 @@
 					email.focus;
 					return false;
 				}
+			}
+			return true;
+		}
+
+		function checkContactNo() 
+		{
+			var contactNo = document.getElementById("contactNo");
+			contactNo.value = contactNo.value.trim();
+			
+			if(contactNo.value != "")
+			{
+				var filter = /^\+?[1-9]\d{7,14}$/;
+				if (!filter.test(contactNo.value)) 
+				{
+					alert("<%= resourceBundle.getProperty("DataManager.DisplayText.ContactNo_Invalid") %>");
+					contactNo.focus;
+					return false;
+				}
+			}
+			else
+			{
+				alert("<%= resourceBundle.getProperty("DataManager.DisplayText.ContactNo_Empty") %>");
+				contactNo.focus;
+				return false;
 			}
 			return true;
 		}
@@ -448,7 +477,7 @@
 					{
 						Map <String, String> mDepartments = RDMServicesUtils.getDepartments();
 						List<String> lDepartments = new ArrayList<String>(mDepartments.keySet());
-						
+	
 						String[] saDepts = new String[lDepartments.size()];
 						saDepts = lDepartments.toArray(saDepts);
 						

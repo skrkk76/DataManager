@@ -758,7 +758,7 @@
 						<input type="hidden" id="PARAM_NAME_<%= idx %>" name="PARAM_NAME_<%= idx %>" value="<%= sName %>"/>
 						<input type="hidden" id="ACTION_<%= idx %>" name="ACTION_<%= idx %>" value="insert"/>
 						<input type="hidden" id="PARAM_GROUP_<%= idx %>" name="PARAM_GROUP_<%= idx %>" value="<%= sParamGroup %>"/>
-						<input type="hidden" id="PARAM_GROUP_<%= idx %>" name="PARAM_UNIT_<%= idx %>" value="<%= sUnit %>"/>
+						<input type="hidden" id="PARAM_UNIT_<%= idx %>" name="PARAM_UNIT_<%= idx %>" value="<%= sUnit %>"/>
 					</tr>
 <%
 					idx++;
@@ -787,7 +787,7 @@ private String getParamGroup(String sName, String sPhase, String saStage)
 	{
 		idx = sName.indexOf(" "+sPhase+" "+saStage);
 	}
-	else  if(sName.endsWith(" phase "+saStage))
+	else if(sName.endsWith(" phase "+saStage))
 	{
 		idx = sName.indexOf(" phase "+saStage);
 	}

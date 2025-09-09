@@ -246,7 +246,7 @@
 			
 			if(contactNo.value != "")
 			{
-				var filter = /^\d{10,12}$/;
+				var filter = /^\+?[1-9]\d{7,14}$/;
 				if (!filter.test(contactNo.value)) 
 				{
 					alert("<%= resourceBundle.getProperty("DataManager.DisplayText.ContactNo_Invalid") %>");
