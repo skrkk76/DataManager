@@ -4,6 +4,8 @@ pg_dump -s -C -U RDM_ADMIN -W -f "E:\DataManager\DataManager.sql" -T "rdm_admin.
 
 pg_dump -s -C -U RDM_ADMIN -W -f D:\DataManagerSchemaFull.sql DataManager
 
+pg_dump -s -C -U RDM_ADMIN -W -f "E:\DataManager\DataManager.sql" -T "rdm_admin.*_param_data" DataManager
+
 pg_dump -s -C -U RDM_ADMIN -W -f E:\DataManager\RoomData.sql --table "rdm_admin.*_param_data" DataManager
 
 pg_dump -s -C -U RDM_ADMIN -f E:\DataManager\Reports.sql  --table "rdm_admin.Material_Gate_Pass_Register" --table "rdm_admin.MD_Meter_Readings" --table "rdm_admin.Compost_Growing_Analysis_Details" --table "rdm_admin.Contract_labour_Attendance" --table "rdm_admin.Chiller_Area_FAN_PUMPS" --table "rdm_admin.Chiller_Area_Water_Readings" --table "rdm_admin.HT_LT_Solar_Power_Generation_Log" --table "rdm_admin.HT_Meter_Readings" --table "rdm_admin.VEHICLE" --table "rdm_admin.Paddy_Starw_Report_QC" --table "rdm_admin.Cold_Storage_Readings" --table "rdm_admin.Tabs_Issuing_Details" --table "rdm_admin.Chiller_Log" --table "rdm_admin.Greasing_and_oiling_Information_AND_OILING_INFORMATION" --table "rdm_admin.Diary_Farm_Employee_Attendance" --table "rdm_admin.Diary_Farm_Material_InwardOutward" --table "rdm_admin.Diary_Farm_IVIS_Observations_" --table "rdm_admin.Diary_Farm_Contract_labour_Attendance" --table "rdm_admin.VISTORPASS" --table "rdm_admin.Genarator_Readings" --table "rdm_admin.Diesel_Consumption" --table "rdm_admin.OUTPASS" --table "rdm_admin.DOCUMENT" --table "rdm_admin.Paddy_Straw_Report_Compost" DataManager

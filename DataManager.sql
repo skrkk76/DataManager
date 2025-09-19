@@ -242,7 +242,8 @@ CREATE TABLE rdm_admin.controller_params_admin (
     param_unit character varying(15),
     cntrl_type character varying(15) NOT NULL,
     on_off_value character varying(1) NOT NULL,
-    reset_value character varying(1) NOT NULL
+    reset_value character varying(1) NOT NULL,
+    param_info character varying
 );
 
 
@@ -335,7 +336,8 @@ CREATE TABLE rdm_admin.general_params_admin (
     cntrl_type character varying(15) NOT NULL,
     graph_view character varying(1) NOT NULL,
     scale_on_graph numeric(3,0) NOT NULL,
-    on_off_value character varying(1) NOT NULL
+    on_off_value character varying(1) NOT NULL,
+    param_info character varying
 );
 
 
@@ -664,7 +666,7 @@ CREATE TABLE rdm_admin.user_info (
     address character varying(200),
     date_of_join date,
     date_of_birth date,
-    contact_no character varying(12),
+    contact_no character varying(15),
     blocked character(1),
     home_page character varying(30),
     locale character varying(3) NOT NULL,
