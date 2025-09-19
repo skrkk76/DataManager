@@ -141,6 +141,7 @@
 					document.getElementById("ACTION_" + i).disabled = true;
 					document.getElementById("PARAM_GROUP_" + i).disabled = true;
 					document.getElementById("PARAM_UNIT_" + i).disabled = true;
+					document.getElementById("PARAM_INFO_" + i).disabled = true;
 					
 					var stage = document.getElementById("STAGE_NAME_" + i);
 					for (var x=0; x<stage.options.length; x++) {
@@ -243,6 +244,7 @@
 	String sParamGroup = null;
 	String sPhase = null;
 	String sUnit = null;
+	String sParamInfo = null;
 	int iDisplayOrder = 0;
 	int iGraphScale = 0;
 %>
@@ -403,7 +405,7 @@
 						<th width="2%">
 							<input type="checkbox" id="product" name="product" value="" onClick="javacript:checkOne('product', this.checked)">
 						</th>
-						<th style="text-align: left" width="25%"><%= resourceBundle.getProperty("DataManager.DisplayText.Product") %></th>							
+						<th style="text-align: left" width="25%"><%= resourceBundle.getProperty("DataManager.DisplayText.Product") %></th>
 						<td align="center" width="5%">
 							<input type="text" id="DISPLAY_ORDER_Product" name="DISPLAY_ORDER_Product" size="3" maxlength="3" value="<%= sDisplayOrder %>" onBlur="javascript:setValue('DISPLAY_ORDER_Product', this.value)">
 						</td>
@@ -508,10 +510,20 @@
 								</tr>
 <%
 							}
+
+							String sNameHeader = sName.replaceAll(">", " ").trim();
+							for(int x=0; x<alStages.size(); x++)
+							{
+								saStage = alStages.get(x);
+								if(sNameHeader.equalsIgnoreCase(saStage[1]))
+								{
+									sNameHeader = (saStage[0].equals(saStage[1]) ? saStage[0] : saStage[1]+" ("+saStage[0]+")").toUpperCase();
+								}
+							}
 %>
 							<tr>
 								<td class="stage" align="center" colspan="18">
-									<a href="javascript:toggleDisplay('div_<%= i %>')"><%= sName.replaceAll(">", " ").trim() %></a>
+									<a href="javascript:toggleDisplay('div_<%= i %>')"><%= sNameHeader %></a>
 								</td>
 							</tr>
 							
@@ -555,12 +567,16 @@
 					sAdminRead = mParam.getAdminRead();
 					sAdminWrite = mParam.getAdminWrite();
 					sUnit = (mCntrlParams.containsKey(sName) ? mCntrlParams.get(sName) : mParam.getParamUnit());
+					sParamInfo = mParam.getParamInfo();
 %>
 					<tr>
-						<th width="2%">
+						<th width="1%">
 							<input type="checkbox" id="CHECK_<%= idx %>" name="CHECK_<%= idx %>" value="" onClick="javacript:checkOne('CHECK_<%= idx %>', this.checked)">
 						</th>
-						<th style="text-align: left" width="25%"><%= sName %></th>
+						<th style="text-align: left" width="25%">
+							<%= sName %></br>
+							<input type="text" id="PARAM_INFO_<%= idx %>" name="PARAM_INFO_<%= idx %>" size="50" value="<%= sParamInfo %>" onBlur="javascript:setValue('PARAM_INFO_<%= idx %>', this.value)">
+						</th>
 						<td align="center" width="5%">
 							<input type="text" id="DISPLAY_ORDER_<%= idx %>" name="DISPLAY_ORDER_<%= idx %>" size="3" maxlength="3" value="<%= sDisplayOrder %>" onBlur="javascript:setValue('DISPLAY_ORDER_<%= idx %>', this.value)">
 						</td>
@@ -677,10 +693,13 @@
 					}
 %>
 					<tr>
-						<th width="2%">
+						<th width="1%">
 							<input type="checkbox" id="CHECK_<%= idx %>" name="CHECK_<%= idx %>" value="" onClick="javacript:checkOne('CHECK_<%= idx %>', this.checked)">
 						</th>
-						<th style="text-align: left" width="25%"><%= sName %></th>
+						<th style="text-align: left" width="25%">
+							<%= sName %></br>
+							<input type="text" id="PARAM_INFO_<%= idx %>" name="PARAM_INFO_<%= idx %>" onBlur="javascript:setValue('PARAM_INFO_<%= idx %>', this.value)" size="50" value="">
+						</th>
 						<td align="center" width="5%">
 							<input type="text" id="DISPLAY_ORDER_<%= idx %>" name="DISPLAY_ORDER_<%= idx %>" onBlur="javascript:setValue('DISPLAY_ORDER_<%= idx %>', this.value)" size="3" maxlength="3" value="">
 						</td>

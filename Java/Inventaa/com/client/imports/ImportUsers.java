@@ -49,9 +49,9 @@ public class ImportUsers extends RDMServicesConstants {
 	    mUserData.put(GROUP_NAME, mUser.get("Group").replace(",", "|"));
 	    mUserData.put(DATE_OF_JOIN, mUser.get("Date of Join"));
 	    mUserData.put(CONTACT_NO, mUser.get("Phone Number"));
-	    mUserData.put(TRAINING, mUser.get("Needs Training"));
 	    mUserData.put(DESIGNATION, mUser.get("Designation"));
 	    mUserData.put(QUALIFICATION, mUser.get("Qualification"));
+	    mUserData.put(TRAINING, mUser.get("Needs Training"));
 	    mUserData.put(LOCALE, mUser.get("en"));
 
 	    if (slUsers.contains(sUserId)) {

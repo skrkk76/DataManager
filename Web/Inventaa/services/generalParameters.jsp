@@ -9,13 +9,67 @@
 
 <%@include file="commonUtils.jsp" %>
 
+<%
+	boolean bShowSaveReset = false;
+	String[] saParamVal = null;
+	String sParam = null;
+	String sValue = null;
+	String sUnit = null;
+	String sAccess = null;
+	ParamSettings mParam = null;
+	
+	String sController = request.getParameter("controller");
+	String sCntrlVersion = RDMSession.getControllerVersion(sController);
+	
+	PLCServices client = null;
+	if(com.client.util.RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion))
+	{
+		client = new PLCServices_oldHW(RDMSession, sController);
+	}
+	else if(com.client.util.RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion))
+	{
+		client = new PLCServices_newHW(RDMSession, sController);
+	}
+	String sCntrlType = client.getControllerType();
+
+	Map<String, ParamSettings> mParamSettings = RDMServicesUtils.getGeneralViewParams(sCntrlType);
+	ArrayList<String> displayOrder = RDMServicesUtils.getDisplayOrder(sCntrlType);
+	Map<String, String[]> mParamData = client.getControllerData(true);
+
+	boolean isAdmin = RDMServicesConstants.ROLE_ADMIN.equals(u.getRole());
+	StringList slControllers = RDMSession.getControllers(u);
+
+	Map<String, String> mParamsInfo = RDMServicesUtils.getGeneralParamsInfo(sCntrlType);
+
+	String sDate = (mParamData.containsKey("Last Refresh") ? mParamData.get("Last Refresh")[0] : "");
+	
+	NumberFormat decimalFormat = NumberFormat.getInstance(Locale.getDefault());
+	decimalFormat.setMinimumFractionDigits(1);
+	
+	StringList slOnOffValues = RDMServicesUtils.getOnOffParams(sCntrlType);
+	
+	StringList userDepts = u.getDepartment();
+	boolean bCanEdit = userDepts.isEmpty();
+	Map<String, String> activeDepts = RDMServicesUtils.getDepartments();
+	for (Map.Entry<String, String> entry : activeDepts.entrySet()) 
+	{
+		String dept = entry.getKey();
+		String editParams = entry.getValue();
+		if("Y".equals(editParams) && userDepts.contains(dept))
+		{
+			bCanEdit = true;
+		}
+	}
+%>
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
+	<meta http-equiv="refresh" content="300;url=generalParameters.jsp?controller=<%= sController %>">
 	<title></title>
 
 	<link type="text/css" href="../styles/superTables.css" rel="stylesheet" />
-    <script type="text/javascript" src="../scripts/superTables.js"></script>
+	<script type="text/javascript" src="../scripts/superTables.js"></script>
 	<style>
 	#scrollDiv 
 	{	
@@ -94,63 +148,12 @@
 		}
 	</script>
 </head>
-
-<%
-	boolean bShowSaveReset = false;
-	String[] saParamVal = null;
-	String sParam = null;
-	String sValue = null;
-	String sUnit = null;
-	String sAccess = null;
-	ParamSettings mParam = null;
-	
-	String sController = request.getParameter("controller");
-	String sCntrlVersion = RDMSession.getControllerVersion(sController);
-	
-	PLCServices client = null;
-	if(com.client.util.RDMServicesConstants.CNTRL_VERSION_OLD.equals(sCntrlVersion))
-	{
-		client = new PLCServices_oldHW(RDMSession, sController);
-	}
-	else if(com.client.util.RDMServicesConstants.CNTRL_VERSION_NEW.equals(sCntrlVersion))
-	{
-		client = new PLCServices_newHW(RDMSession, sController);
-	}
-	String sCntrlType = client.getControllerType();
-
-	Map<String, ParamSettings> mParamSettings = RDMServicesUtils.getGeneralViewParams(sCntrlType);
-	ArrayList<String> displayOrder = RDMServicesUtils.getDisplayOrder(sCntrlType);
-	Map<String, String[]> mParamData = client.getControllerData(true);
-
-	boolean isAdmin = RDMServicesConstants.ROLE_ADMIN.equals(u.getRole());
-	StringList slControllers = RDMSession.getControllers(u);
- 
-	String sDate = (mParamData.containsKey("Last Refresh") ? mParamData.get("Last Refresh")[0] : "");
-	
-	NumberFormat decimalFormat = NumberFormat.getInstance(Locale.getDefault());
-	decimalFormat.setMinimumFractionDigits(1);
-	
-	StringList slOnOffValues = RDMServicesUtils.getOnOffParams(sCntrlType);
-	
-	StringList userDepts = u.getDepartment();
-	boolean bCanEdit = userDepts.isEmpty();
-	Map<String, String> activeDepts = RDMServicesUtils.getDepartments();
-	for (Map.Entry<String, String> entry : activeDepts.entrySet()) 
-	{
-		String dept = entry.getKey();
-		String editParams = entry.getValue();
-		if("Y".equals(editParams) && userDepts.contains(dept))
-		{
-			bCanEdit = true;
-		}
-	}
-%>
-
 <body onLoad="javascript:initOnOff()">
 	<table border="0" cellpadding="0" cellspacing="0" width="95%">
 		<tr>
 			<td style="font-family:Arial; font-size:0.8em; font-weight:bold; border:#ffffff; text-align:left">
-				<%= resourceBundle.getProperty("DataManager.DisplayText.Select_Room") %>:&nbsp;<select id="controller" name="controller" onChange="javascript:changeController(this)">
+				<%= resourceBundle.getProperty("DataManager.DisplayText.Select_Room") %>:&nbsp;
+				<select id="controller" name="controller" onChange="javascript:changeController(this)">
 <%
 				if(RDMServicesConstants.ROLE_ADMIN.equals(u.getRole()))
 				{
@@ -224,12 +227,13 @@
 	<form name="frm" method="post" action="setParametersProcess.jsp" target="hiddenFrame">
 		<input type="hidden" id="controller" name="controller" value="<%= sController %>">
 		<div id="scrollDiv">
-			<table id="freezeHeaders" border="1" cellpadding="2" cellspacing="0">
+			<table id="freezeHeaders" border="1" cellpadding="2" cellspacing="0" width="25%">
 				<tr>
-					<th style="text-align: center; height:25px">
+					<th style="border-right:0px" width="80%">
 						<%= resourceBundle.getProperty("DataManager.DisplayText.Parameter_Unit") %>
 					</th>
-					<th style="text-align: center; height:25px">
+					<th style="border-left:0px" width="10%">&nbsp;</th>
+					<th width="10%">
 						<%= resourceBundle.getProperty("DataManager.DisplayText.Value") %>
 					</th>
 				</tr>
@@ -289,12 +293,25 @@
 				}
 %>
 				<tr>
-					<th style="text-align: left"><%= sParam %>
+					<th style="text-align: left; border-right:0px"><%= sParam %>
 <%
 					if(!"".equals(sUnit))
 					{
 %>
 						&nbsp;<label class="unit">(<%= sUnit %>)</label>
+<%
+					}
+%>
+					</th>
+					<th style="border-left:0px">
+<%
+					if(mParamsInfo.containsKey(sParam))
+					{
+%>
+						<div class="tooltip">
+							<img src="../images/info.png" alt="Info" width="18" height="18">
+							<div class="tooltiptext"><%= mParamsInfo.get(sParam) %></div>
+						</div>
 <%
 					}
 %>
@@ -398,11 +415,11 @@
 		</div>
 	</form>
 	
-	<script type="text/javascript">		
+	<script type="text/javascript">
 		var myST = new superTable("freezeHeaders", {
 			cssSkin : "sGrey",
 			headerRows : 1,
-			fixedCols : 1
+			fixedCols : 2
 		});
 	</script>
 <%

@@ -38,6 +38,7 @@ public class RDMServicesUtils extends RDMServicesConstants {
     private static Map<String, Map<String, Integer>> GRAPH_SCALE = new HashMap<String, Map<String, Integer>>();
     private static Map<String, Map<Integer, String>> GROUP_HEADERS = new HashMap<String, Map<Integer, String>>();
     private static Map<String, Map<String, String>> DISPLAY_PARAM_HEADERS = new HashMap<String, Map<String, String>>();
+    private static Map<String, Map<String, String>> PARAM_INFO = new HashMap<String, Map<String, String>>();
     private static Map<String, String> CNTRL_GROUPS = null;
     private static Map<String, Map<String, Object>> USER_VIEWS = null;
     private static Map<String, StringList> PARAM_GROUPS = new HashMap<String, StringList>();
@@ -423,6 +424,25 @@ public class RDMServicesUtils extends RDMServicesConstants {
 	return iYieldScale;
     }
 
+    public static Map<String, String> getControllerParamsInfo(String cntrlType) throws Exception {
+	return getParamsInfo(cntrlType);
+    }
+
+    public static Map<String, String> getGeneralParamsInfo(String cntrlType) throws Exception {
+	return getParamsInfo(cntrlType);
+    }
+
+    private static Map<String, String> getParamsInfo(String cntrlType) throws Exception {
+	Map<String, String> map = PARAM_INFO.get(cntrlType);
+	if (map == null) {
+	    DataQuery query = new DataQuery();
+	    map = query.getParamInfo(cntrlType);
+
+	    PARAM_INFO.put(cntrlType, map);
+	}
+	return map;
+    }
+
     public static void setViewParamaters(String cntrlType) throws Throwable {
 	DataQuery query = new DataQuery();
 	boolean bIsNotGeneral = !cntrlType.startsWith("General");
@@ -440,10 +460,12 @@ public class RDMServicesUtils extends RDMServicesConstants {
 	    PARAM_GROUPS.put(cntrlType, query.getParamGroup(cntrlType));
 	    ON_OFF_VALUES.put(cntrlType, query.getOnOffParams(cntrlType));
 	    RESET_VALUES.put(cntrlType, query.getResetParams(cntrlType));
+	    PARAM_INFO.put(cntrlType, query.getParamInfo(cntrlType));
 	} else {
 	    DISPLAY_ORDER.put(cntrlType, query.getGeneralParamDisplayOrder(cntrlType));
 	    ON_OFF_VALUES.put(cntrlType, query.getOnOffParams(cntrlType));
 	    GENERAL_OVERVIEW_PARAMS.put(cntrlType, query.getGeneralParamAdminSettings(cntrlType));
+	    PARAM_INFO.put(cntrlType, query.getParamInfo(cntrlType));
 	}
     }
 

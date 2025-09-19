@@ -217,6 +217,7 @@
 		String[] saParamVal = null;
 		ParamSettings groupParams = null;
 
+		boolean bNoHeader = true;
 		for(int i=0; i<alParams.size(); i++)
 		{
 			sParam = (String)alParams.get(i);
@@ -254,6 +255,15 @@
 					alDisplayOrder.remove(0);
 					slHeaders.add(sHeader);
 				}
+			}
+			else if((iDispOrd == 0) && bNoHeader)
+			{
+%>
+				<tr>
+					<th align="center" colspan="<%= alPhases.size() + 3 %>">&nbsp;</th>
+				</tr>
+<%
+				bNoHeader = false;
 			}
 
 			sAccess = u.getUserAccess(paramSettings);

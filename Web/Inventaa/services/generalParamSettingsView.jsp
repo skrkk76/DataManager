@@ -106,6 +106,7 @@
 					document.getElementById("PARAM_NAME_" + i).disabled = true;
 					document.getElementById("ACTION_" + i).disabled = true;
 					document.getElementById("PARAM_UNIT_" + i).disabled = true;
+					document.getElementById("PARAM_INFO_" + i).disabled = true;
 				}
 			}
 			
@@ -150,7 +151,7 @@
 						<th align="center" rowspan="2" width="2%" >
 							<input type="checkbox" name="CHECK_ALL" onClick="checkAll(this, 'CHECK_')">
 						</th>
-						<th align="center" width="22%" rowspan="2">
+						<th align="center" width="30%" rowspan="2">
 							<%= resourceBundle.getProperty("DataManager.DisplayText.Name") %>
 						</th>
 						<th align="center" width="5%" rowspan="2">
@@ -236,6 +237,7 @@
 				String sManagerWrite = null;
 				String sAdminRead = null;
 				String sAdminWrite = null;
+				String sParamInfo = null;
 				int iDisplayOrder = 0;
 				int iGraphScale = 0;
 				
@@ -276,12 +278,16 @@
 					sManagerWrite = mParam.getManagerWrite();
 					sAdminRead = mParam.getAdminRead();
 					sAdminWrite = mParam.getAdminWrite();
+					sParamInfo = mParam.getParamInfo();
 %>
 					<tr>
 						<th width="2%">
 							<input type="checkbox" id="CHECK_<%= idx %>" name="CHECK_<%= idx %>" value="" onClick="javacript:checkOne('CHECK_<%= idx %>', this.checked)">
 						</th>
-						<th style="text-align: left" width="22%"><%= sName %></th>
+						<th style="text-align: left" width="30%">
+							<%= sName %></br>
+							<input type="text" id="PARAM_INFO_<%= idx %>" name="PARAM_INFO_<%= idx %>" size="50" value="<%= sParamInfo %>" onBlur="javascript:setValue('PARAM_INFO_<%= idx %>', this.value)">
+						</th>
 						<td align="center" width="5%">
 							<input type="text" id="DISPLAY_ORDER_<%= idx %>" name="DISPLAY_ORDER_<%= idx %>" size="3" maxlength="3" value="<%= sDisplayOrder %>" onBlur="javascript:setValue('DISPLAY_ORDER_<%= idx %>', this.value)">
 						</td>
@@ -318,7 +324,7 @@
 						<td align="center" width="4%">
 							<input type="checkbox" id="ADMIN_WRITE_<%= idx %>" name="ADMIN_WRITE_<%= idx %>" value="<%= sAdminWrite %>" <%= ("Y".equals(sAdminWrite) ? "checked" : "") %> onClick="javacript:checkOne('ADMIN_WRITE_<%= idx %>', this.checked)">
 						</td>
-						<td align="center" style="border:#FFFFFF" width="1%">&nbsp;</th>
+						<td align="center" style="border:#FFFFFF" width="1%">&nbsp;</td>
 						
 						<input type="hidden" id="PARAM_NAME_<%= idx %>" name="PARAM_NAME_<%= idx %>" value="<%= sName %>">
 						<input type="hidden" id="ACTION_<%= idx %>" name="ACTION_<%= idx %>" value="update">
@@ -354,7 +360,10 @@
 						<th width="2%">
 							<input type="checkbox" id="CHECK_<%= idx %>" name="CHECK_<%= idx %>" value="" onClick="javacript:checkOne('CHECK_<%= idx %>', this.checked)">
 						</th>
-						<th style="text-align: left" width="22%"><%= sName %></th>
+						<th style="text-align: left" width="30%">
+							<%= sName %></br>
+							<input type="text" id="PARAM_INFO_<%= idx %>" name="PARAM_INFO_<%= idx %>" onBlur="javascript:setValue('PARAM_INFO_<%= idx %>', this.value)" size="50" value="">
+						</th>
 						<td align="center" width="5%">
 							<input type="text" id="DISPLAY_ORDER_<%= idx %>" name="DISPLAY_ORDER_<%= idx %>" onBlur="javascript:setValue('DISPLAY_ORDER_<%= idx %>', this.value)" size="3" maxlength="3" value="">
 						</td>
@@ -391,7 +400,7 @@
 						<td align="center" width="4%">
 							<input type="checkbox" id="ADMIN_WRITE_<%= idx %>" name="ADMIN_WRITE_<%= idx %>" value="" onClick="javacript:checkOne('ADMIN_WRITE_<%= idx %>', this.checked)">
 						</td>
-						<td align="center" style="border:#FFFFFF" width="1%">&nbsp;</th>
+						<td align="center" style="border:#FFFFFF" width="1%">&nbsp;</td>
 						
 						<input type="hidden" id="PARAM_NAME_<%= idx %>" name="PARAM_NAME_<%= idx %>" value="<%= sName %>">
 						<input type="hidden" id="ACTION_<%= idx %>" name="ACTION_<%= idx %>" value="insert">

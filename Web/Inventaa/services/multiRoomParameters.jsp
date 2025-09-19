@@ -27,6 +27,7 @@
 	StringList slControllers = RDMSession.getControllers(iSelRange, 10, slCntrlPhases);
 	Map<String, ParamSettings> mParamStgs = RDMServicesUtils.getMultiRoomViewParamaters(sCntrlType);
 	ArrayList<String> displayOrder = RDMServicesUtils.getDisplayOrder(sCntrlType);
+	Map<String, String> mParamsInfo = RDMServicesUtils.getControllerParamsInfo(sCntrlType);
 
 	boolean bShowSaveReset = false;
 	String sRole = u.getRole();
@@ -111,7 +112,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
 	<title></title>
-	<meta http-equiv="refresh" content="300;url=multiRoomView.jsp?realTime=false&selRange=<%= iSelRange %>&cntrlType=<%= sCntrlType %>">
+	<meta http-equiv="refresh" content="300;url=multiRoomView.jsp?selRange=<%= iSelRange %>&cntrlType=<%= sCntrlType %>">
 	
 	<link type="text/css" href="../styles/superTables.css" rel="stylesheet" />
 	<script type="text/javascript" src="../scripts/superTables.js"></script>
@@ -438,7 +439,17 @@
 %>
 								</th>
 								<th style="border-left:0px">
-									<img src="../images/info.png" height="18" width="18">
+<%
+								if(mParamsInfo.containsKey(sParam))
+								{
+%>
+									<div class="tooltip">
+										<img src="../images/info.png" alt="Info" width="18" height="18">
+										<div class="tooltiptext"><%= mParamsInfo.get(sParam) %></div>
+									</div>
+<%
+								}
+%>
 								</th>
 								<td align="center" bgcolor="#FFFFFF">
 <%
@@ -523,8 +534,14 @@
 										}
 									}
 								}
+
+								String bgColor = "#FFFFFF";
+								if(slOnOffValues.contains(sParam) && sParam.contains("manual"))
+								{
+									bgColor = (("On".equals(sValue) || "1".equals(sValue)) ? "#0000FF" : bgColor);
+								}
 %>
-								<td class="text">
+								<td class="text" style="background-color:<%= bgColor %>">
 									<%= sValue %>
 								</td>
 <%

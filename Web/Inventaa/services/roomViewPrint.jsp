@@ -235,6 +235,7 @@
 		StringList slOnOffValues = RDMServicesUtils.getOnOffParams(sCntrlType);
 		ParamSettings paramSettings = null;
 
+		boolean bNoHeader = true;
 		for(int i=0, iCnt=alParams.size(); i<iCnt; i++)
 		{
 			sName = alParams.get(i);
@@ -269,14 +270,21 @@
 				{
 %>
 					<tr>
-						<th align="center" colspan="12">
-							<%= sHeader %>
-						</th>
+						<th align="center" colspan="12"><%= sHeader %></th>
 					</tr>
 <%
 					alDisplayOrder.remove(0);
 					slHeaders.add(sHeader);
 				}
+			}
+			else if((iDispOrd == 0) && bNoHeader)
+			{
+%>
+				<tr>
+					<th align="center" colspan="12">&nbsp;</th>
+				</tr>
+<%
+				bNoHeader = false;
 			}
 %>
 			<tr>
@@ -403,7 +411,7 @@
 					else
 					{
 %>
-						&nbsp;
+						---
 <%
 					}
 %>

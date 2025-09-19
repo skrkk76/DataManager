@@ -13,7 +13,7 @@
 	String sDefParamType = request.getParameter("defParamType");
 	sDefParamType = ((sDefParamType == null || "".equals(sDefParamType)) ? "Default Product" : sDefParamType);
 
-	StringList slControllers = RDMSession.getControllers(u);	
+	StringList slControllers = RDMSession.getControllers(u);
 	ArrayList<String[]> alPhases = RDMServicesUtils.getControllerStages(sController);
 
 	Map<String, ParamSettings> mViewParams = RDMServicesUtils.getSingleRoomViewParamaters(sController);
@@ -34,6 +34,8 @@
 	
 	StringList slOnOffValues = RDMServicesUtils.getOnOffParams(sController);
 	StringList slManualParams = RDMServicesUtils.getManualParams(sController);
+	
+	Map<String, String> mParamsInfo = RDMServicesUtils.getControllerParamsInfo(sController);
 	
 	String sDefaultProduct = "Default Product";
 	
@@ -57,6 +59,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
+	<meta http-equiv="refresh" content="300;url=defaultParameters.jsp?controller=<%= sController %>">
 	<title></title>
 
 	<link type="text/css" href="../styles/superTables.css" rel="stylesheet" />
@@ -501,7 +504,17 @@
 						</div>
 					</th>
 					<th style="border-left:0px">
-						<img src="../images/info.png" height="18" width="18">
+<%
+					if(mParamsInfo.containsKey(sParam))
+					{
+%>
+						<div class="tooltip">
+							<img src="../images/info.png" alt="Info" width="18" height="18">
+							<div class="tooltiptext"><%= mParamsInfo.get(sParam) %></div>
+						</div>
+<%
+					}
+%>
 					</th>
 <%
 				if("NA".equals(sStage))

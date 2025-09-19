@@ -98,6 +98,7 @@
 		mSettings.put(RDMServicesConstants.MANAGER_WRITE, getRequestValue(request, "MANAGER_WRITE_"+i));
 		mSettings.put(RDMServicesConstants.ADMIN_READ, getRequestValue(request, "ADMIN_READ_"+i));
 		mSettings.put(RDMServicesConstants.ADMIN_WRITE, getRequestValue(request, "ADMIN_WRITE_"+i));
+		mSettings.put(RDMServicesConstants.PARAM_INFO, getRequestValue(request, "PARAM_INFO_"+i));
 		mSettings.put(RDMServicesConstants.CNTRL_TYPE, sCntrlType);
 
 		return mSettings;

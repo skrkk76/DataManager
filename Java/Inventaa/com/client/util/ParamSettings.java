@@ -28,6 +28,7 @@ public class ParamSettings {
     private String ADMIN_WRITE = "";
     private int SCALE_ON_GRAPH = 1;
     private String PARAM_UNIT = "";
+    private String PARAM_INFO = "";
 
     private Map<String, ParamSettings> mGrpParams = new HashMap<String, ParamSettings>();
 
@@ -127,6 +128,10 @@ public class ParamSettings {
 	this.PARAM_UNIT = s;
     }
 
+    public void setParamInfo(String s) {
+	this.PARAM_INFO = s;
+    }
+
     public String getParamName() {
 	return this.PARAM_NAME;
     }
@@ -221,6 +226,10 @@ public class ParamSettings {
 
     public String getParamUnit() {
 	return this.PARAM_UNIT;
+    }
+
+    public String getParamInfo() {
+	return this.PARAM_INFO;
     }
 
     public void setGroupParams(String s, ParamSettings p) {

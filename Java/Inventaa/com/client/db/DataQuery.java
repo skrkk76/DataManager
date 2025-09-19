@@ -381,6 +381,50 @@ public class DataQuery extends RDMServicesConstants {
 	return mGraphScale;
     }
 
+    public Map<String, String> getParamInfo(String cntrlType) throws SQLException, InterruptedException {
+	Connection conn = null;
+	Statement stmt = null;
+	ResultSet rs = null;
+	Map<String, String> map = new HashMap<String, String>();
+
+	try {
+	    conn = connectionPool.getConnection();
+	    stmt = conn.createStatement();
+	    
+	    boolean bGeneral = cntrlType.startsWith("General.");
+
+	    String sTable = null;
+	    String selectString = "select param_name, param_info ";
+	    if (bGeneral) {
+		sTable = "GENERAL_PARAMS_ADMIN";
+	    } else {
+		sTable = "CONTROLLER_PARAMS_ADMIN";
+		selectString += ", param_group ";
+	    }
+	    selectString += "from " + SCHEMA_NAME + "." + sTable + " where CNTRL_TYPE = '" + cntrlType + "'";
+
+	    rs = stmt.executeQuery(selectString);
+	    while (rs.next()) {
+		String sParamInfo = rs.getString(PARAM_INFO);
+		if (RDMServicesUtils.isNullOrEmpty(sParamInfo)) {
+		    continue;
+		}
+		
+		String sParamGroup = bGeneral ? null : rs.getString(PARAM_GROUP);
+		if (RDMServicesUtils.isNotNullAndNotEmpty(sParamGroup)) {
+		    map.put(sParamGroup, sParamInfo);
+		} else {
+		    String sParamName = rs.getString(PARAM_NAME);
+		    map.put(sParamName, sParamInfo);
+		}
+	    }
+	} finally {
+	    close(stmt, rs);
+	    connectionPool.free(conn);
+	}
+	return map;
+    }
+
     public Map<String, ParamSettings> getAdminSettings(String cntrlType) throws SQLException, InterruptedException {
 	Connection conn = null;
 	Statement stmt = null;
@@ -417,6 +461,7 @@ public class DataQuery extends RDMServicesConstants {
 		mParam.setAdminWrite(rs.getString(ADMIN_WRITE));
 		mParam.setScaleOnGraph(rs.getInt(SCALE_ON_GRAPH));
 		mParam.setParamUnit(rs.getString(PARAM_UNIT));
+		mParam.setParamInfo(rs.getString(PARAM_INFO));
 
 		map.put(sName, mParam);
 	    }
@@ -490,7 +535,8 @@ public class DataQuery extends RDMServicesConstants {
 	    sbUpdate.append("PARAM_GROUP = ?, ");
 	    sbUpdate.append("PARAM_UNIT = ?, ");
 	    sbUpdate.append("ON_OFF_VALUE = ?, ");
-	    sbUpdate.append("RESET_VALUE = ?");
+	    sbUpdate.append("RESET_VALUE = ?, ");
+	    sbUpdate.append("PARAM_INFO = ?");
 	    sbUpdate.append(" where ");
 	    sbUpdate.append("PARAM_NAME = ?");
 	    sbUpdate.append(" and ");
@@ -501,6 +547,8 @@ public class DataQuery extends RDMServicesConstants {
 
 	    String sDisplayOrder;
 	    String sGraphScale;
+	    String sParamUnit;
+	    String sParamInfo;
 	    int iDisplayOrder;
 	    int iGraphScale;
 	    for (int i = 0, iSz = mlParamSettings.size(); i < iSz; i++) {
@@ -515,6 +563,12 @@ public class DataQuery extends RDMServicesConstants {
 		sGraphScale = ((sGraphScale == null || "".equals(sGraphScale)) ? "1" : sGraphScale);
 		iGraphScale = Integer.parseInt(sGraphScale);
 		iGraphScale = ((iGraphScale < 1) ? 1 : iGraphScale);
+
+		sParamUnit = map.get(PARAM_UNIT);
+		sParamUnit = ((sParamUnit == null || "null".equals(sParamUnit)) ? "" : sParamUnit);
+
+		sParamInfo = map.get(PARAM_INFO);
+		sParamInfo = ((sParamInfo == null || "N".equals(sParamInfo)) ? "" : sParamInfo);
 
 		pstmt.setInt(1, iDisplayOrder);
 		pstmt.setString(2, map.get(STAGE_NAME));
@@ -532,11 +586,12 @@ public class DataQuery extends RDMServicesConstants {
 		pstmt.setString(14, map.get(ADMIN_WRITE));
 		pstmt.setInt(15, iGraphScale);
 		pstmt.setString(16, map.get(PARAM_GROUP));
-		pstmt.setString(17, map.get(PARAM_UNIT));
+		pstmt.setString(17, sParamUnit);
 		pstmt.setString(18, map.get(ON_OFF_VALUE));
 		pstmt.setString(19, map.get(RESET_VALUE));
-		pstmt.setString(20, map.get(PARAM_NAME));
-		pstmt.setString(21, map.get(CNTRL_TYPE));
+		pstmt.setString(20, sParamInfo);
+		pstmt.setString(21, map.get(PARAM_NAME));
+		pstmt.setString(22, map.get(CNTRL_TYPE));
 		pstmt.executeUpdate();
 		pstmt.clearParameters();
 	    }
@@ -559,17 +614,18 @@ public class DataQuery extends RDMServicesConstants {
 	try {
 	    sbInsert.append("insert into " + SCHEMA_NAME + ".CONTROLLER_PARAMS_ADMIN (");
 	    sbInsert.append(
-		    "PARAM_NAME, DISPLAY_ORDER, STAGE_NAME, ROOMS_OVERVIEW, MULTIROOMS_VIEW, SINGLEROOM_VIEW, GRAPH_VIEW, ");
-	    sbInsert.append(
-		    "HELPER_READ, HELPER_WRITE, SUPERVISOR_READ, SUPERVISOR_WRITE, MANAGER_READ, MANAGER_WRITE, ADMIN_READ, ADMIN_WRITE, ");
-	    sbInsert.append("SCALE_ON_GRAPH, PARAM_GROUP, PARAM_UNIT, ON_OFF_VALUE, RESET_VALUE, CNTRL_TYPE");
-	    sbInsert.append(") values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		    "PARAM_NAME, DISPLAY_ORDER, STAGE_NAME, ROOMS_OVERVIEW, MULTIROOMS_VIEW, SINGLEROOM_VIEW, GRAPH_VIEW, "
+			    + "HELPER_READ, HELPER_WRITE, SUPERVISOR_READ, SUPERVISOR_WRITE, MANAGER_READ, MANAGER_WRITE, ADMIN_READ, ADMIN_WRITE, "
+			    + "SCALE_ON_GRAPH, PARAM_GROUP, PARAM_UNIT, ON_OFF_VALUE, RESET_VALUE, CNTRL_TYPE, PARAM_INFO) "
+			    + "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 	    conn = connectionPool.getConnection();
 	    pstmt = conn.prepareStatement(sbInsert.toString());
 
 	    String sDisplayOrder;
 	    String sGraphScale;
+	    String sParamUnit;
+	    String sParamInfo;
 	    int iDisplayOrder;
 	    int iGraphScale;
 	    for (int i = 0, iSz = mlParamSettings.size(); i < iSz; i++) {
@@ -584,6 +640,12 @@ public class DataQuery extends RDMServicesConstants {
 		sGraphScale = ((sGraphScale == null || "".equals(sGraphScale)) ? "1" : sGraphScale);
 		iGraphScale = Integer.parseInt(sGraphScale);
 		iGraphScale = ((iGraphScale < 1) ? 1 : iGraphScale);
+
+		sParamUnit = map.get(PARAM_UNIT);
+		sParamUnit = ((sParamUnit == null || "null".equals(sParamUnit)) ? "" : sParamUnit);
+
+		sParamInfo = map.get(PARAM_INFO);
+		sParamInfo = ((sParamInfo == null || "N".equals(sParamInfo)) ? "" : sParamInfo);
 
 		pstmt.setString(1, map.get(PARAM_NAME));
 		pstmt.setInt(2, iDisplayOrder);
@@ -602,10 +664,11 @@ public class DataQuery extends RDMServicesConstants {
 		pstmt.setString(15, map.get(ADMIN_WRITE));
 		pstmt.setInt(16, iGraphScale);
 		pstmt.setString(17, map.get(PARAM_GROUP));
-		pstmt.setString(18, map.get(PARAM_UNIT));
+		pstmt.setString(18, sParamUnit);
 		pstmt.setString(19, map.get(ON_OFF_VALUE));
 		pstmt.setString(20, map.get(RESET_VALUE));
 		pstmt.setString(21, map.get(CNTRL_TYPE));
+		pstmt.setString(22, sParamInfo);
 		pstmt.executeUpdate();
 		pstmt.clearParameters();
 	    }
@@ -1074,8 +1137,8 @@ public class DataQuery extends RDMServicesConstants {
 		mUserInfo.put(DATE_OF_JOIN, sDateofJoin);
 		mUserInfo.put(BLOCKED, rs.getString(BLOCKED));
 		mUserInfo.put(HOME_PAGE, sHomePage);
-		mUserInfo.put(LOCALE, rs.getString(LOCALE));
 		mUserInfo.put(TRAINING, rs.getString(TRAINING));
+		mUserInfo.put(LOCALE, rs.getString(LOCALE));
 		mUserInfo.put(QUALIFICATION, rs.getString(QUALIFICATION));
 		mUserInfo.put(DESIGNATION, rs.getString(DESIGNATION));
 	    }
@@ -1244,8 +1307,8 @@ public class DataQuery extends RDMServicesConstants {
 		mUser.put(DATE_OF_JOIN, sDateofJoin);
 		mUser.put(BLOCKED, rs.getString(BLOCKED));
 		mUser.put(HOME_PAGE, sHomePage);
-		mUser.put(LOCALE, rs.getString(LOCALE));
 		mUser.put(TRAINING, rs.getString(TRAINING));
+		mUser.put(LOCALE, rs.getString(LOCALE));
 		mUser.put(QUALIFICATION, sQualification);
 		mUser.put(DESIGNATION, sDesignation);
 
@@ -4130,6 +4193,7 @@ public class DataQuery extends RDMServicesConstants {
 		mParam.setScaleOnGraph(rs.getInt(SCALE_ON_GRAPH));
 		mParam.setGraphView(rs.getString(GRAPH_VIEW));
 		mParam.setOnOffValue(rs.getString(ON_OFF_VALUE));
+		mParam.setParamInfo(rs.getString(PARAM_INFO));
 
 		mParam.setHelperAccess(getRoleAccess(rs.getString(HELPER_READ), rs.getString(HELPER_WRITE)));
 		mParam.setSupervisorAccess(
@@ -4203,7 +4267,8 @@ public class DataQuery extends RDMServicesConstants {
 	    sbUpdate.append("ADMIN_WRITE = ?, ");
 	    sbUpdate.append("SCALE_ON_GRAPH = ?, ");
 	    sbUpdate.append("GRAPH_VIEW = ?, ");
-	    sbUpdate.append("ON_OFF_VALUE = ? ");
+	    sbUpdate.append("ON_OFF_VALUE = ?, ");
+	    sbUpdate.append("PARAM_INFO = ? ");
 	    sbUpdate.append("where PARAM_NAME = ?");
 	    sbUpdate.append(" and ");
 	    sbUpdate.append("CNTRL_TYPE = ?");
@@ -4214,6 +4279,7 @@ public class DataQuery extends RDMServicesConstants {
 	    String sDisplayOrder;
 	    String sGraphScale;
 	    String sParamUnit;
+	    String sParamInfo;
 	    int iDisplayOrder;
 	    int iGraphScale;
 	    for (int i = 0, iSz = mlParamSettings.size(); i < iSz; i++) {
@@ -4232,6 +4298,9 @@ public class DataQuery extends RDMServicesConstants {
 		sParamUnit = map.get(PARAM_UNIT);
 		sParamUnit = ((sParamUnit == null || "null".equals(sParamUnit)) ? "" : sParamUnit);
 
+		sParamInfo = map.get(PARAM_INFO);
+		sParamInfo = ((sParamInfo == null || "N".equals(sParamInfo)) ? "" : sParamInfo);
+
 		pstmt.setString(1, sParamUnit);
 		pstmt.setInt(2, iDisplayOrder);
 		pstmt.setString(3, map.get(HELPER_READ));
@@ -4245,8 +4314,9 @@ public class DataQuery extends RDMServicesConstants {
 		pstmt.setInt(11, iGraphScale);
 		pstmt.setString(12, map.get(GRAPH_VIEW));
 		pstmt.setString(13, map.get(ON_OFF_VALUE));
-		pstmt.setString(14, map.get(PARAM_NAME));
-		pstmt.setString(15, map.get(CNTRL_TYPE));
+		pstmt.setString(14, sParamInfo);
+		pstmt.setString(15, map.get(PARAM_NAME));
+		pstmt.setString(16, map.get(CNTRL_TYPE));
 
 		pstmt.executeUpdate();
 		pstmt.clearParameters();
@@ -4268,20 +4338,19 @@ public class DataQuery extends RDMServicesConstants {
 	StringBuilder sbInsert = new StringBuilder();
 
 	try {
-	    sbInsert.append("insert into " + SCHEMA_NAME + ".GENERAL_PARAMS_ADMIN (");
-	    sbInsert.append("PARAM_NAME, PARAM_UNIT, DISPLAY_ORDER, ");
-	    sbInsert.append("HELPER_READ, HELPER_WRITE, ");
-	    sbInsert.append("SUPERVISOR_READ, SUPERVISOR_WRITE, ");
-	    sbInsert.append("MANAGER_READ, MANAGER_WRITE, ");
-	    sbInsert.append("ADMIN_READ, ADMIN_WRITE, ");
-	    sbInsert.append("CNTRL_TYPE, SCALE_ON_GRAPH, GRAPH_VIEW, ON_OFF_VALUE");
-	    sbInsert.append(") values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	    sbInsert.append("insert into " + SCHEMA_NAME
+		    + ".GENERAL_PARAMS_ADMIN (PARAM_NAME, PARAM_UNIT, DISPLAY_ORDER, "
+		    + "HELPER_READ, HELPER_WRITE, SUPERVISOR_READ, SUPERVISOR_WRITE, MANAGER_READ, MANAGER_WRITE, ADMIN_READ, ADMIN_WRITE, "
+		    + "CNTRL_TYPE, SCALE_ON_GRAPH, GRAPH_VIEW, ON_OFF_VALUE, PARAM_INFO) "
+		    + "values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 	    conn = connectionPool.getConnection();
 	    pstmt = conn.prepareStatement(sbInsert.toString());
 
 	    String sDisplayOrder;
 	    String sGraphScale;
+	    String sParamUnit;
+	    String sParamInfo;
 	    int iDisplayOrder;
 	    int iGraphScale;
 	    for (int i = 0, iSz = mlParamSettings.size(); i < iSz; i++) {
@@ -4297,8 +4366,14 @@ public class DataQuery extends RDMServicesConstants {
 		iGraphScale = Integer.parseInt(sGraphScale);
 		iGraphScale = ((iGraphScale < 1) ? 1 : iGraphScale);
 
+		sParamUnit = map.get(PARAM_UNIT);
+		sParamUnit = ((sParamUnit == null || "null".equals(sParamUnit)) ? "" : sParamUnit);
+
+		sParamInfo = map.get(PARAM_INFO);
+		sParamInfo = ((sParamInfo == null || "N".equals(sParamInfo)) ? "" : sParamInfo);
+
 		pstmt.setString(1, map.get(PARAM_NAME));
-		pstmt.setString(2, map.get(PARAM_UNIT));
+		pstmt.setString(2, sParamUnit);
 		pstmt.setInt(3, iDisplayOrder);
 		pstmt.setString(4, map.get(HELPER_READ));
 		pstmt.setString(5, map.get(HELPER_WRITE));
@@ -4312,6 +4387,7 @@ public class DataQuery extends RDMServicesConstants {
 		pstmt.setInt(13, iGraphScale);
 		pstmt.setString(14, map.get(GRAPH_VIEW));
 		pstmt.setString(15, map.get(ON_OFF_VALUE));
+		pstmt.setString(16, sParamInfo);
 
 		pstmt.executeUpdate();
 		pstmt.clearParameters();

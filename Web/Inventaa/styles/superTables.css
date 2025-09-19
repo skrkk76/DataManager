@@ -1,4 +1,3 @@
-/* Super Tables v0.30 - MIT Style License --- Copyright (c) 2008 Matt Murphy, www.matts411.com --- Contributors: Joe Gallo */
 .sBase{position:relative;width:100%;height:100%;overflow:hidden;}
 .sHeader{position:absolute;z-index:3;background-color:#ffffff;}
 .sHeaderInner{position:relative;}
@@ -32,3 +31,6 @@
 .sGrey th, .sGrey td{border:1px solid #555555;padding:3px 6px 3px 4px;white-space:nowrap;}
 .sGrey th{background-color:#b3b7bb;}
 .sGrey-Fixed{background-color:#9ba0a6;}
+.tooltip {position: relative;display: inline-block;}
+.tooltip .tooltiptext {visibility: hidden;width: 125px;background-color: #ffffff;color: #000000;text-align: center;text-wrap: balance;word-wrap: break-word;padding: 6px;border-radius: 4px;position: absolute;bottom: -100%;left: 0%;transform: translateX(-100%);opacity: 0;transition: opacity 0.3s;z-index: 1;}
+.tooltip:hover .tooltiptext {visibility: visible;opacity: 1;}

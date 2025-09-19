@@ -98,6 +98,10 @@ public class User extends RDMServicesConstants implements Serializable {
 	return dDateOfJoin;
     }
 
+    public String getTraining() {
+	return sTraining;
+    }
+
     public boolean isLoggedIn() {
 	return isLoggedIn;
     }
@@ -116,10 +120,6 @@ public class User extends RDMServicesConstants implements Serializable {
 	}
 
 	return new Locale(sLocale);
-    }
-
-    public String getTraining() {
-	return sTraining;
     }
 
     public String getQualification() {

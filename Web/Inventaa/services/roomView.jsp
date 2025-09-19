@@ -35,13 +35,14 @@
 	sRealTime = ((sRealTime == null || "".equals(sRealTime)) ? "false" : sRealTime);
 
 	String sCntrlType = request.getParameter("cntrlType");
-	Map<String, ParamSettings> mViewParams = RDMServicesUtils.getRoomsOverViewParamaters(sCntrlType);
-
 	StringList slCntrlSel = RDMSession.getControllersSelection(sCntrlType, 10);
 	if(slCntrlSel.size() == 0)
 	{
 		return;
 	}
+
+	Map<String, ParamSettings> mViewParams = RDMServicesUtils.getRoomsOverViewParamaters(sCntrlType);
+	Map<String, String> mParamsInfo = RDMServicesUtils.getControllerParamsInfo(sCntrlType);
 
 	if(!"".equals(sSelRange))
 	{
@@ -142,16 +143,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
 	<title></title>
-<%
-	if(iSelRange > -1)
-	{
-%>
-		<meta http-equiv="refresh" content="300;url=roomView.jsp?realTime=false&selRange=<%= iSelRange %>&cntrlType=<%= sCntrlType %>">
-<%
-	}
-%>
+	<meta http-equiv="refresh" content="300;url=roomView.jsp?selRange=<%= iSelRange %>&cntrlType=<%= sCntrlType %>">
+
 	<link type="text/css" href="../styles/superTables.css" rel="stylesheet" />
-    <script type="text/javascript" src="../scripts/superTables.js"></script>
+	<script type="text/javascript" src="../scripts/superTables.js"></script>
 	<style>
 	#scrollDiv
 	{
@@ -569,6 +564,7 @@ if(iSelRange > -1)
 <%
 				}
 				
+				boolean bNoHeader = true;
 				for(int i=0, iCnt=alParams.size(); i<iCnt; i++)
 				{
 					sName = alParams.get(i);
@@ -603,14 +599,21 @@ if(iSelRange > -1)
 						{
 %>
 							<tr>
-								<th align="center" colspan="12">
-									<%= sHeader %>
-								</th>
+								<th align="center" colspan="12"><%= sHeader %></th>
 							</tr>
 <%
 							alDisplayOrder.remove(0);
 							slHeaders.add(sHeader);
 						}
+					}
+					else if((iDispOrd == 0) && bNoHeader)
+					{
+%>
+						<tr>
+							<th align="center" colspan="12">&nbsp;</th>
+						</tr>
+<%
+						bNoHeader = false;
 					}
 %>
 					<tr>
@@ -643,7 +646,17 @@ if(iSelRange > -1)
 									</div>
 								</th>
 								<th style="border-left:0px">
-									<img src="../images/info.png" height="18" width="18">
+<%
+								if(mParamsInfo.containsKey(sName))
+								{
+%>
+									<div class="tooltip">
+										<img src="../images/info.png" alt="Info" width="18" height="18">
+										<div class="tooltiptext"><%= mParamsInfo.get(sName) %></div>
+									</div>
+<%
+								}
+%>
 								</th>
 <%
 							}
@@ -693,7 +706,17 @@ if(iSelRange > -1)
 									</div>
 								</th>
 								<th style="border-left:0px">
-									<img src="../images/info.png" height="18" width="18">
+<%
+								if(mParamsInfo.containsKey(sName))
+								{
+%>
+									<div class="tooltip">
+										<img src="../images/info.png" alt="Info" width="18" height="18">
+										<div class="tooltiptext"><%= mParamsInfo.get(sName) %></div>
+									</div>
+<%
+								}
+%>
 								</th>
 <%
 							}
@@ -710,13 +733,20 @@ if(iSelRange > -1)
 						{
 							//do nothing
 						}
+
+						String sParameter = ((mParamInfo != null) ? mParamInfo.get(RDMServicesConstants.PARAM_NAME) : "");
+						if(slOnOffValues.contains(sParameter) && sParameter.contains("manual"))
+						{
+							bgColor = (("On".equals(sValue) || "1".equals(sValue)) ? "#0000ff" : bgColor);
+						}
+
 %>
-						<td class="text" align="left" bgcolor="<%= bgColor %>">
+						<td class="text" align="left" style="background-color:<%= bgColor %>">
 <%
 						if(RDMServicesConstants.ACCESS_WRITE.equals(sUserAccess) && bCanEdit)
 						{
 							bShowSaveReset = true;
-							sParamName = sController+"_"+mParamInfo.get(RDMServicesConstants.PARAM_NAME);
+							sParamName = sController+"_"+sParameter;
 							if(bHasRange)
 							{
 								try
@@ -739,7 +769,7 @@ if(iSelRange > -1)
 								</select>
 <%
 							}
-							else if(slOnOffValues.contains(mParamInfo.get(RDMServicesConstants.PARAM_NAME)))
+							else if(slOnOffValues.contains(sParameter))
 							{
 %>
 								<select id="<%= sParamName %>" name="<%= sParamName %>" onclick="javascript:selectDiv('<%= sName %>'); this.focus();this.select()" onChange="javascript:setOnOff('<%= sParamName %>', this);" onBlur="javascript:unselectDiv('<%= sName %>'); setValue('<%= sParamName %>', '<%= sName %>', this);">
@@ -771,9 +801,9 @@ if(iSelRange > -1)
 						}
 						else if(RDMServicesConstants.ACCESS_READ.equals(sUserAccess))
 						{
-							if(slOnOffValues.contains(mParamInfo.get(RDMServicesConstants.PARAM_NAME)))
+							if(slOnOffValues.contains(sParameter))
 							{
-								if(mParamInfo.get(RDMServicesConstants.PARAM_NAME).contains("door.open"))
+								if(sParameter.contains("door.open"))
 								{
 									if("1".equals(sValue) || "On".equals(sValue))
 									{
@@ -814,7 +844,7 @@ if(iSelRange > -1)
 						else
 						{
 %>
-							&nbsp;
+							---
 <%
 						}
 %>

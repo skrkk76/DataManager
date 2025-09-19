@@ -65,6 +65,8 @@
 	alDisplayOrder.addAll(mDisplayHeaders.keySet());
 	Collections.sort(alDisplayOrder);
 
+	Map<String, String> mParamsInfo = RDMServicesUtils.getControllerParamsInfo(sCntrlType);
+
 	String sDate = (mParams.containsKey("Last Refresh") ? mParams.get("Last Refresh")[0] : "");
 	String sBatchNo = client.getBatchNo();
 
@@ -125,10 +127,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
+	<meta http-equiv="refresh" content="300;url=roomParameters.jsp?controller=<%= sController %>">
 	<title></title>
 
 	<link type="text/css" href="../styles/superTables.css" rel="stylesheet" />
-    <script type="text/javascript" src="../scripts/superTables.js"></script>
+	<script type="text/javascript" src="../scripts/superTables.js"></script>
 	<style>
 	#scrollDiv
 	{
@@ -815,6 +818,7 @@
 				String[] saParamVal = null;
 				Map<String, String> mParamMaxMinVal = new HashMap<String, String>();
 
+				boolean bNoHeader = true;
 				for(int i=0; i<alParams.size(); i++)
 				{
 					sParam = (String)alParams.get(i);
@@ -852,6 +856,15 @@
 							alDisplayOrder.remove(0);
 							slHeaders.add(sHeader);
 						}
+					}
+					else if((iDispOrd == 0) && bNoHeader)
+					{
+%>
+						<tr>
+							<th align="center" colspan="<%= alPhases.size() + 3 %>">&nbsp;</th>
+						</tr>
+<%
+						bNoHeader = false;
 					}
 
 					sCurrentAcc = u.getUserAccess(paramSettings);
@@ -899,7 +912,17 @@
 							</div>
 						</th>
 						<th style="border-left:0px">
-							<img src="../images/info.png" height="18" width="18">
+<%
+						if(mParamsInfo.containsKey(sParam))
+						{
+%>
+							<div class="tooltip">
+								<img src="../images/info.png" alt="Info" width="18" height="18">
+								<div class="tooltiptext"><%= mParamsInfo.get(sParam) %></div>
+							</div>
+<%
+						}
+%>
 						</th>
 <%
 						sCurrentVal = "";

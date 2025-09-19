@@ -58,7 +58,7 @@
 			if("Y".equals(isChecked))
 			{
 				mlUpdateSettings.add(updateGeneralSettings(request, "ViewImage", sCntrlType));
-			}			
+			}
 			
 			DataQuery qry = new DataQuery();
 			if(mlInsertSettings.size() > 0)
@@ -121,6 +121,7 @@
 		mSettings.put(RDMServicesConstants.PARAM_GROUP, request.getParameter("PARAM_GROUP_"+i));
 		mSettings.put(RDMServicesConstants.ON_OFF_VALUE, getRequestValue(request, "ON_OFF_"+i));
 		mSettings.put(RDMServicesConstants.RESET_VALUE, getRequestValue(request, "RESET_VALUE_"+i));
+		mSettings.put(RDMServicesConstants.PARAM_INFO, getRequestValue(request, "PARAM_INFO_"+i));
 		mSettings.put(RDMServicesConstants.CNTRL_TYPE, sCntrlType);
 
 		return mSettings;

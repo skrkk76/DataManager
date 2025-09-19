@@ -17,6 +17,7 @@ public class RDMServicesConstants {
     public final static String PARAM_GROUP = "PARAM_GROUP";
     public final static String PARAM_VALUE = "PARAM_VALUE";
     public final static String PARAM_UNIT = "PARAM_UNIT";
+    public final static String PARAM_INFO = "PARAM_INFO";
     public final static String MIN_PARAM_VALUE = "MIN_PARAM_VALUE";
     public final static String MAX_PARAM_VALUE = "MAX_PARAM_VALUE";
 
