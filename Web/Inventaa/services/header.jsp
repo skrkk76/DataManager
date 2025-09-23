@@ -16,7 +16,7 @@
 		   border-color:transparent;
 		   border-width:0px;
 		}
-		
+
 		td.label
 		{
 		   font-size:14px;
@@ -32,7 +32,7 @@
 	<script language="javascript">
 		window.onresize = function() {
 			var winW = 630, winH = 460;
-			if(top.document.body && top.document.body.offsetWidth) 
+			if(top.document.body && top.document.body.offsetWidth)
 			{
 				winW = top.document.body.offsetWidth;
 				winH = top.document.body.offsetHeight;
@@ -42,7 +42,7 @@
 				winW = top.document.documentElement.offsetWidth;
 				winH = top.document.documentElement.offsetHeight;
 			}
-			if(top.window.innerWidth && top.window.innerHeight) 
+			if(top.window.innerWidth && top.window.innerHeight)
 			{
 				winW = top.window.innerWidth;
 				winH = top.window.innerHeight;
@@ -53,7 +53,7 @@
 			//setTimeout("loadContent('"+url+"')", 500);
 		};
 	</script>
-	
+
 	<script type="text/javascript">
 		function setLogData()
 		{
@@ -63,7 +63,7 @@
 			document.getElementsByTagName("head")[0].appendChild(script);
 		}
 
-		function apiResponse(response) 
+		function apiResponse(response)
 		{
 			document.getElementById("ip").value = response.ip;
 			document.getElementById("hostname").value = response.hostname;
@@ -78,22 +78,22 @@
 		{
 			frames['displaycontent'].location.href = url;
 		}
-		
+
 		function reloadHeader(url)
 		{
 			parent.frames['header'].location.href = "header.jsp?showContent="+url;
 		}
-		
+
 		function popupContent(url, h, w)
 		{
-			var retval = window.open(url, '', 'left=200,top=100,resizable=no,scrollbars=no,status=no,toolbar=no,height='+h+',width='+w);			
+			var retval = window.open(url, '', 'left=200,top=100,resizable=no,scrollbars=no,status=no,toolbar=no,height='+h+',width='+w);
 		}
 
 		function logout()
 		{
 			document.frm.submit();
 		}
-		
+
 		function resetContext(userId)
 		{
 			top.window.document.location.href = "../LoginServlet?U="+userId+"&resetContext=yes";
@@ -107,7 +107,7 @@ if(showContent == null || "".equals(showContent))
 {
 	String sHomePage = u.getHomePage();
 	sHomePage = (sHomePage == null || "".equals(sHomePage) ? RDMServicesConstants.HOME : sHomePage);
-	
+
 	Map<String, String> mHomePage = new HashMap<String, String>();
 	mHomePage.put(RDMServicesConstants.HOME, "showGlobalAlertsView.jsp");
 	mHomePage.put(RDMServicesConstants.SHORTLINKS, "viewShortLinks.jsp");
@@ -175,7 +175,6 @@ if(showContent == null || "".equals(showContent))
 
 							boolean bCreateTask = u.hasViewAccess(RDMServicesConstants.ACTIONS_CREATE_TASK);
 							boolean bUpdateBNO = u.hasViewAccess(RDMServicesConstants.ACTIONS_UPDATE_BNO);
-
 							if(bCreateTask || bUpdateBNO)
 							{
 %>
@@ -199,7 +198,7 @@ if(showContent == null || "".equals(showContent))
 								</li>
 <%
 							}
-							
+
 							boolean bViewGrwDB = u.hasViewAccess(RDMServicesConstants.ROOMS_VIEW_DASHBOARD_GROWER);
 							boolean bViewBnkDB = u.hasViewAccess(RDMServicesConstants.ROOMS_VIEW_DASHBOARD_BUNKER);
 							boolean bViewTnlDB = u.hasViewAccess(RDMServicesConstants.ROOMS_VIEW_DASHBOARD_TUNNEL);
@@ -207,7 +206,7 @@ if(showContent == null || "".equals(showContent))
 							boolean bViewMultiGrw = u.hasViewAccess(RDMServicesConstants.ROOMS_VIEW_MULTI_ROOM_GROWER);
 							boolean bViewMultiBnk = u.hasViewAccess(RDMServicesConstants.ROOMS_VIEW_MULTI_ROOM_BUNKER);
 							boolean bViewMultiTnl = u.hasViewAccess(RDMServicesConstants.ROOMS_VIEW_MULTI_ROOM_TUNNEL);
-							
+
 							if((bViewGrwDB || bViewBnkDB || bViewTnlDB) || bViewSingle || (bViewMultiGrw || bViewMultiBnk || bViewMultiTnl))
 							{
 %>
@@ -249,16 +248,16 @@ if(showContent == null || "".equals(showContent))
 										</li>
 <%
 									}
-									
+
 									if(bViewSingle)
 									{
-%>									
+%>
 										<li><a href="javascript:reloadHeader('singleRoomView.jsp')">
 											<%= resourceBundle.getProperty("DataManager.DisplayText.Single_Room") %></a>
 										</li>
 <%
 									}
-									
+
 									if(bViewMultiGrw || bViewMultiBnk || bViewMultiTnl)
 									{
 %>
@@ -299,7 +298,7 @@ if(showContent == null || "".equals(showContent))
 								</li>
 <%
 							}
-							
+
 							boolean bViewAttrGraph = u.hasViewAccess(RDMServicesConstants.VIEWS_GRAPH_ATTRDATA);
 							boolean bViewProdGraph = u.hasViewAccess(RDMServicesConstants.VIEWS_GRAPH_PRODUCTIVITY);
 							boolean bViewBatchLoad = u.hasViewAccess(RDMServicesConstants.VIEWS_GRAPH_BATCHLOAD);
@@ -309,7 +308,7 @@ if(showContent == null || "".equals(showContent))
 							boolean bViewTasks = u.hasViewAccess(RDMServicesConstants.VIEWS_TASKS);
 							boolean bViewYields = u.hasViewAccess(RDMServicesConstants.VIEWS_YIELDS);
 							boolean bViewTimesheets = u.hasViewAccess(RDMServicesConstants.VIEWS_TIMESHEETS);
-							boolean bViewReports = u.hasViewAccess(RDMServicesConstants.VIEWS_REPORTS);							
+							boolean bViewReports = u.hasViewAccess(RDMServicesConstants.VIEWS_REPORTS);
 							boolean bViewProductvity = u.hasViewAccess(RDMServicesConstants.VIEWS_PRODUCTIVITY);
 							
 							if(bViewAttrGraph || bViewProdGraph || bViewBatchLoad || bViewAlarms || bViewLogs || bViewComments 
@@ -397,7 +396,7 @@ if(showContent == null || "".equals(showContent))
 										<li><a href="javascript:reloadHeader('userProductivity.jsp')"><%= resourceBundle.getProperty("DataManager.DisplayText.Productivity") %></a></li>
 <%
 									}
-									
+
 									if(RDMServicesConstants.ROLE_ADMIN.equals(u.getRole()) || RDMServicesConstants.ROLE_MANAGER.equals(u.getRole()))
 									{									
 %>
@@ -414,7 +413,7 @@ if(showContent == null || "".equals(showContent))
 
 							if(RDMServicesConstants.ROLE_ADMIN.equals(u.getRole()))
 							{
-%>							
+%>
 								<li><a href="#"><%= resourceBundle.getProperty("DataManager.DisplayText.Admin") %> &raquo;</a>
 									<ul>
 										<li><a href="#"><%= resourceBundle.getProperty("DataManager.DisplayText.Set_Views") %> &raquo;</a>
@@ -525,15 +524,15 @@ if(showContent == null || "".equals(showContent))
 			{
 				java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd-MMM HH:mm");
 				sUserLoggedIn = sdf.format(Calendar.getInstance().getTime());
-				
+
 				session.setAttribute("UserLoggedIn", sUserLoggedIn);
 			}
-			
+
 			com.client.util.User contextUser = (com.client.util.User)session.getAttribute("contextUser");
 			if(contextUser != null)
 			{
 %>
-				<td align="right" class="label" width="25%"> 
+				<td align="right" class="label" width="25%">
 					<%= u.getLastName() %>,&nbsp;<%= u.getFirstName() %><br>
 					<a href="javascript:resetContext('<%= contextUser.getUser() %>');" class="label">(<%= contextUser.getLastName() %>,&nbsp;<%= contextUser.getFirstName() %>&nbsp;<img border="0" src="../images/SwitchUser.png" height="20">)</a>
 				</td>
@@ -542,9 +541,9 @@ if(showContent == null || "".equals(showContent))
 			else
 			{
 %>
-				<td align="right" class="label" width="25%"> 
+				<td align="right" class="label" width="25%">
 					<%= u.getLastName() %>,&nbsp;<%= u.getFirstName() %>&nbsp;
-					<a href="javascript:popupContent('changePassword.jsp', '200', '320');" class="label">(<%= resourceBundle.getProperty("DataManager.DisplayText.Change_Password") %>)</a><br>
+					<a href="javascript:popupContent('changePassword.jsp', '200', '475');" class="label">(<%= resourceBundle.getProperty("DataManager.DisplayText.Change_Password") %>)</a><br>
 					<font size="2px"><%= resourceBundle.getProperty("DataManager.DisplayText.Logged_On") %>:&nbsp;<%= sUserLoggedIn %></font>
 				</td>
 <%
@@ -557,7 +556,7 @@ if(showContent == null || "".equals(showContent))
 	</table>
 	<form name="frm" method="post" action="../LogoutServlet" target="_top">
 		<input type="hidden" id="ip" name="ip" value="">
-		<input type="hidden" id="hostname" name="hostname" value="">	
+		<input type="hidden" id="hostname" name="hostname" value="">
 		<input type="hidden" id="city" name="city" value="">
 		<input type="hidden" id="region" name="region" value="">
 		<input type="hidden" id="country" name="country" value="">

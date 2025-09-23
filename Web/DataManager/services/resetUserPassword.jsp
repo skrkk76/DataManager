@@ -12,13 +12,16 @@ Locale locale = request.getLocale();
 LabelResourceBundle resourceBundle = new LabelResourceBundle(locale);
 
 String flag = request.getParameter("flag");
+String password = request.getParameter("password");
+String message = "Password has been reset successfully.\\nNew password: " + password;
+
 if("success".equals(flag))
 {
 %>
-	alert("<%= resourceBundle.getProperty("DataManager.DisplayText.Password_Reset_success") %>");
+	alert("<%= message %>");
 <%
 }
-else if("nomail".equals(flag))
+else if("nouser".equals(flag))
 {
 %>
 	alert("<%= resourceBundle.getProperty("DataManager.DisplayText.Email_Id_Empty") %>");

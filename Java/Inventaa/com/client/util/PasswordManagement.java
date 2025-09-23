@@ -25,29 +25,30 @@ public class PasswordManagement extends HttpServlet {
 	    String sUserName = request.getParameter("id");
 	    String sAction = request.getParameter("action");
 
+	    String flag = null;
+	    String password = generatePassword();
+
 	    DataQuery qry = new DataQuery();
 	    Map<String, String> mUserInfo = qry.getUserDetails(sUserName);
 
-	    String flag;
 	    if (mUserInfo.isEmpty() || mUserInfo.size() == 0) {
 		flag = "nouser";
 	    } else {
-		String eMail = mUserInfo.get(RDMServicesConstants.EMAIL);
-		if (eMail == null || "".equals(eMail)) {
-		    flag = "nomail";
-		} else {
-		    if ("reset.password".equals(sAction)) {
-			String password = generatePassword();
-
-			Map<String, String> mUpdatePwd = new HashMap<String, String>();
-			mUpdatePwd.put(RDMServicesConstants.PASSWORD, password);
-
-			qry.updateUser(sUserName, mUpdatePwd);
-
+		if ("forgot.password".equals(sAction)) {
+		    String eMail = mUserInfo.get(RDMServicesConstants.EMAIL);
+		    if (eMail == null || "".equals(eMail)) {
+			flag = "nomail";
+		    } else {
 			mUserInfo.put(RDMServicesConstants.PASSWORD, password);
+			Mail.sendMail(mUserInfo, sAction);
 		    }
+		}
 
-		    Mail.sendMail(mUserInfo, sAction);
+		if (flag == null) {
+		    Map<String, String> mUpdatePwd = new HashMap<String, String>();
+		    mUpdatePwd.put(RDMServicesConstants.PASSWORD, password);
+
+		    qry.updateUser(sUserName, mUpdatePwd);
 		    flag = "success";
 		}
 	    }
@@ -55,7 +56,7 @@ public class PasswordManagement extends HttpServlet {
 	    if ("forgot.password".equals(sAction)) {
 		response.sendRedirect("services/forgotPassword.jsp?flag=" + flag);
 	    } else if ("reset.password".equals(sAction)) {
-		response.sendRedirect("services/resetUserPassword.jsp?flag=" + flag);
+		response.sendRedirect("services/resetUserPassword.jsp?flag=" + flag + "&password=" + password);
 	    }
 	} catch (Exception e) {
 	    e.printStackTrace();

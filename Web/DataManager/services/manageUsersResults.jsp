@@ -74,18 +74,8 @@
 		
 		function resetPwd(userId)
 		{
-			var email = document.getElementById(userId+'_email');
-			email.value = email.value.trim();
-			
-			if(email.value == "")
-			{
-				alert("<%= resourceBundle.getProperty("DataManager.DisplayText.Email_Addr_Empty") %>");
-			}
-			else
-			{
-				var url = "../Password?id="+userId+"&action=reset.password";
-				parent.frames['hiddenFrame'].document.location.href = url;
-			}
+			var url = "../Password?id="+userId+"&action=reset.password";
+			parent.frames['hiddenFrame'].document.location.href = url;
 		}
 		
 		function blockUser(userId)
@@ -186,7 +176,7 @@
 						if("Y".equals(blocked))
 						{
 %>
-							<a href="javascript:unblockUser('<%= userId %>')"><img border="0" height="24" width="24" src="../images/unblocked.png" alt="<%= resourceBundle.getProperty("DataManager.DisplayText.Unblock_User") %>"></a>
+							<a href="javascript:unblockUser('<%= userId %>')"><img border="0" height="24" width="24" src="../images/unblocked.png" title="<%= resourceBundle.getProperty("DataManager.DisplayText.Unblock_User") %>"></a>
 <%
 						}
 						else
@@ -194,12 +184,12 @@
 							if(contextUser == null)
 							{
 %>
-								<a href="javascript:pushContext('<%= userId %>')"><img border="0" src="../images/SwitchUser.png" height="22"></a>&nbsp;&nbsp;
+								<a href="javascript:pushContext('<%= userId %>')"><img border="0" src="../images/SwitchUser.png" height="22" title="Switch User"></a>&nbsp;&nbsp;
 <%
 							}
 %>
-							<a href="javascript:resetPwd('<%= userId %>')"><img border="0" src="../images/reset.png" height="20" alt="<%= resourceBundle.getProperty("DataManager.DisplayText.Reset_Password") %>"></a>&nbsp;&nbsp;
-							<a href="javascript:blockUser('<%= userId %>')"><img border="0" height="20" width="20" src="../images/blocked.png" alt="<%= resourceBundle.getProperty("DataManager.DisplayText.Block_User") %>"></a>
+							<a href="javascript:resetPwd('<%= userId %>')"><img border="0" src="../images/reset.png" height="20" title="<%= resourceBundle.getProperty("DataManager.DisplayText.Reset_Password") %>"></a>&nbsp;&nbsp;
+							<a href="javascript:blockUser('<%= userId %>')"><img border="0" height="20" width="20" src="../images/blocked.png" title="<%= resourceBundle.getProperty("DataManager.DisplayText.Block_User") %>"></a>
 <%
 						}
 %>

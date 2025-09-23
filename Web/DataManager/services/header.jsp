@@ -464,7 +464,7 @@ if(showContent == null || "".equals(showContent))
 %>
 				<td align="right" class="label" width="25%">
 					<%= u.getLastName() %>,&nbsp;<%= u.getFirstName() %>&nbsp;
-					<a href="javascript:popupContent('changePassword.jsp', '200', '320');" class="label">(<%= resourceBundle.getProperty("DataManager.DisplayText.Change_Password") %>)</a><br>
+					<a href="javascript:popupContent('changePassword.jsp', '200', '475');" class="label">(<%= resourceBundle.getProperty("DataManager.DisplayText.Change_Password") %>)</a><br>
 					<font size="2px"><%= resourceBundle.getProperty("DataManager.DisplayText.Logged_On") %>:&nbsp;<%= sUserLoggedIn %></font>
 				</td>
 <%
