@@ -533,47 +533,11 @@ if(iSelRange > -1)
 %>
 				</tr>
 <%
-				if(mViewParams.containsKey("current phase"))
-				{
-					iHeaderRows++;
-%>
-					<tr>
-						<th style="text-align:left;border-right:0px">current phase</th>
-						<th style="border-left:0px">&nbsp;</th>
-<%
-						for(int i=0; i<iSz; i++)
-						{
-							sController = slControllers.get(i);
-							mParams = mAllParams.get(sController);
-							sValue = (mParams.containsKey("current phase") ? mParams.get("current phase").get(RDMServicesConstants.PARAM_VALUE) : "");
-							if(sValue.endsWith(".0"))
-							{
-								sValue = sValue.substring(0, sValue.indexOf("."));
-							}
-							sName = RDMServicesUtils.getStageName(sCntrlType, sValue);
-							if(!("".equals(sName) || "-".equals(sName)))
-							{
-								sValue = sName.replaceAll(" ", "<br>") + "&nbsp;("+ sValue + ")";
-							}
-%>
-							<td class="text" align="left"><%= sValue %></td>
-<%
-						}
-%>
-					</tr>
-<%
-				}
-				
 				boolean bNoHeader = true;
 				for(int i=0, iCnt=alParams.size(); i<iCnt; i++)
 				{
-					sName = alParams.get(i);
-					if("current phase".equals(sName))
-					{
-						continue;
-					}
-					
 					iDispOrd = -1;
+					sName = alParams.get(i);
 					paramSettings = mViewParams.get(sName);
 					if(paramSettings != null)
 					{
@@ -663,6 +627,24 @@ if(iSelRange > -1)
 
 							sValue = mParamInfo.get(RDMServicesConstants.PARAM_VALUE);
 							sValue = (sValue == null ? "&nbsp;" : sValue);
+
+							if("current phase".equals(sName))
+							{
+								if(sValue.endsWith(".0"))
+								{
+									sValue = sValue.substring(0, sValue.indexOf("."));
+								}
+								String stgName = RDMServicesUtils.getStageName(sCntrlType, sValue);
+								if(!("".equals(stgName) || "-".equals(stgName)))
+								{
+									sValue = stgName.replaceAll(" ", "<br>") + "&nbsp;("+ sValue + ")";
+								}
+
+								if(j == 0)
+								{
+									iHeaderRows++;
+								}
+							}
 
 							sMinVal = mParamInfo.get(RDMServicesConstants.MIN_PARAM_VALUE);
 							sMaxVal = mParamInfo.get(RDMServicesConstants.MAX_PARAM_VALUE);

@@ -89,21 +89,27 @@
 			if(!document.getElementById("batchNo").checked)
 			{
 				document.getElementById("batchNo").disabled = true;
-				document.getElementById("DISPLAY_ORDER_BatchNo").disabled = true;
 				document.getElementById("ROOMS_OVERVIEW_BatchNo").disabled = true;
 				document.getElementById("MULTIROOMS_VIEW_BatchNo").disabled = true;
 				document.getElementById("SINGLEROOM_VIEW_BatchNo").disabled = true;
 				document.getElementById("GRAPH_VIEW_BatchNo").disabled = true;
+				document.getElementById("HELPER_READ_BatchNo").disabled = true;
+				document.getElementById("SUPERVISOR_READ_BatchNo").disabled = true;
+				document.getElementById("MANAGER_READ_BatchNo").disabled = true;
+				document.getElementById("ADMIN_READ_BatchNo").disabled = true;
 			}
 			
 			if(!document.getElementById("product").checked)
 			{
 				document.getElementById("product").disabled = true;
-				document.getElementById("DISPLAY_ORDER_Product").disabled = true;
 				document.getElementById("ROOMS_OVERVIEW_Product").disabled = true;
 				document.getElementById("MULTIROOMS_VIEW_Product").disabled = true;
 				document.getElementById("SINGLEROOM_VIEW_Product").disabled = true;
 				document.getElementById("GRAPH_VIEW_Product").disabled = true;
+				document.getElementById("HELPER_READ_Product").disabled = true;
+				document.getElementById("SUPERVISOR_READ_Product").disabled = true;
+				document.getElementById("MANAGER_READ_Product").disabled = true;
+				document.getElementById("ADMIN_READ_Product").disabled = true;
 			}
 			
 			if(!document.getElementById("image").checked)
@@ -351,6 +357,10 @@
 						sMultiRoomsView = mParam.getMultiRoomView();
 						sSingleRoomView = mParam.getSingleRoomView();
 						sGraphView = mParam.getGraphView();
+						sViewerRead = mParam.getHelperRead();
+						sGrowerRead = mParam.getSupervisorRead();
+						sManagerRead = mParam.getManagerRead();
+						sAdminRead = mParam.getAdminRead();
 					}
 					sDisplayOrder = ((sDisplayOrder == null) ? "" : sDisplayOrder);
 %>
@@ -359,9 +369,7 @@
 							<input type="checkbox" id="batchNo" name="batchNo" value="" onClick="javacript:checkOne('batchNo', this.checked)">
 						</th>
 						<th style="text-align: left" width="25%"><%= resourceBundle.getProperty("DataManager.DisplayText.Batch_No") %></th>
-						<td align="center" width="5%">
-							<input type="text" id="DISPLAY_ORDER_BatchNo" name="DISPLAY_ORDER_BatchNo" size="3" maxlength="3" value="<%= sDisplayOrder %>" onBlur="javascript:setValue('DISPLAY_ORDER_BatchNo', this.value)">
-						</td>
+						<td align="center" width="5%">&nbsp;</td>
 						<td align="center" width="5%">&nbsp;</td>
 						<td align="center" width="4%">&nbsp;</td>
 						<td align="center" width="4%">&nbsp;</td>
@@ -378,13 +386,21 @@
 						<td align="center" width="4%">
 							<input type="checkbox" id="GRAPH_VIEW_BatchNo"  name="GRAPH_VIEW_BatchNo" value="<%= sGraphView %>" <%= ("Y".equals(sGraphView) ? "checked" : "") %> onClick="javacript:checkOne('GRAPH_VIEW_BatchNo', this.checked)">
 						</td>
+						<td align="center" width="3%">
+							<input type="checkbox" id="HELPER_READ_BatchNo" name="HELPER_READ_BatchNo" value="<%= sViewerRead %>" <%= ("Y".equals(sViewerRead) ? "checked" : "") %> onClick="javacript:checkOne('HELPER_READ_BatchNo', this.checked)">
+						</td>
 						<td align="center" width="3%">&nbsp;</td>
+						<td align="center" width="3%">
+							<input type="checkbox" id="SUPERVISOR_READ_BatchNo" name="SUPERVISOR_READ_BatchNo" value="<%= sGrowerRead %>" <%= ("Y".equals(sGrowerRead) ? "checked" : "") %> onClick="javacript:checkOne('SUPERVISOR_READ_BatchNo', this.checked)">
+						</td>
 						<td align="center" width="3%">&nbsp;</td>
+						<td align="center" width="3%">
+							<input type="checkbox" id="MANAGER_READ_BatchNo" name="MANAGER_READ_BatchNo" value="<%= sManagerRead %>" <%= ("Y".equals(sManagerRead) ? "checked" : "") %> onClick="javacript:checkOne('MANAGER_READ_BatchNo', this.checked)">
+						</td>
 						<td align="center" width="3%">&nbsp;</td>
-						<td align="center" width="3%">&nbsp;</td>
-						<td align="center" width="3%">&nbsp;</td>
-						<td align="center" width="3%">&nbsp;</td>
-						<td align="center" width="4%">&nbsp;</td>
+						<td align="center" width="4%">
+							<input type="checkbox" id="ADMIN_READ_BatchNo" name="ADMIN_READ_BatchNo" value="<%= sAdminRead %>" <%= ("Y".equals(sAdminRead) ? "checked" : "") %> onClick="javacript:checkOne('ADMIN_READ_BatchNo', this.checked)">
+						</td>
 						<td align="center" width="4%">&nbsp;</td>
 						<td align="center" style="border:#FFFFFF" width="1%">&nbsp;</td>
 					</tr>
@@ -398,6 +414,10 @@
 						sMultiRoomsView = mParam.getMultiRoomView();
 						sSingleRoomView = mParam.getSingleRoomView();
 						sGraphView = mParam.getGraphView();
+						sViewerRead = mParam.getHelperRead();
+						sGrowerRead = mParam.getSupervisorRead();
+						sManagerRead = mParam.getManagerRead();
+						sAdminRead = mParam.getAdminRead();
 					}
 					sDisplayOrder = ((sDisplayOrder == null) ? "" : sDisplayOrder);
 %>
@@ -406,9 +426,7 @@
 							<input type="checkbox" id="product" name="product" value="" onClick="javacript:checkOne('product', this.checked)">
 						</th>
 						<th style="text-align: left" width="25%"><%= resourceBundle.getProperty("DataManager.DisplayText.Product") %></th>
-						<td align="center" width="5%">
-							<input type="text" id="DISPLAY_ORDER_Product" name="DISPLAY_ORDER_Product" size="3" maxlength="3" value="<%= sDisplayOrder %>" onBlur="javascript:setValue('DISPLAY_ORDER_Product', this.value)">
-						</td>
+						<td align="center" width="5%">&nbsp;</td>
 						<td align="center" width="5%">&nbsp;</td>
 						<td align="center" width="4%">&nbsp;</td>
 						<td align="center" width="4%">&nbsp;</td>
@@ -425,13 +443,21 @@
 						<td align="center" width="4%">
 							<input type="checkbox" id="GRAPH_VIEW_Product"  name="GRAPH_VIEW_Product" value="<%= sGraphView %>" <%= ("Y".equals(sGraphView) ? "checked" : "") %> onClick="javacript:checkOne('GRAPH_VIEW_Product', this.checked)">
 						</td>
+						<td align="center" width="3%">
+							<input type="checkbox" id="HELPER_READ_Product" name="HELPER_READ_Product" value="<%= sViewerRead %>" <%= ("Y".equals(sViewerRead) ? "checked" : "") %> onClick="javacript:checkOne('HELPER_READ_Product', this.checked)">
+						</td>
 						<td align="center" width="3%">&nbsp;</td>
+						<td align="center" width="3%">
+							<input type="checkbox" id="SUPERVISOR_READ_Product" name="SUPERVISOR_READ_Product" value="<%= sGrowerRead %>" <%= ("Y".equals(sGrowerRead) ? "checked" : "") %> onClick="javacript:checkOne('SUPERVISOR_READ_Product', this.checked)">
+						</td>
 						<td align="center" width="3%">&nbsp;</td>
+						<td align="center" width="3%">
+							<input type="checkbox" id="MANAGER_READ_Product" name="MANAGER_READ_Product" value="<%= sManagerRead %>" <%= ("Y".equals(sManagerRead) ? "checked" : "") %> onClick="javacript:checkOne('MANAGER_READ_Product', this.checked)">
+						</td>
 						<td align="center" width="3%">&nbsp;</td>
-						<td align="center" width="3%">&nbsp;</td>
-						<td align="center" width="3%">&nbsp;</td>
-						<td align="center" width="3%">&nbsp;</td>
-						<td align="center" width="4%">&nbsp;</td>
+						<td align="center" width="4%">
+							<input type="checkbox" id="ADMIN_READ_Product" name="ADMIN_READ_Product" value="<%= sAdminRead %>" <%= ("Y".equals(sAdminRead) ? "checked" : "") %> onClick="javacript:checkOne('ADMIN_READ_Product', this.checked)">
+						</td>
 						<td align="center" width="4%">&nbsp;</td>
 						<td align="center" style="border:#FFFFFF" width="1%">&nbsp;</td>
 					</tr>

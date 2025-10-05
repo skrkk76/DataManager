@@ -129,25 +129,22 @@
 	
 	private Map updateGeneralSettings(ServletRequest request, String sName, String sCntrlType) throws Exception
 	{
-		String displayOrder = request.getParameter("DISPLAY_ORDER_"+sName);
-		displayOrder = ((displayOrder == null || "".equals(displayOrder)) ? "0" : displayOrder);
-		
 		Map<String, String> mSettings = new HashMap<String, String>();
 		mSettings.put(RDMServicesConstants.PARAM_NAME, sName);
-		mSettings.put(RDMServicesConstants.DISPLAY_ORDER, displayOrder);
+		mSettings.put(RDMServicesConstants.DISPLAY_ORDER, "1");
 		mSettings.put(RDMServicesConstants.SCALE_ON_GRAPH, "0");
 		mSettings.put(RDMServicesConstants.STAGE_NAME, "NA");
 		mSettings.put(RDMServicesConstants.ROOMS_OVERVIEW, getRequestValue(request, "ROOMS_OVERVIEW_"+sName));
 		mSettings.put(RDMServicesConstants.MULTIROOMS_VIEW, getRequestValue(request, "MULTIROOMS_VIEW_"+sName));
 		mSettings.put(RDMServicesConstants.SINGLEROOM_VIEW, getRequestValue(request, "SINGLEROOM_VIEW_"+sName));
 		mSettings.put(RDMServicesConstants.GRAPH_VIEW, getRequestValue(request, "GRAPH_VIEW_"+sName));
-		mSettings.put(RDMServicesConstants.HELPER_READ, "Y");
+		mSettings.put(RDMServicesConstants.HELPER_READ, getRequestValue(request, "HELPER_READ_"+sName));
 		mSettings.put(RDMServicesConstants.HELPER_WRITE, "N");
-		mSettings.put(RDMServicesConstants.SUPERVISOR_READ, "Y");
+		mSettings.put(RDMServicesConstants.SUPERVISOR_READ, getRequestValue(request, "SUPERVISOR_READ_"+sName));
 		mSettings.put(RDMServicesConstants.SUPERVISOR_WRITE, "N");
-		mSettings.put(RDMServicesConstants.MANAGER_READ, "Y");
+		mSettings.put(RDMServicesConstants.MANAGER_READ, getRequestValue(request, "MANAGER_READ_"+sName));
 		mSettings.put(RDMServicesConstants.MANAGER_WRITE, "N");
-		mSettings.put(RDMServicesConstants.ADMIN_READ, "Y");
+		mSettings.put(RDMServicesConstants.ADMIN_READ, getRequestValue(request, "ADMIN_READ_"+sName));
 		mSettings.put(RDMServicesConstants.ADMIN_WRITE, "N");
 		mSettings.put(RDMServicesConstants.PARAM_UNIT, "");
 		mSettings.put(RDMServicesConstants.PARAM_GROUP, "");

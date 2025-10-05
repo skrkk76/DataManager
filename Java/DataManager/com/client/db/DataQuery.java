@@ -390,7 +390,7 @@ public class DataQuery extends RDMServicesConstants {
 	try {
 	    conn = connectionPool.getConnection();
 	    stmt = conn.createStatement();
-	    
+
 	    boolean bGeneral = cntrlType.startsWith("General.");
 
 	    String sTable = null;
@@ -409,7 +409,7 @@ public class DataQuery extends RDMServicesConstants {
 		if (RDMServicesUtils.isNullOrEmpty(sParamInfo)) {
 		    continue;
 		}
-		
+
 		String sParamGroup = bGeneral ? null : rs.getString(PARAM_GROUP);
 		if (RDMServicesUtils.isNotNullAndNotEmpty(sParamGroup)) {
 		    map.put(sParamGroup, sParamInfo);
@@ -807,6 +807,7 @@ public class DataQuery extends RDMServicesConstants {
 	    StringBuilder sbVals = new StringBuilder();
 	    StringBuilder sbNewCols = new StringBuilder();
 	    StringList slParams = new StringList();
+	    StringList slCols = new StringList();
 
 	    String roomTable = sController.replace(" ", "") + "_param_data";
 	    StringList slColParams = getColumnParameters(roomTable);
@@ -832,7 +833,7 @@ public class DataQuery extends RDMServicesConstants {
 		    fg1 = true;
 		}
 
-		if (!slParams.contains(sParam)) {
+		if (!slCols.contains(sParam.toUpperCase())) {
 		    if (fg2) {
 			sbCols.append(", ");
 			sbVals.append(", ");
@@ -842,6 +843,7 @@ public class DataQuery extends RDMServicesConstants {
 		    sbVals.append("?");
 
 		    slParams.add(sParam);
+		    slCols.add(sParam.toUpperCase());
 		    fg2 = true;
 		}
 	    }

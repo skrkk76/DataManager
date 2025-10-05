@@ -7,7 +7,7 @@
 
 <%@include file="commonUtils.jsp" %>
 
-<%	
+<%
 	String sRealTime = request.getParameter("realTime");
 	boolean bRealTime = ("true".equalsIgnoreCase(sRealTime));	
 	String sSelRange = request.getParameter("selRange");
@@ -15,7 +15,7 @@
 	
 	String sCntrlType = request.getParameter("cntrlType");
 
-	StringList slCntrlPhases = RDMServicesUtils.sortControllerPhases(RDMSession);
+	StringList slCntrlPhases = RDMServicesUtils.sortControllerPhases(RDMSession, sCntrlType);
 	StringList slCntrlSel = RDMSession.getControllersSelection(slCntrlPhases, 10);
 
 	StringList slControllers = RDMSession.getControllers(iSelRange, 10, slCntrlPhases);
