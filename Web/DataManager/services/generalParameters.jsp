@@ -261,12 +261,32 @@
 			slWaterParams.sort();
 			slTimeParams.sort();
 			
+			TreeMap<String, String> mpNoOrderParams = new TreeMap<String, String>();
 			StringList slParams = new StringList();
 			slParams.addAll(slWaterParams);
 			slParams.addAll(slTimeParams);
 			for(String param : displayOrder)
 			{
-				slParams.add(param);
+				mParam = mParamSettings.get(param);
+				if(mParam.getDisplayOrder() == 0)
+				{
+					String paramLabelKey = (sController + "." + param).replace(" ", "");
+					String paramLabelVal = resourceBundle.getProperty(paramLabelKey);
+					if(paramLabelKey.equals(paramLabelVal))
+					{
+						paramLabelVal = param;
+					}
+					mpNoOrderParams.put(paramLabelVal, param);
+				}
+				else
+				{
+					slParams.add(param);
+				}
+			}
+			
+			for (Map.Entry<String, String> entry : mpNoOrderParams.entrySet())
+			{
+				slParams.add(entry.getValue());
 			}
 			
 			for(int m=0; m<slParams.size(); m++)
@@ -291,9 +311,16 @@
 				{
 					continue;
 				}
+				
+				String paramLabelKey = (sController + "." + param).replace(" ", "");
+				String paramLabelVal = resourceBundle.getProperty(paramLabelKey);
+				if(paramLabelKey.equals(paramLabelVal))
+				{
+					paramLabelVal = sParam;
+				}
 %>
 				<tr>
-					<th style="text-align: left; border-right:0px"><%= sParam %>
+					<th style="text-align: left; border-right:0px"><%= paramLabelVal %>
 <%
 					if(!"".equals(sUnit))
 					{

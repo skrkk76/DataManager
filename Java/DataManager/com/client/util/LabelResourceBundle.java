@@ -6,14 +6,17 @@ import java.util.ResourceBundle;
 public class LabelResourceBundle {
     private ResourceBundle defResourceBundle = null;
     private ResourceBundle userResourceBundle = null;
+    private ResourceBundle GeneralWaterParams = null;
 
     public LabelResourceBundle() {
 	defResourceBundle = ResourceBundle.getBundle("DataManagerStringResource");
+	GeneralWaterParams = ResourceBundle.getBundle("GeneralWateringParameters");
     }
 
     public LabelResourceBundle(Locale l) {
 	defResourceBundle = ResourceBundle.getBundle("DataManagerStringResource");
 	userResourceBundle = ResourceBundle.getBundle("DataManagerStringResource", l);
+	GeneralWaterParams = ResourceBundle.getBundle("GeneralWateringParameters");
     }
 
     public String getProperty(String sProperty) {
@@ -22,6 +25,9 @@ public class LabelResourceBundle {
 	    return sValue.trim();
 	} else if (defResourceBundle != null && defResourceBundle.containsKey(sProperty)) {
 	    String sValue = (String) defResourceBundle.getObject(sProperty);
+	    return sValue.trim();
+	} else if (GeneralWaterParams != null && GeneralWaterParams.containsKey(sProperty)) {
+	    String sValue = (String) GeneralWaterParams.getObject(sProperty);
 	    return sValue.trim();
 	}
 	return sProperty;
