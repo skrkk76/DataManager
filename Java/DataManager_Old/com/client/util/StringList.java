@@ -3,10 +3,11 @@ package com.client.util;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
-@SuppressWarnings("serial")
-public class StringList implements Serializable {
+public class StringList implements Iterable<String>, Serializable {
+    private static final long serialVersionUID = 1L;
     private List<String> list;
 
     public StringList() {
@@ -129,5 +130,9 @@ public class StringList implements Serializable {
 	String[] s = new String[list.size()];
 	s = (String[]) list.toArray(s);
 	return s;
+    }
+
+    public Iterator<String> iterator() {
+	return this.iterator();
     }
 }

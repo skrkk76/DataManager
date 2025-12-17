@@ -110,6 +110,7 @@
 	NumberFormat decimalFormat = NumberFormat.getInstance(Locale.getDefault());
 	decimalFormat.setMinimumFractionDigits(1);
 	
+	/*
 	StringList userDepts = u.getDepartment();
 	boolean bCanEdit = userDepts.isEmpty();
 	Map<String, String> activeDepts = RDMServicesUtils.getDepartments();
@@ -122,6 +123,8 @@
 			bCanEdit = true;
 		}
 	}
+	*/
+	boolean bCanEdit = true;
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

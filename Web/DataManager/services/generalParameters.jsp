@@ -30,6 +30,21 @@
 	{
 		client = new PLCServices_newHW(RDMSession, sController);
 	}
+	
+	try
+	{
+		client.isActive();
+	}
+	catch(Exception e)
+	{
+%>
+		<script language="javascript">
+			alert("<%= e.getMessage() %>");
+			document.location.href = "singleRoomView.jsp";
+		</script>
+<%
+		return;
+	}
 	String sCntrlType = client.getControllerType();
 
 	Map<String, ParamSettings> mParamSettings = RDMServicesUtils.getGeneralViewParams(sCntrlType);
@@ -48,6 +63,7 @@
 	
 	StringList slOnOffValues = RDMServicesUtils.getOnOffParams(sCntrlType);
 	
+	/*
 	StringList userDepts = u.getDepartment();
 	boolean bCanEdit = userDepts.isEmpty();
 	Map<String, String> activeDepts = RDMServicesUtils.getDepartments();
@@ -60,6 +76,8 @@
 			bCanEdit = true;
 		}
 	}
+	*/
+	boolean bCanEdit = true;
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -312,7 +330,7 @@
 					continue;
 				}
 				
-				String paramLabelKey = (sController + "." + param).replace(" ", "");
+				String paramLabelKey = (sController + "." + sParam).replace(" ", "");
 				String paramLabelVal = resourceBundle.getProperty(paramLabelKey);
 				if(paramLabelKey.equals(paramLabelVal))
 				{

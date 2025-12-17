@@ -743,6 +743,7 @@ public class DataQuery extends RDMServicesConstants {
 	    StringBuilder sbVals = new StringBuilder();
 	    StringBuilder sbNewCols = new StringBuilder();
 	    StringList slParams = new StringList();
+	    StringList slCols = new StringList();
 
 	    String roomTable = sController.replace(" ", "") + "_param_data";
 	    StringList slColParams = getColumnParameters(roomTable);
@@ -768,7 +769,7 @@ public class DataQuery extends RDMServicesConstants {
 		    fg1 = true;
 		}
 
-		if (!slParams.contains(sParam)) {
+		if (!slCols.contains(sParam.toUpperCase())) {
 		    if (fg2) {
 			sbCols.append(", ");
 			sbVals.append(", ");
@@ -778,6 +779,7 @@ public class DataQuery extends RDMServicesConstants {
 		    sbVals.append("?");
 
 		    slParams.add(sParam);
+		    slCols.add(sParam.toUpperCase());
 		    fg2 = true;
 		}
 	    }
@@ -1000,10 +1002,6 @@ public class DataQuery extends RDMServicesConstants {
 			    iGraphScale = (mGraphScale.containsKey(sParam) ? mGraphScale.get(sParam).intValue() : 1);
 			    iGraphScale = ((iGraphScale < 1) ? 1 : iGraphScale);
 			    sValue = Double.toString(Double.parseDouble(sValue) / iGraphScale);
-
-			    if (Double.parseDouble(sValue) < 0) {
-				sValue = "0";
-			    }
 			} catch (Exception ex) {
 			    // do nothing
 			}

@@ -105,6 +105,7 @@ public class RDMServicesConstants {
     public final static String TYPE_GROWER = "Grower";
     public final static String TYPE_BUNKER = "Bunker";
     public final static String TYPE_TUNNEL = "Tunnel";
+    public final static String TYPE_GENERAL = "General";
     public final static String TYPE_GENERAL_GROWER = "General.Grower";
     public final static String TYPE_GENERAL_BUNKER = "General.Bunker";
     public final static String TYPE_GENERAL_TUNNEL = "General.Tunnel";
@@ -292,6 +293,13 @@ public class RDMServicesConstants {
 
     public final static String ALGORITHM_AES = "AES";
     public final static String ALGORITHM_DES = "DES";
+
+    public final static StringList GENERAL_CNTRL_TYPES = new StringList();
+    static {
+	GENERAL_CNTRL_TYPES.add(TYPE_GENERAL_GROWER);
+	GENERAL_CNTRL_TYPES.add(TYPE_GENERAL_BUNKER);
+	GENERAL_CNTRL_TYPES.add(TYPE_GENERAL_TUNNEL);
+    }
 
     public final static Map<String, String> SET_PARAMS = new HashMap<String, String>();
     static {

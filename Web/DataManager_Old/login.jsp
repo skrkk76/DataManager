@@ -58,7 +58,7 @@
 			<td colspan="3" align="right">
 				<a class="label" href="javascript:forgotPwd()"><%= resourceBundle.getProperty("DataManager.DisplayText.Forgot_Password") %></a>
 			</td>
-		</tr>		
+		</tr>
 	</table>
 	<input type="hidden" id="winW" name="winW" value="">
 	<input type="hidden" id="winH" name="winH" value="">
@@ -86,6 +86,8 @@
 %>
 	function forgotPwd()
 	{
+		alert("Please contact the Administrator to reset the password.");
+		/*
 		var user = document.getElementById("U").value;
 		if(user == "")
 		{
@@ -96,6 +98,7 @@
 			var url = "Password?id="+user+"&action=forgot.password";
 			document.location.href = url;
 		}
+		*/
 	}
 	
 	function setWinDim()

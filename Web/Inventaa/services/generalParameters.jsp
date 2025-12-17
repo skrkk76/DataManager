@@ -30,6 +30,21 @@
 	{
 		client = new PLCServices_newHW(RDMSession, sController);
 	}
+	
+	try
+	{
+		client.isActive();
+	}
+	catch(Exception e)
+	{
+%>
+		<script language="javascript">
+			alert("<%= e.getMessage() %>");
+			document.location.href = "singleRoomView.jsp";
+		</script>
+<%
+		return;
+	}
 	String sCntrlType = client.getControllerType();
 
 	Map<String, ParamSettings> mParamSettings = RDMServicesUtils.getGeneralViewParams(sCntrlType);
@@ -312,7 +327,7 @@
 					continue;
 				}
 				
-				String paramLabelKey = (sController + "." + param).replace(" ", "");
+				String paramLabelKey = (sController + "." + sParam).replace(" ", "");
 				String paramLabelVal = resourceBundle.getProperty(paramLabelKey);
 				if(paramLabelKey.equals(paramLabelVal))
 				{

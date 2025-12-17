@@ -1066,10 +1066,6 @@ public class DataQuery extends RDMServicesConstants {
 			    iGraphScale = (mGraphScale.containsKey(sParam) ? mGraphScale.get(sParam).intValue() : 1);
 			    iGraphScale = ((iGraphScale < 1) ? 1 : iGraphScale);
 			    sValue = Double.toString(Double.parseDouble(sValue) / iGraphScale);
-
-			    if (Double.parseDouble(sValue) < 0) {
-				sValue = "0";
-			    }
 			} catch (Exception ex) {
 			    // do nothing
 			}

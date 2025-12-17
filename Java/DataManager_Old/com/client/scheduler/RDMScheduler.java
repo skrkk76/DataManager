@@ -9,6 +9,7 @@ import com.client.ServicesSession;
 import com.client.db.DataQuery;
 import com.client.license.VerifyLicense;
 import com.client.rules.RuleEngine;
+import com.client.util.RDMServicesConstants;
 import com.client.util.RDMServicesUtils;
 import com.client.util.StringList;
 
@@ -49,7 +50,14 @@ public class RDMScheduler {
 	ServicesSession session = new ServicesSession();
 
 	if (args.length == 1) {
-	    slControllers.addAll(session.getAllControllers(args[0]));
+	    if (RDMServicesConstants.TYPE_GENERAL.equals(args[0])) {
+		for (int i = 0; i < RDMServicesConstants.GENERAL_CNTRL_TYPES.size(); i++) {
+		    String cntrlType = RDMServicesConstants.GENERAL_CNTRL_TYPES.get(i);
+		    slControllers.addAll(session.getAllControllers(cntrlType));
+		}
+	    } else {
+		slControllers.addAll(session.getAllControllers(args[0]));
+	    }
 	} else {
 	    String[] controllers = args[1].split(",");
 	    for (String controller : controllers) {
