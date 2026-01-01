@@ -136,7 +136,7 @@
 				<td class="label" width="25%" id="a"><b><%= resourceBundle.getProperty("DataManager.DisplayText.Date") %></b></td>
 				<td class="input" width="75%">
 					<input type="text" size="10" id="date" name="date" readonly>
-					<a href="#" onClick="setYears(2000, 2025);showCalender('a', 'date');"><img src="../images/calender.png"></a>
+					<a href="#" onClick="setYears(2000, 2050);showCalender('a', 'date');"><img src="../images/calender.png"></a>
 					<a href="#" onClick="javascript:document.getElementById('date').value=''"><img src="../images/clear.png"></a>
 				</td>
 			</tr>

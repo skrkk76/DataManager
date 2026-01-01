@@ -117,7 +117,7 @@
 				<td class="label" rowspan="2"><%= resourceBundle.getProperty("DataManager.DisplayText.Log_In") %></td>
 				<td class="label" colspan="4" id="a">
 					<input type="text" size="10" id="log_in" name="log_in" value="<%= sInDt %>" readonly>
-					<a href="#" onClick="setYears(2000, 2025);showCalender('b', 'log_in');"><img src="../images/calender.png"></a>
+					<a href="#" onClick="setYears(2000, 2050);showCalender('b', 'log_in');"><img src="../images/calender.png"></a>
 					<a href="#" onClick="javascript:document.getElementById('log_in').value=''"><img src="../images/clear.png"></a>
 				</td>
 			</tr>
@@ -134,7 +134,7 @@
 				<td class="label" rowspan="2"><%= resourceBundle.getProperty("DataManager.DisplayText.Log_Out") %></td>
 				<td class="label" colspan="4" id="b">
 					<input type="text" size="10" id="log_out" name="log_out" value="<%= sOutDt %>" readonly>
-					<a href="#" onClick="setYears(2000, 2025);showCalender('b', 'log_out');"><img src="../images/calender.png"></a>
+					<a href="#" onClick="setYears(2000, 2050);showCalender('b', 'log_out');"><img src="../images/calender.png"></a>
 					<a href="#" onClick="javascript:document.getElementById('log_out').value=''"><img src="../images/clear.png"></a>
 				</td>
 			</tr>

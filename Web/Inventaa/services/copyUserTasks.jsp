@@ -330,7 +330,7 @@
 				<td class="label" id="a"><b><%= resourceBundle.getProperty("DataManager.DisplayText.Estimated_Start") %></b></td>
 				<td class="input">
 					<input type="text" size="10" id="start_date" name="start_date" readonly>
-					<a href="#" onClick="setYears(2000, 2025);showCalender('a', 'start_date');"><img src="../images/calender.png"></a>
+					<a href="#" onClick="setYears(2000, 2050);showCalender('a', 'start_date');"><img src="../images/calender.png"></a>
 					<a href="#" onClick="javascript:document.getElementById('start_date').value=''"><img src="../images/clear.png"></a>
 				</td>
 				<td class="input">
@@ -362,7 +362,7 @@
 				<td class="label" id="b"><b><%= resourceBundle.getProperty("DataManager.DisplayText.Estimated_End") %></b></td>
 				<td class="input">
 					<input type="text" size="10" id="end_date" name="end_date" readonly>
-					<a href="#" onClick="setYears(2000, 2025);showCalender('b', 'end_date');"><img src="../images/calender.png"></a>
+					<a href="#" onClick="setYears(2000, 2050);showCalender('b', 'end_date');"><img src="../images/calender.png"></a>
 					<a href="#" onClick="javascript:document.getElementById('end_date').value=''"><img src="../images/clear.png"></a>
 				</td>
 				<td class="input">
