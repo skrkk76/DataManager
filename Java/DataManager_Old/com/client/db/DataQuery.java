@@ -2334,7 +2334,7 @@ public class DataQuery extends RDMServicesConstants {
 	    stmt = conn.createStatement();
 
 	    String sQuery = "SELECT COUNT(*) FROM " + SCHEMA_NAME + ".ROOM_INFO WHERE " + CNTRL_TYPE
-		    + " NOT LIKE 'General.%'";
+		    + " NOT LIKE 'General.%' and " + ROOM_STATUS + " = '" + ACTIVE + "'";
 	    rs = stmt.executeQuery(sQuery);
 
 	    int iCnt = 0;
@@ -7716,7 +7716,7 @@ public class DataQuery extends RDMServicesConstants {
 	    stmt = conn.createStatement();
 
 	    String sQuery = "SELECT COUNT(*) FROM " + SCHEMA_NAME + ".ROOM_INFO WHERE " + CNTRL_TYPE
-		    + " NOT LIKE 'General.%'";
+		    + " NOT LIKE 'General.%' and " + ROOM_STATUS + " = '" + ACTIVE + "'";
 	    rs = stmt.executeQuery(sQuery);
 
 	    int iCnt = 0;

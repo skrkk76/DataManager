@@ -135,9 +135,11 @@ public class NotifyAlarms extends RDMServicesConstants {
 	MapList mlAlarms = null;
 
 	Map<String, Map<String, String>> mNotificationAlarms = getNotificationAlarms();
+	System.out.println("Notification Alarms : " + mNotificationAlarms);
 
 	DataQuery query = new DataQuery();
 	MapList mlNotifyAlarms = query.getNotifyAlarms();
+	System.out.println("Notify Alarms : " + mlNotifyAlarms);
 
 	int level1;
 	int level2;
@@ -178,6 +180,8 @@ public class NotifyAlarms extends RDMServicesConstants {
 	    }
 
 	    sCntrlAlarm = String.valueOf(sCntrlType) + "." + sAlarm;
+	    System.out.println("Cntrl Alarm : " + sCntrlAlarm);
+
 	    if (mNotificationAlarms.containsKey(sCntrlAlarm)) {
 		mNotify = mNotificationAlarms.get(sCntrlAlarm);
 		sNotifyBy = mNotify.get(NOTIFY_BY);
@@ -237,6 +241,10 @@ public class NotifyAlarms extends RDMServicesConstants {
 	    mUser = mlUsers.get(i);
 	    mUsers.put(mUser.get(USER_ID), mUser.get(CONTACT_NO));
 	}
+
+	System.out.println("Alarms : " + mlAlarms);
+	System.out.println("Call Users : " + hsCallUsers);
+	System.out.println("SMS Users : " + mSMSUsers);
 
 	sendNotifications(hsCallUsers, mSMSUsers, mlAlarms, mUsers);
     }
