@@ -94,13 +94,13 @@
 			if(document.frm.global.checked)
 			{
 				document.frm.global.value = "Y";
+				document.frm.closed.value = "N";
+				document.frm.closed.checked = false;
 			}
 			else
 			{
 				document.frm.global.value = "N";
-				document.frm.closed.value = "N";
-				document.frm.closed.checked = false;
-			}			
+			}
 		}
 
 		function setClosed()
@@ -108,13 +108,13 @@
 			if(document.frm.closed.checked)
 			{
 				document.frm.closed.value = "Y";
-				document.frm.global.value = "Y";
-				document.frm.global.checked = true;
+				document.frm.global.value = "N";
+				document.frm.global.checked = false;
 			}
 			else
 			{
 				document.frm.closed.value = "N";
-			}			
+			}
 		}
 
 		function setLogByMe()
@@ -126,7 +126,7 @@
 			else
 			{
 				document.frm.logByMe.value = "N";
-			}			
+			}
 		}
 	</script>
 </head>
@@ -287,17 +287,17 @@
 				</td>
 			</tr>
 			<tr>
-				<td class="label"><%= resourceBundle.getProperty("DataManager.DisplayText.Show_Alerts") %></td>
+				<td class="label"><%= resourceBundle.getProperty("DataManager.DisplayText.Open_Alerts") %></td>
 				<td>
 					<input type="checkbox" id="global" name="global" value="N" onClick="javascript:setGlobal()">
 					<%= resourceBundle.getProperty("DataManager.DisplayText.Yes") %>
 				</td>
 			</tr>
 			<tr>
-				<td class="label"><%= resourceBundle.getProperty("DataManager.DisplayText.Include_Closed") %></td>
+				<td class="label"><%= resourceBundle.getProperty("DataManager.DisplayText.Closed_Alerts") %></td>
 				<td>
 					<input type="checkbox" id="closed" name="closed" value="N" onClick="javascript:setClosed()">
-					<%= resourceBundle.getProperty("DataManager.DisplayText.Yes") %>					
+					<%= resourceBundle.getProperty("DataManager.DisplayText.Yes") %>
 				</td>
 			</tr>
 			<tr>

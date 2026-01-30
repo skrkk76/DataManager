@@ -26,7 +26,7 @@
 	String sDeptFilter = request.getParameter("dept");
 	sDeptFilter = (sDeptFilter == null ? sDeptAllFilter : sDeptFilter);
 	String sBlockedUsers = request.getParameter("blockedUsers");
-
+	
 	Map<String, String> mInfo= null;
 	String userId = null;
 	String role = null;
@@ -111,7 +111,7 @@
 </head>
 <body>
 	<form name="frm">
-		<table border="0" cellpadding="1" align="center" cellspacing="1" width="<%= winWidth * 0.5 %>">
+		<table border="0" cellpadding="1" align="center" cellspacing="1" width="<%= winWidth * 0.6 %>">
 			<tr>
 				<td colspan="1" align="left">
 <%
@@ -131,12 +131,12 @@
 				</td>
 			</tr>
 			<tr>
-				<th class="label" width="15%"><%= resourceBundle.getProperty("DataManager.DisplayText.User_ID") %></th>
-				<th class="label" width="20%"><%= resourceBundle.getProperty("DataManager.DisplayText.User_Name") %></th>
+				<th class="label" width="10%"><%= resourceBundle.getProperty("DataManager.DisplayText.User_ID") %></th>
+				<th class="label" width="25%"><%= resourceBundle.getProperty("DataManager.DisplayText.User_Name") %></th>
 				<th class="label" width="15%"><%= resourceBundle.getProperty("DataManager.DisplayText.Role") %></th>
 				<th class="label" width="15%"><%= resourceBundle.getProperty("DataManager.DisplayText.Department") %></th>
-				<th class="label" width="15%"><%= resourceBundle.getProperty("DataManager.DisplayText.Group") %></th>
-				<th class="label" width="15%"><%= resourceBundle.getProperty("DataManager.DisplayText.Actions") %></th>
+				<th class="label" width="25%"><%= resourceBundle.getProperty("DataManager.DisplayText.Group") %></th>
+				<th class="label" width="10%"><%= resourceBundle.getProperty("DataManager.DisplayText.Actions") %></th>
 			</tr>
 <%
 			for(int i=0; i<iSz; i++)
@@ -170,7 +170,7 @@
 					<td class="input"><%= mInfo.get(RDMServicesConstants.LAST_NAME) %>,&nbsp;<%= mInfo.get(RDMServicesConstants.FIRST_NAME) %></td>
 					<td class="input"><%= role %></td>
 					<td class="input"><%= dept.replace("|", "<br>") %></td>
-					<td class="input"><%= groups.replace("|", "<br>") %></td>
+					<td class="input"><%= groups.replace("|", ", ") %></td>
 					<td class="input" style="text-align:center">
 <%
 						if("Y".equals(blocked))

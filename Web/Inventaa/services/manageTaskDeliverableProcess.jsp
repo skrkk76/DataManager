@@ -99,16 +99,19 @@
 		{
 			if(mode == "add")
 			{
+				alert("<%= resourceBundle.getProperty("DataManager.DisplayText.Deliverable_Added") %>");
 				top.opener.parent.frames['content'].document.location.href = 'userTaskDeliverables.jsp?taskId=<%= sTaskId %>';
 				parent.frames['content'].document.location.href = parent.frames['content'].document.location.href;
 			}
 			else if(mode == "edit")
 			{
+				alert("<%= resourceBundle.getProperty("DataManager.DisplayText.Deliverable_Updated") %>");
 				top.opener.parent.frames['content'].document.location.href = top.opener.parent.frames['content'].document.location.href;
 				top.close();
 			}
 			else
 			{
+				alert("<%= resourceBundle.getProperty("DataManager.DisplayText.Deliverable_Deleted") %>");
 				parent.frames['content'].document.location.href = parent.frames['content'].document.location.href;
 			}
 		}

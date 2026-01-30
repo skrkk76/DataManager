@@ -637,14 +637,15 @@ CREATE TABLE rdm_admin.user_comments (
     logged_on timestamp without time zone NOT NULL,
     global character varying(1) NOT NULL,
     review_comments character varying,
-    closed character varying(1),
     cmt_id character varying(15) NOT NULL,
     stage_number numeric,
     batch_no character varying,
     category character varying(3),
     department_name character varying,
     running_day integer,
-    attachments character varying
+    attachments character varying,
+    closed character varying(1),
+    closed_on timestamp without time zone
 );
 
 

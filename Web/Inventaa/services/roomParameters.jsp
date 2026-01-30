@@ -122,6 +122,10 @@
 			bCanEdit = true;
 		}
 	}
+
+	boolean bViewAttrGraph = u.hasViewAccess(RDMServicesConstants.VIEWS_GRAPH_ATTRDATA);
+	boolean bViewAlarms = u.hasViewAccess(RDMServicesConstants.VIEWS_ALARMS);
+	boolean bViewComments = u.hasViewAccess(RDMServicesConstants.VIEWS_COMMENTS);
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -622,8 +626,14 @@
 				}
 %>
 				<td style="font-family:Arial; font-size:0.8em; border:#ffffff; text-align:right">
-					<input type="button" id="Alarms" name="Alarms" value="<%= resourceBundle.getProperty("DataManager.DisplayText.View_Alarms").replaceAll("\\s", "\n") %>" onClick="javascript:showAlarms()">&nbsp;
 <%
+					if(bViewAlarms)
+					{
+%>
+						<input type="button" id="Alarms" name="Alarms" value="<%= resourceBundle.getProperty("DataManager.DisplayText.View_Alarms").replaceAll("\\s", "\n") %>" onClick="javascript:showAlarms()">&nbsp;
+<%
+					}
+
 					paramSettings = mViewParams.get("ViewImage");
 					if((paramSettings != null) && RDMServicesConstants.ACCESS_READ.equals(u.getUserAccess(paramSettings)))
 					{
@@ -632,7 +642,7 @@
 <%
 					}
 
-					if(slGraphs.contains(sCntrlType+" Dashboard"))
+					if(bViewAttrGraph && slGraphs.contains(sCntrlType+" Dashboard"))
 					{
 						Map<String, String> mGrpParams = u.getGraphParams(sCntrlType+" Dashboard");
 						sParams = mGrpParams.get("PARAMS").replaceAll(",", "\\|");
@@ -640,18 +650,15 @@
 						<input type="button" id="Graph" name="Graph" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Show_Graph").replaceAll("\\s", "\n") %>" onClick="javascript:showGraph()">&nbsp;
 <%
 					}
-					else
-					{
-%>
-						<input type="button" id="Graph" name="Graph" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Show_Graph").replaceAll("\\s", "\n") %>">&nbsp;
-<%
-					}
 
 					if(!RDMServicesConstants.ROLE_HELPER.equals(u.getRole()))
 					{
+						if(bViewComments)
+						{
 %>
-						<input type="button" id="Comments" name="Comments" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Add_Comments").replaceAll("\\s", "\n") %>" onClick="javascript:addComments()">&nbsp;
+							<input type="button" id="Comments" name="Comments" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Add_Comments").replaceAll("\\s", "\n") %>" onClick="javascript:addComments()">&nbsp;
 <%
+						}
 						if(bCanEdit)
 						{
 %>

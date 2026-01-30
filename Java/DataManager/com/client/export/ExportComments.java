@@ -122,8 +122,9 @@ public class ExportComments extends HttpServlet {
 	String sFromDate = request.getParameter("start_date");
 	String sToDate = request.getParameter("end_date");
 	String sGlobal = request.getParameter("global");
-	String sClosed = request.getParameter("closed");
 	String sLogByMe = request.getParameter("logByMe");
+	String sClosed = request.getParameter("closed");
+	boolean bClosed = "Y".equals(sClosed);
 
 	Row row = sheet.createRow(0);
 	Cell cell = row.createCell(0);
@@ -157,13 +158,13 @@ public class ExportComments extends HttpServlet {
 
 	row = sheet.createRow(5);
 	cell = row.createCell(0);
-	cell.setCellValue("From Date");
+	cell.setCellValue("From Date(" + (bClosed ? "Closed" : "Logged") + ")");
 	cell = row.createCell(1);
 	cell.setCellValue(sFromDate);
 
 	row = sheet.createRow(6);
 	cell = row.createCell(0);
-	cell.setCellValue("To Date");
+	cell.setCellValue("To Date(" + (bClosed ? "Closed" : "Logged") + ")");
 	cell = row.createCell(1);
 	cell.setCellValue(sToDate);
 
@@ -175,13 +176,13 @@ public class ExportComments extends HttpServlet {
 
 	row = sheet.createRow(8);
 	cell = row.createCell(0);
-	cell.setCellValue("Show Only Alerts");
+	cell.setCellValue("Open Alerts");
 	cell = row.createCell(1);
 	cell.setCellValue("Y".equals(sGlobal) ? "Yes" : "No");
 
 	row = sheet.createRow(9);
 	cell = row.createCell(0);
-	cell.setCellValue("Include Closed");
+	cell.setCellValue("Closed Alerts");
 	cell = row.createCell(1);
 	cell.setCellValue("Y".equals(sClosed) ? "Yes" : "No");
     }
@@ -216,6 +217,12 @@ public class ExportComments extends HttpServlet {
 
 	cell = row.createCell(8);
 	cell.setCellValue("Department");
+
+	cell = row.createCell(9);
+	cell.setCellValue("Closed");
+
+	cell = row.createCell(10);
+	cell.setCellValue("Closed On");
     }
 
     private void addComments(HSSFSheet sheet, MapList mlComments) throws Exception {
@@ -276,6 +283,12 @@ public class ExportComments extends HttpServlet {
 
 	    cell = row.createCell(8);
 	    cell.setCellValue((mLog.get(RDMServicesConstants.DEPARTMENT_NAME)).replace("|", "\n"));
+
+	    cell = row.createCell(9);
+	    cell.setCellValue("Y".equals(mLog.get(RDMServicesConstants.CLOSED_COMMENT)) ? "Yes" : "No");
+
+	    cell = row.createCell(10);
+	    cell.setCellValue(mLog.get(RDMServicesConstants.CLOSED_ON));
 	}
     }
 }

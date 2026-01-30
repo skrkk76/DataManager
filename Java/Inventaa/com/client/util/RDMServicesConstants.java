@@ -104,6 +104,7 @@ public class RDMServicesConstants {
     public final static String CLOSED_COMMENT = "CLOSED";
     public final static String REVIEW_COMMENTS = "REVIEW_COMMENTS";
     public final static String RUNNING_DAY = "RUNNING_DAY";
+    public final static String CLOSED_ON = "CLOSED_ON";
 
     public final static String TYPE_GROWER = "Grower";
     public final static String TYPE_BUNKER = "Bunker";

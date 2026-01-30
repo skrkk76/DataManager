@@ -179,7 +179,7 @@ public class User extends RDMServicesConstants implements Serializable {
 		iLoggedIn = 0;
 	    }
 
-	    boolean allCntrls = slGroups.isEmpty();
+	    boolean allCntrls = slGroups.isEmpty() && RDMServicesConstants.ROLE_ADMIN.equals(sRole);
 	    MapList mlControllers = query.getRoomsList();
 	    for (int i = 0, iSz = mlControllers.size(); i < iSz; i++) {
 		Map<String, String> mInfo = mlControllers.get(i);

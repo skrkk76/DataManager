@@ -109,6 +109,10 @@
 	}
 	*/
 	boolean bCanEdit = true;
+
+	boolean bViewAttrGraph = u.hasViewAccess(RDMServicesConstants.VIEWS_GRAPH_ATTRDATA);
+	boolean bViewAlarms = u.hasViewAccess(RDMServicesConstants.VIEWS_ALARMS);
+	boolean bViewComments = u.hasViewAccess(RDMServicesConstants.VIEWS_COMMENTS);
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -282,8 +286,13 @@
 
 			<td style="font-family:Arial; font-size:0.8em; font-weight:bold; border:#ffffff; text-align:right">
 				<div id="loading" style="display:none"><image src="../images/loading_icon.gif"></div>
-				<input type="button" id="Comments" name="Comments" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Add_Comments") %>" onClick="javascript:addComments()">
 <%
+				if(bViewComments)
+				{
+%>
+					<input type="button" id="Comments" name="Comments" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Add_Comments") %>" onClick="javascript:addComments()">
+<%
+				}
 				if(bCanEdit)
 				{
 %>
@@ -325,18 +334,12 @@
 								<a href="roomImageView.jsp?controller=<%=sController%>"><%= resourceBundle.getProperty("DataManager.DisplayText.View_Image") %></a><br>
 <%
 							}
-							if(slGraphs.contains(sCntrlType+" Dashboard"))
+							if(bViewAttrGraph && slGraphs.contains(sCntrlType+" Dashboard"))
 							{
 								Map<String, String> mGrpParams = u.getGraphParams(sCntrlType+" Dashboard");
 								sParams = mGrpParams.get("PARAMS").replace(",", "|");
 %>
 								<a href="javascript:showGraph('<%=sController%>')"><%= resourceBundle.getProperty("DataManager.DisplayText.Show_Graph") %></a>
-<%
-							}
-							else
-							{
-%>
-								<%= resourceBundle.getProperty("DataManager.DisplayText.Show_Graph") %>
 <%
 							}
 %>

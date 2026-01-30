@@ -2587,9 +2587,11 @@ public class DataQuery extends RDMServicesConstants {
 
 	boolean fg = false;
 	String sDesc = null;
+	String sClosed = null;
 	String reviewComments = null;
 	String attachments = null;
 	StringList slControllers = null;
+	Timestamp tsClosedOn = null;
 	MapList mlLogs = new MapList();
 	Map<String, String> mLog = null;
 
@@ -2650,7 +2652,8 @@ public class DataQuery extends RDMServicesConstants {
 		} else {
 		    sbQuery.append(" where ");
 		}
-		sbQuery.append(LOGGED_ON + " >= '" + sFromDate + " 12:00:00 AM'");
+		sbQuery.append(bClosed ? CLOSED_ON : LOGGED_ON);
+		sbQuery.append(" >= '" + sFromDate + " 12:00:00 AM'");
 		fg = true;
 	    }
 
@@ -2660,7 +2663,8 @@ public class DataQuery extends RDMServicesConstants {
 		} else {
 		    sbQuery.append(" where ");
 		}
-		sbQuery.append(LOGGED_ON + " <= '" + sToDate + " 11:59:59 PM'");
+		sbQuery.append(bClosed ? CLOSED_ON : LOGGED_ON);
+		sbQuery.append(" <= '" + sToDate + " 11:59:59 PM'");
 		fg = true;
 	    }
 
@@ -2679,19 +2683,16 @@ public class DataQuery extends RDMServicesConstants {
 	    } else {
 		sbQuery.append(" where ");
 	    }
-	    sbQuery.append(GLOBAL_ALERT + " = '" + (bGlobal ? "Y" : "N") + "'");
+	    sbQuery.append(GLOBAL_ALERT + " = '" + ((bGlobal || bClosed) ? "Y" : "N") + "'");
 	    fg = true;
 
-	    if (!bClosed) {
-		if (fg) {
-		    sbQuery.append(" and ");
-		} else {
-		    sbQuery.append(" where ");
-		}
-
-		sbQuery.append(CLOSED_COMMENT + " is NULL");
-		fg = true;
+	    if (fg) {
+		sbQuery.append(" and ");
+	    } else {
+		sbQuery.append(" where ");
 	    }
+	    sbQuery.append(CLOSED_COMMENT + (bClosed ? " = 'Y'" : " is NULL"));
+	    fg = true;
 
 	    if (!"".equals(BNo)) {
 		if (fg) {
@@ -2728,7 +2729,7 @@ public class DataQuery extends RDMServicesConstants {
 		sbQuery.append(DEPARTMENT_NAME + " = '')");
 	    }
 
-	    sbQuery.append(" ORDER BY LOGGED_ON DESC ");
+	    sbQuery.append(" ORDER BY LOGGED_ON DESC");
 
 	    if (limit > 0) {
 		sbQuery.append(" LIMIT " + limit);
@@ -2752,9 +2753,14 @@ public class DataQuery extends RDMServicesConstants {
 		    mLog.put(LOGGED_BY, rs.getString(LOGGED_BY));
 		    mLog.put(LOGGED_ON, sdf.format(rs.getTimestamp(LOGGED_ON)));
 		    mLog.put(GLOBAL_ALERT, rs.getString(GLOBAL_ALERT));
-		    mLog.put(CLOSED_COMMENT, rs.getString(CLOSED_COMMENT));
 		    mLog.put(DEPARTMENT_NAME, rs.getString(DEPARTMENT_NAME));
 		    mLog.put(RUNNING_DAY, rs.getString(RUNNING_DAY));
+
+		    sClosed = rs.getString(CLOSED_COMMENT);
+		    mLog.put(CLOSED_COMMENT, ((sClosed == null) ? "" : sClosed));
+
+		    tsClosedOn = rs.getTimestamp(CLOSED_ON);
+		    mLog.put(CLOSED_ON, ((tsClosedOn == null) ? "" : sdf.format(tsClosedOn)));
 
 		    reviewComments = rs.getString(REVIEW_COMMENTS);
 		    mLog.put(REVIEW_COMMENTS, (reviewComments == null ? "" : reviewComments));
@@ -2941,6 +2947,9 @@ public class DataQuery extends RDMServicesConstants {
 		sbComments.append(", ");
 		sbComments.append(CLOSED_COMMENT);
 		sbComments.append(" = 'Y'");
+		sbComments.append(", ");
+		sbComments.append(CLOSED_ON);
+		sbComments.append(" = '" + new java.sql.Timestamp(cal.getTimeInMillis()) + "'");
 	    } else {
 		if (sAttachment != null && !"".equals(sAttachment)) {
 		    sbComments.append(", ");

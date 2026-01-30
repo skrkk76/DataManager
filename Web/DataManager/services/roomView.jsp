@@ -140,6 +140,10 @@
 	}
 	*/
 	boolean bCanEdit = true;
+
+	boolean bViewAttrGraph = u.hasViewAccess(RDMServicesConstants.VIEWS_GRAPH_ATTRDATA);
+	boolean bViewAlarms = u.hasViewAccess(RDMServicesConstants.VIEWS_ALARMS);
+	boolean bViewComments = u.hasViewAccess(RDMServicesConstants.VIEWS_COMMENTS);
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -412,8 +416,13 @@
 			{
 %>
 				<div id="loading" style="display:none"><image src="../images/loading_icon.gif"></div>
-				<input type="button" id="Comments" name="Comments" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Add_Comments") %>" onClick="javascript:addComments()">
 <%
+				if(bViewComments)
+				{
+%>
+					<input type="button" id="Comments" name="Comments" value="<%= resourceBundle.getProperty("DataManager.DisplayText.Add_Comments") %>" onClick="javascript:addComments()">
+<%
+				}
 				if(bCanEdit)
 				{
 %>
@@ -469,18 +478,12 @@ if(iSelRange > -1)
 								<a href="roomImageView.jsp?controller=<%=sController%>"><%= resourceBundle.getProperty("DataManager.DisplayText.View_Image") %></a><br>
 <%
 							}
-							if(slGraphs.contains(sCntrlType+" Dashboard"))
+							if(bViewAttrGraph && slGraphs.contains(sCntrlType+" Dashboard"))
 							{
 								Map<String, String> mGrpParams = u.getGraphParams(sCntrlType+" Dashboard");
 								sParams = mGrpParams.get("PARAMS").replaceAll(",", "\\|");
 %>
 								<a href="javascript:showGraph('<%=sController%>')"><%= resourceBundle.getProperty("DataManager.DisplayText.Show_Graph") %></a>
-<%
-							}
-							else
-							{
-%>
-								<%= resourceBundle.getProperty("DataManager.DisplayText.Show_Graph") %>
 <%
 							}
 %>
@@ -489,36 +492,42 @@ if(iSelRange > -1)
 					}
 %>
 				</tr>
-
-				<tr>
-					<th style="text-align:left;border-right:0px"><%= resourceBundle.getProperty("DataManager.DisplayText.Alarms") %></th>
-					<th style="border-left:0px">&nbsp;</th>
 <%
-					for(int i=0; i<iSz; i++)
-					{
-						sController = slControllers.get(i);
-						bgColor = mAllAlarms.get(sController);
+				if(bViewAlarms)
+				{
 %>
-						<td bgcolor="<%= bgColor %>" style="border-top:solid 1px #888888;border-bottom:solid 1px #888888;border-right:solid 1px #888888;border-left:solid 1px #888888;text-align:center">
+					<tr>
+						<th style="text-align:left;border-right:0px"><%= resourceBundle.getProperty("DataManager.DisplayText.Alarms") %></th>
+						<th style="border-left:0px">&nbsp;</th>
 <%
-						if("#FF0000".equals(bgColor))
+						for(int i=0; i<iSz; i++)
 						{
+							sController = slControllers.get(i);
+							bgColor = mAllAlarms.get(sController);
 %>
-							<a href="javascript:showAlarms('<%=sController%>')"><b><%= resourceBundle.getProperty("DataManager.DisplayText.View") %></b></a>
+							<td bgcolor="<%= bgColor %>" style="border-top:solid 1px #888888;border-bottom:solid 1px #888888;border-right:solid 1px #888888;border-left:solid 1px #888888;text-align:center">
+<%
+							if("#FF0000".equals(bgColor))
+							{
+%>
+								<a href="javascript:showAlarms('<%=sController%>')"><b><%= resourceBundle.getProperty("DataManager.DisplayText.View") %></b></a>
+<%
+							}
+							else
+							{
+%>
+								&nbsp;
+<%
+							}
+%>
+							</td>
 <%
 						}
-						else
-						{
 %>
-							&nbsp;
+					</tr>
 <%
-						}
+				}
 %>
-						</td>
-<%
-					}
-%>
-				</tr>
 				<tr>
 					<th style="text-align:left;border-right:0px"><%= resourceBundle.getProperty("DataManager.DisplayText.Manual") %></th>
 					<th style="border-left:0px">&nbsp;</th>

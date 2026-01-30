@@ -10,10 +10,10 @@
 
 <html>
 <%
-	String sController = request.getParameter("controller");	
+	String sController = request.getParameter("controller");
 	boolean bResetParams = "true".equals(request.getParameter("resetParams"));
 	String sCntrlType = request.getParameter("cntrlType");
-	String sDefParamType = request.getParameter("defParamType");		
+	String sDefParamType = request.getParameter("defParamType");
 	String sScrollLeft = request.getParameter("scrollLeft");
 	String sScrollTop = request.getParameter("scrollTop");
 	session.setAttribute("scrollLeft", sScrollLeft);
@@ -98,6 +98,7 @@
 		batchNo = (batchNo == null ? "" : batchNo);
 		String BNo = request.getParameter("BNo");
 		String sResetPhase = request.getParameter("ResetPhase");
+		String sCurrPhase = request.getParameter("CurrPhase");
 
 		PLCServices client = null;
 		String sCntrlVersion = RDMSession.getControllerVersion(sController);
@@ -113,17 +114,24 @@
 		if(!RDMServicesUtils.isGeneralController(sController))
 		{
 			ArrayList<String[]> alPhases = RDMServicesUtils.getControllerStages(sCntrlType);
-			if("".equals(batchNo) && bResetParams)
+			if("".equals(batchNo))
 			{
-				if("".equals(BNo) || !BNo.startsWith("auto_"))
+				if(bResetParams)
 				{
-					BNo = "auto_" + sController + "_" + new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
-					client.addBatchNo(BNo, sDefParamType);
+					if("".equals(BNo) || !BNo.startsWith("auto_"))
+					{
+						BNo = "auto_" + sController + "_" + new SimpleDateFormat("yyyyMMddHHmmss").format(Calendar.getInstance().getTime());
+						client.addBatchNo(BNo, sDefParamType);
+					}
+					else
+					{
+						client.updateDefaultProduct(BNo, sDefParamType);
+					}
 				}
-				else
+				else if("0".equals(sCurrPhase))
 				{
-					client.updateDefaultProduct(BNo, sDefParamType);
-				}			
+					client.updateBatchNo(batchNo, sDefParamType);
+				}
 			}
 			else if(!"".equals(batchNo))
 			{
@@ -149,7 +157,7 @@
 		{
 			sRet = client.setParameters(u, mParams);
 		}
-		
+
 		if(!RDMServicesUtils.isGeneralController(sController))
 		{
 			if("true".equals(sResetPhase))
