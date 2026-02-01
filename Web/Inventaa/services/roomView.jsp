@@ -141,6 +141,7 @@
 	boolean bViewAttrGraph = u.hasViewAccess(RDMServicesConstants.VIEWS_GRAPH_ATTRDATA);
 	boolean bViewAlarms = u.hasViewAccess(RDMServicesConstants.VIEWS_ALARMS);
 	boolean bViewComments = u.hasViewAccess(RDMServicesConstants.VIEWS_COMMENTS);
+	boolean bViewSingle = u.hasViewAccess(RDMServicesConstants.ROOMS_VIEW_SINGLE_ROOM);
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -466,9 +467,25 @@ if(iSelRange > -1)
 						sController = slControllers.get(i);
 %>
 						<th style="text-align: center; height:25px">
-							<input type="checkbox" id="<%= sController %>" name="<%= sController %>" value="No" onClick="javascript:setSelected(this)"><br>
-							<a href="singleRoomView.jsp?controller=<%=sController%>"><%= sController %></a><br>
 <%
+							if(bCanEdit)
+							{
+%>
+								<input type="checkbox" id="<%= sController %>" name="<%= sController %>" value="No" onClick="javascript:setSelected(this)"><br>
+<%
+							}
+							if(bViewSingle)
+							{
+%>
+								<a href="singleRoomView.jsp?controller=<%=sController%>"><%= sController %></a><br>
+<%
+							}
+							else
+							{
+%>
+								<%= sController %>
+<%
+							}
 							if(bViewImage)
 							{
 %>
