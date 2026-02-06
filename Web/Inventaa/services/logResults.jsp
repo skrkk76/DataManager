@@ -37,7 +37,7 @@ MapList mlLogs = null;
 if(mode != null)
 {
 	Logs logs = new Logs();
-	mlLogs = logs.getLogHistory(sRoom, sStage, BNo, sFromDate, sToDate, sParams, showSysLogs, iLimit);
+	mlLogs = logs.getLogHistory(u, sRoom, sStage, BNo, sFromDate, sToDate, sParams, showSysLogs, iLimit);
 }
 
 Map<String, String> mUsers = RDMServicesUtils.getUserNames();

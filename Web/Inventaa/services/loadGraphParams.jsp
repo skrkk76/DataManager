@@ -45,7 +45,7 @@
 		
 		paramS = mParams.get(sParam);
 		sAccess = u.getUserAccess(paramS);
-		if(sAccess == null || RDMServicesConstants.ACCESS_NONE.equals(sAccess))
+		if(sAccess == null || RDMServicesConstants.ACCESS_NONE.equals(sAccess) || "BatchNo".equals(sParam) || "Product".equals(sParam))
 		{
 			continue;
 		}

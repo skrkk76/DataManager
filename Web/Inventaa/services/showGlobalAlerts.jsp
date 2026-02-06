@@ -67,7 +67,7 @@
 			</tr>
 <%
 			Comments comments = new Comments();
-			MapList mlComments = comments.getGlobalAlerts(u.getDepartment());
+			MapList mlComments = comments.getGlobalAlerts(u);
 			int iSz = mlComments.size();
 			if(iSz > 0)
 			{

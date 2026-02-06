@@ -14,67 +14,67 @@ import javax.servlet.http.HttpServletResponse;
 import com.client.db.DataQuery;
 
 public class PasswordManagement extends HttpServlet {
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public void init(ServletConfig config) throws ServletException {
-	super.init(config);
-    }
-
-    public void doGet(HttpServletRequest request, HttpServletResponse response) {
-	try {
-	    String sUserName = request.getParameter("id");
-	    String sAction = request.getParameter("action");
-
-	    String flag = null;
-	    String password = generatePassword();
-
-	    DataQuery qry = new DataQuery();
-	    Map<String, String> mUserInfo = qry.getUserDetails(sUserName);
-
-	    if (mUserInfo.isEmpty() || mUserInfo.size() == 0) {
-		flag = "nouser";
-	    } else {
-		if ("forgot.password".equals(sAction)) {
-		    String eMail = mUserInfo.get(RDMServicesConstants.EMAIL);
-		    if (eMail == null || "".equals(eMail)) {
-			flag = "nomail";
-		    } else {
-			mUserInfo.put(RDMServicesConstants.PASSWORD, password);
-			Mail.sendMail(mUserInfo, sAction);
-		    }
-		}
-
-		if (flag == null) {
-		    Map<String, String> mUpdatePwd = new HashMap<String, String>();
-		    mUpdatePwd.put(RDMServicesConstants.PASSWORD, password);
-
-		    qry.updateUser(sUserName, mUpdatePwd);
-		    flag = "success";
-		}
-	    }
-
-	    if ("forgot.password".equals(sAction)) {
-		response.sendRedirect("services/forgotPassword.jsp?flag=" + flag);
-	    } else if ("reset.password".equals(sAction)) {
-		response.sendRedirect("services/resetUserPassword.jsp?flag=" + flag + "&password=" + password);
-	    }
-	} catch (Exception e) {
-	    e.printStackTrace();
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
 	}
-    }
 
-    private String generatePassword() {
-	String symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
-	Random random = new SecureRandom();
+	public void doGet(HttpServletRequest request, HttpServletResponse response) {
+		try {
+			String sUserName = request.getParameter("id");
+			String sAction = request.getParameter("action");
 
-	char[] buf = new char[10];
-	for (int idx = 0; idx < buf.length; idx++) {
-	    buf[idx] = symbols.charAt(random.nextInt(symbols.length()));
+			String flag = null;
+			String password = generatePassword();
+
+			DataQuery qry = new DataQuery();
+			Map<String, String> mUserInfo = qry.getUserDetails(sUserName);
+
+			if (mUserInfo.isEmpty() || mUserInfo.size() == 0) {
+				flag = "nouser";
+			} else {
+				if ("forgot.password".equals(sAction)) {
+					String eMail = mUserInfo.get(RDMServicesConstants.EMAIL);
+					if (eMail == null || "".equals(eMail)) {
+						flag = "nomail";
+					} else {
+						mUserInfo.put(RDMServicesConstants.PASSWORD, password);
+						Mail.sendMail(mUserInfo, sAction);
+					}
+				}
+
+				if (flag == null) {
+					Map<String, String> mUpdatePwd = new HashMap<String, String>();
+					mUpdatePwd.put(RDMServicesConstants.PASSWORD, password);
+
+					qry.updateUser(sUserName, mUpdatePwd);
+					flag = "success";
+				}
+			}
+
+			if ("forgot.password".equals(sAction)) {
+				response.sendRedirect("services/forgotPassword.jsp?flag=" + flag);
+			} else if ("reset.password".equals(sAction)) {
+				response.sendRedirect("services/resetUserPassword.jsp?flag=" + flag + "&password=" + password);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	return new String(buf);
-    }
 
-    public void destroy() {
+	private String generatePassword() {
+		String symbols = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz";
+		Random random = new SecureRandom();
 
-    }
+		char[] buf = new char[10];
+		for (int idx = 0; idx < buf.length; idx++) {
+			buf[idx] = symbols.charAt(random.nextInt(symbols.length()));
+		}
+		return new String(buf);
+	}
+
+	public void destroy() {
+
+	}
 }

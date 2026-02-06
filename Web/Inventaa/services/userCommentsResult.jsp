@@ -41,7 +41,7 @@ if(mode != null)
 	BNo = BNo.replaceAll("\\s", ",").replaceAll(",,", ",");
 	
 	Comments comments = new Comments();
-	mlComments = comments.getUserComments(sRoom, sStage, BNo, sFromDate, sToDate, sLoggedBy, text, dept, bGlobal, bClosed, iLimit);
+	mlComments = comments.getUserComments(u, sRoom, sStage, BNo, sFromDate, sToDate, sLoggedBy, text, dept, bGlobal, bClosed, iLimit);
 	iSz = mlComments.size();
 }
 %>

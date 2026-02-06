@@ -47,7 +47,7 @@ if(limit != null && !"".equals(limit))
 if(mode != null)
 {	
 	Alarms alarms = new Alarms();
-	mlAlarms = alarms.getAlarmLogHistory(sRoom, sStage, BNo, sbTypes.toString(), sFromDate, sToDate, showOpenAlarms, iLimit);
+	mlAlarms = alarms.getAlarmLogHistory(u, sRoom, sStage, BNo, sbTypes.toString(), sFromDate, sToDate, showOpenAlarms, iLimit);
 }
 
 Map<String, String> mUsers = RDMServicesUtils.getUserNames();
