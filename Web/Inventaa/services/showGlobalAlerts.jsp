@@ -66,6 +66,8 @@
 				<th class="label" width="5%">&nbsp;</th>
 			</tr>
 <%
+			boolean bHideRoomView = !(u.hasViewAccess(RDMServicesConstants.ROOMS_VIEW_SINGLE_ROOM));
+
 			Comments comments = new Comments();
 			MapList mlComments = comments.getGlobalAlerts(u);
 			int iSz = mlComments.size();
@@ -116,7 +118,7 @@
 %>
 						</td>
 <%
-						if(slInactiveCntrl.contains(sRoomId))
+						if(slInactiveCntrl.contains(sRoomId) || bHideRoomView)
 						{
 %>
 							<td class="input" width="7%"><%= sRoomId %></td>

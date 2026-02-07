@@ -41,6 +41,8 @@ if(mode != null)
 }
 
 Map<String, String> mUsers = RDMServicesUtils.getUserNames();
+
+boolean bHideRoomView = !(u.hasViewAccess(RDMServicesConstants.ROOMS_VIEW_SINGLE_ROOM));
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -128,7 +130,7 @@ Map<String, String> mUsers = RDMServicesUtils.getUserNames();
 %>
 						<tr>
 <%
-							if(slInactiveCntrl.contains(sRoomId))
+							if(slInactiveCntrl.contains(sRoomId) || bHideRoomView)
 							{
 %>
 								<td class="input"><%= sRoomId %></td>

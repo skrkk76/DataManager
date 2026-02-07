@@ -44,6 +44,8 @@ if(mode != null)
 	mlComments = comments.getUserComments(u, sRoom, sStage, BNo, sFromDate, sToDate, sLoggedBy, text, dept, bGlobal, bClosed, iLimit);
 	iSz = mlComments.size();
 }
+
+boolean bHideRoomView = !(u.hasViewAccess(RDMServicesConstants.ROOMS_VIEW_SINGLE_ROOM));
 %>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -195,7 +197,7 @@ if(mode != null)
 %>
 							</td>
 <%
-							if(slInactiveCntrl.contains(sRoomId))
+							if(slInactiveCntrl.contains(sRoomId) || bHideRoomView)
 							{
 %>
 								<td class="input"><%= sRoomId %></td>
