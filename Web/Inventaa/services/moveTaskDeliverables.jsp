@@ -45,7 +45,19 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" >
 <head>
-	<link type="text/css" href="../styles/dygraph.css" rel="stylesheet" />
+	<link type="text/css" href="../styles/select2.min.css" rel="stylesheet" />
+
+	<script language="javaScript" type="text/javascript" src="../scripts/jquery.min.js"></script>
+	<script language="javaScript" type="text/javascript" src="../scripts/select2.full.js"></script>
+	<script language="javaScript" type="text/javascript" src="../scripts/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		//<![CDATA[
+		$(document).ready(function(){
+			$(".js-example-basic-multiple").select2();
+		});
+		//]]>
+	</script>
+
 	<script language="javascript">
 	function submitForm()
 	{
@@ -160,7 +172,7 @@
 						<tr>
 							<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.Owner") %></b></td>
 							<td class="input">
-								<select id="owner" name="owner">
+								<select id="owner" name="owner" style="width:250px" class="js-example-basic-multiple">
 <%
 									MapList mlOwners = RDMServicesUtils.getTaskOwners(sTaskDept, false);
 									for(int i=0, iSz=mlOwners.size(); i<iSz; i++)
@@ -185,9 +197,9 @@
 					<tr>
 						<td class="label"><b><%= resourceBundle.getProperty("DataManager.DisplayText.Assignee") %></b></td>
 						<td class="input" colspan="2">
-							<select id="assignee" name="assignee">
+							<select id="assignee" name="assignee" style="width:250px" class="js-example-basic-multiple">
 <%
-								MapList mlAssignees = RDMServicesUtils.getAssigneeList(sTaskDept, false);							
+								MapList mlAssignees = RDMServicesUtils.getAssigneeList(sTaskDept, false);
 								for(int i=0, iSz=mlAssignees.size(); i<iSz; i++)
 								{
 									mInfo = mlAssignees.get(i);

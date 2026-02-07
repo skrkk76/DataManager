@@ -92,12 +92,24 @@ Collections.sort(lKeys, String.CASE_INSENSITIVE_ORDER);
 
 	<link type="text/css" href="../styles/dygraph.css" rel="stylesheet" />
 	<link type="text/css" href="../styles/calendar.css" rel="stylesheet" />
+	<link type="text/css" href="../styles/select2.min.css" rel="stylesheet" />
 	<style>
 	img
 	{
 		vertical-align: middle;
 	}
 	</style>
+
+	<script language="javaScript" type="text/javascript" src="../scripts/jquery.min.js"></script>
+	<script language="javaScript" type="text/javascript" src="../scripts/select2.full.js"></script>
+	<script language="javaScript" type="text/javascript" src="../scripts/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		//<![CDATA[
+		$(document).ready(function(){
+			$(".js-example-basic-multiple").select2();
+		});
+		//]]>
+	</script>
 
 	<script language="javaScript" type="text/javascript" src="../scripts/calendar.js"></script>
 	<script language="javascript">
@@ -224,7 +236,7 @@ Collections.sort(lKeys, String.CASE_INSENSITIVE_ORDER);
 			{
 %>
 				<td colspan="<%= (!slReadWeights.isEmpty() ? "4" : "2") %>">
-					<select id="selTaskId" name="selTaskId" onChange="javascript:showTaskDeliverables()">
+					<select id="selTaskId" name="selTaskId" onChange="javascript:showTaskDeliverables()" style="width:250px" class="js-example-basic-multiple">
 <%
 					String sTaskAutoId = null;
 					String sTaskAssignee = null;
@@ -386,6 +398,9 @@ Collections.sort(lKeys, String.CASE_INSENSITIVE_ORDER);
 				</td>
 			</tr>
 		</table>
+		<div id="added" style="display:none; color: green; font-weight: bold;">
+			<%= resourceBundle.getProperty("DataManager.DisplayText.Deliverable_Added") %>
+		</div>
 	</form>
 </body>
 </html>

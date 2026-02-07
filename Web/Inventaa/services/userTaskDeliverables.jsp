@@ -118,7 +118,19 @@ Collections.sort(lKeys, String.CASE_INSENSITIVE_ORDER);
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title></title>
-	<link type="text/css" href="../styles/dygraph.css" rel="stylesheet" />
+	<link type="text/css" href="../styles/select2.min.css" rel="stylesheet" />
+
+	<script language="javaScript" type="text/javascript" src="../scripts/jquery.min.js"></script>
+	<script language="javaScript" type="text/javascript" src="../scripts/select2.full.js"></script>
+	<script language="javaScript" type="text/javascript" src="../scripts/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		//<![CDATA[
+		$(document).ready(function(){
+			$(".js-example-basic-multiple").select2();
+		});
+		//]]>
+	</script>
+
 	<script language="javascript">
 	function manageDeliverable(sDeliverableId)
 	{
@@ -221,7 +233,7 @@ Collections.sort(lKeys, String.CASE_INSENSITIVE_ORDER);
 		{
 %>
 			<th style="font-size:16px;text-align:left" colspan="10">
-				<select id="taskId" name="taskId" onChange="javascript:showTaskDeliverables()">
+				<select id="taskId" name="taskId" onChange="javascript:showTaskDeliverables()" style="width:250px" class="js-example-basic-multiple">
 <%
 				String sTaskAutoId = null;
 				String sTaskAssignee = null;
@@ -234,7 +246,7 @@ Collections.sort(lKeys, String.CASE_INSENSITIVE_ORDER);
 <%
 					for(int j=0; j<mlValues.size(); j++)
 					{
-						mTask = mlValues.get(j);					
+						mTask = mlValues.get(j);
 						sTaskAutoId = mTask.get(RDMServicesConstants.TASK_AUTONAME);
 						sTaskAssignee = mTask.get(RDMServicesConstants.ASSIGNEE);
 %>
@@ -272,20 +284,20 @@ Collections.sort(lKeys, String.CASE_INSENSITIVE_ORDER);
 			</td>
 		</tr>
 		<tr>
-			<th class="label" width="10%"><%= resourceBundle.getProperty("DataManager.DisplayText.Task_Name") %></th>
-			<td class="input" width="15%"><%= sTaskId %></td>
+			<td class="label" width="8%"><%= resourceBundle.getProperty("DataManager.DisplayText.Task_Name") %></td>
+			<td class="input" width="12%"><%= sTaskId %></td>
 
-			<th class="label" width="10%"><%= resourceBundle.getProperty("DataManager.DisplayText.Task_Id") %></th>
-			<td class="input" width="15%"><%= sTaskAdmId %>&nbsp;<%= "".equals(sTaskAdmName) ? "" : "("+sTaskAdmName+")" %></td>
+			<th class="label" width="8%"><%= resourceBundle.getProperty("DataManager.DisplayText.Task_Id") %></th>
+			<td class="input" width="12%"><%= sTaskAdmId %>&nbsp;<%= "".equals(sTaskAdmName) ? "" : "("+sTaskAdmName+")" %></td>
 
-			<th class="label" width="10%"><%= resourceBundle.getProperty("DataManager.DisplayText.Room_No") %></th>
-			<td class="input" width="15%"><%= sRoom %></td>
+			<th class="label" width="8%"><%= resourceBundle.getProperty("DataManager.DisplayText.Room_No") %></th>
+			<td class="input" width="12%"><%= sRoom %></td>
 			
-			<th class="label" width="10%"><%= resourceBundle.getProperty("DataManager.DisplayText.Owner") %></th>
-			<td class="input" width="15%"><%= mUserNames.get(sOwner) %>&nbsp;(<%= sOwner %>)</td>
+			<th class="label" width="8%"><%= resourceBundle.getProperty("DataManager.DisplayText.Owner") %></th>
+			<td class="input" width="12%"><%= mUserNames.get(sOwner) %>&nbsp;(<%= sOwner %>)</td>
 
-			<th class="label" width="10%"><%= resourceBundle.getProperty("DataManager.DisplayText.Assignee") %></th>
-			<td class="input" width="15%"><%= ("".equals(sAssignee) ? "" : mUserNames.get(sAssignee) + "&nbsp;(" + sAssignee +")") %></td>
+			<th class="label" width="8%"><%= resourceBundle.getProperty("DataManager.DisplayText.Assignee") %></th>
+			<td class="input" width="12%"><%= ("".equals(sAssignee) ? "" : mUserNames.get(sAssignee) + "&nbsp;(" + sAssignee +")") %></td>
 		<tr>
 	</table>
 	
