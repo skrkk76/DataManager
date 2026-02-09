@@ -7,24 +7,22 @@ import com.client.db.DataQuery;
 import com.client.util.MapList;
 import com.client.util.RDMServicesConstants;
 import com.client.util.StringList;
-import com.client.util.User;
 
 public class Comments extends RDMServicesConstants {
 	public Comments() {
 
 	}
 
-	public MapList getGlobalAlerts(User ctxUser) throws Exception {
-		StringList slDept = ctxUser.getDepartment();
-		return getUserComments(ctxUser, "", "", "", "", "", "", "", slDept.join('|'), true, false, 0);
+	public MapList getGlobalAlerts(StringList slDept) throws Exception {
+		return getUserComments("", "", "", "", "", "", "", slDept.join('|'), true, false, 0);
 	}
 
-	public MapList getUserComments(User ctxUser, String sRoom, String sStage, String BNo, String sFromDate,
-			String sToDate, String sLoggedBy, String sCategory, String sDept, boolean bGlobal, boolean bClosed,
-			int limit) throws Exception {
+	public MapList getUserComments(String sRoom, String sStage, String BNo, String sFromDate, String sToDate,
+			String sLoggedBy, String sCategory, String sDept, boolean bGlobal, boolean bClosed, int limit)
+			throws Exception {
 		DataQuery query = new DataQuery();
-		return query.getUserComments(ctxUser, sRoom, sStage, BNo, sFromDate, sToDate, sLoggedBy, sCategory, sDept,
-				bGlobal, bClosed, limit);
+		return query.getUserComments(sRoom, sStage, BNo, sFromDate, sToDate, sLoggedBy, sCategory, sDept, bGlobal,
+				bClosed, limit);
 	}
 
 	public boolean addUserComments(Map<String, String> mInfo) throws Exception {

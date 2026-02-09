@@ -606,6 +606,7 @@ public class UserTasks extends RDMServicesConstants {
 			MapList mlTaskDels = getTaskDeliverables(sTaskId);
 			for (int x = 0, iSz = mlTaskDels.size(); x < iSz; x++) {
 				mDeliverable = mlTaskDels.get(x);
+
 				if (x == 0) {
 					sFstDelCreatedOn = mDeliverable.get(CREATED_ON);
 					if (iSz == 1) {

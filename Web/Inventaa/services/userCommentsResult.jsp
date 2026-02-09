@@ -41,7 +41,7 @@ if(mode != null)
 	BNo = BNo.replaceAll("\\s", ",").replaceAll(",,", ",");
 	
 	Comments comments = new Comments();
-	mlComments = comments.getUserComments(u, sRoom, sStage, BNo, sFromDate, sToDate, sLoggedBy, text, dept, bGlobal, bClosed, iLimit);
+	mlComments = comments.getUserComments(sRoom, sStage, BNo, sFromDate, sToDate, sLoggedBy, text, dept, bGlobal, bClosed, iLimit);
 	iSz = mlComments.size();
 }
 
@@ -159,7 +159,8 @@ boolean bHideRoomView = !(u.hasViewAccess(RDMServicesConstants.ROOMS_VIEW_SINGLE
 					String sNoDays = null;
 					String sAttachments = null;
 					StringList slInactiveCntrl = RDMSession.getInactiveControllers();
-			
+					StringList slUserCntrl = u.getControllers();
+
 					for(int i=0; i<iSz; i++)
 					{
 						mComment = mlComments.get(i);
@@ -197,7 +198,7 @@ boolean bHideRoomView = !(u.hasViewAccess(RDMServicesConstants.ROOMS_VIEW_SINGLE
 %>
 							</td>
 <%
-							if(slInactiveCntrl.contains(sRoomId) || bHideRoomView)
+							if(bHideRoomView || !slUserCntrl.contains(sRoomId) || slInactiveCntrl.contains(sRoomId))
 							{
 %>
 								<td class="input"><%= sRoomId %></td>

@@ -10,18 +10,16 @@ import com.client.db.DataQuery;
 import com.client.util.MapList;
 import com.client.util.RDMServicesConstants;
 import com.client.util.StringList;
-import com.client.util.User;
 
 public class Alarms extends RDMServicesConstants {
 	public Alarms() {
 
 	}
 
-	public MapList getAlarmLogHistory(User ctxUser, String sRoom, String sStage, String BNo, String sParams,
-			String sFromDate, String sToDate, String showOpenAlarms, int limit) throws Exception {
+	public MapList getAlarmLogHistory(String sRoom, String sStage, String BNo, String sParams, String sFromDate,
+			String sToDate, String showOpenAlarms, int limit) throws Exception {
 		DataQuery query = new DataQuery();
-		return query.getAlarmLogHistory(ctxUser, sRoom, sStage, BNo, sParams, sFromDate, sToDate, showOpenAlarms,
-				limit);
+		return query.getAlarmLogHistory(sRoom, sStage, BNo, sParams, sFromDate, sToDate, showOpenAlarms, limit);
 	}
 
 	public StringList getAlarmFilters() throws Exception {
@@ -48,8 +46,8 @@ public class Alarms extends RDMServicesConstants {
 			Map<String, String> mAlarm = null;
 			Map<String, String> mOpenAlarm = null;
 
-			MapList mlOpenAlarms = query.getAlarmLogHistory(null, sRoomId, sStage, sBatchNo, sTypes, sFromDt, sToDt,
-					"Yes", 0);
+			MapList mlOpenAlarms = query.getAlarmLogHistory(sRoomId, sStage, sBatchNo, sTypes, sFromDt, sToDt, "Yes",
+					0);
 			for (int i = 0; i < mlOpenAlarms.size(); i++) {
 				mOpenAlarm = mlOpenAlarms.get(i);
 				sRoomId = mOpenAlarm.get(ROOM_ID);

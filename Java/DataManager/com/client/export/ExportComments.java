@@ -11,7 +11,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -22,7 +21,6 @@ import com.client.db.DataQuery;
 import com.client.util.MapList;
 import com.client.util.RDMServicesConstants;
 import com.client.util.RDMServicesUtils;
-import com.client.util.User;
 
 public class ExportComments extends HttpServlet {
 	private static final long serialVersionUID = 1L;
@@ -84,12 +82,9 @@ public class ExportComments extends HttpServlet {
 			}
 		}
 
-		HttpSession session = request.getSession();
-		User ctxUser = (User) session.getAttribute("currentSessionUser");
-
 		DataQuery query = new DataQuery();
-		MapList mlComments = query.getUserComments(ctxUser, sRoom, sStage, BNo, sFromDate, sToDate, sLoggedBy, text,
-				dept, bGlobal, bClosed, limit);
+		MapList mlComments = query.getUserComments(sRoom, sStage, BNo, sFromDate, sToDate, sLoggedBy, text, dept,
+				bGlobal, bClosed, limit);
 
 		return mlComments;
 	}

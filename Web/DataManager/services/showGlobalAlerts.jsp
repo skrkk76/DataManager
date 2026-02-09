@@ -69,11 +69,12 @@
 			boolean bHideRoomView = !(u.hasViewAccess(RDMServicesConstants.ROOMS_VIEW_SINGLE_ROOM));
 
 			Comments comments = new Comments();
-			MapList mlComments = comments.getGlobalAlerts(u);
+			MapList mlComments = comments.getGlobalAlerts(u.getDepartment());
 			int iSz = mlComments.size();
 			if(iSz > 0)
 			{
 				StringList slInactiveCntrl = RDMSession.getInactiveControllers();
+				StringList slUserCntrl = u.getControllers();
 
 				Map<String, String> mUsers = RDMServicesUtils.getUserNames();
 				Map<String, String> mComment = null;
@@ -118,7 +119,7 @@
 %>
 						</td>
 <%
-						if(slInactiveCntrl.contains(sRoomId) || bHideRoomView)
+						if(bHideRoomView || !slUserCntrl.contains(sRoomId) || slInactiveCntrl.contains(sRoomId))
 						{
 %>
 							<td class="input" width="7%"><%= sRoomId %></td>

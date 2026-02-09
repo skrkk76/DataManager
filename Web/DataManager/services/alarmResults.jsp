@@ -47,7 +47,7 @@ if(limit != null && !"".equals(limit))
 if(mode != null)
 {	
 	Alarms alarms = new Alarms();
-	mlAlarms = alarms.getAlarmLogHistory(u, sRoom, sStage, BNo, sbTypes.toString(), sFromDate, sToDate, showOpenAlarms, iLimit);
+	mlAlarms = alarms.getAlarmLogHistory(sRoom, sStage, BNo, sbTypes.toString(), sFromDate, sToDate, showOpenAlarms, iLimit);
 }
 
 Map<String, String> mUsers = RDMServicesUtils.getUserNames();
@@ -167,6 +167,7 @@ boolean bHideRoomView = !(u.hasViewAccess(RDMServicesConstants.ROOMS_VIEW_SINGLE
 				String sBatchNo = null;
 				String sLastNotified = null;
 				StringList slInactiveCntrl = RDMSession.getInactiveControllers();
+				StringList slUserCntrl = u.getControllers();
 
 				for(int i=0; i<iSz; i++)
 				{
@@ -205,7 +206,7 @@ boolean bHideRoomView = !(u.hasViewAccess(RDMServicesConstants.ROOMS_VIEW_SINGLE
 %>
 					<tr>
 <%
-						if(slInactiveCntrl.contains(sRoomId) || bHideRoomView)
+						if(bHideRoomView || !slUserCntrl.contains(sRoomId) || slInactiveCntrl.contains(sRoomId))
 						{
 %>
 							<td class="input"><%= sRoomId %></td>

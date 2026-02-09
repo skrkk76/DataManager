@@ -37,7 +37,7 @@ MapList mlLogs = null;
 if(mode != null)
 {
 	Logs logs = new Logs();
-	mlLogs = logs.getLogHistory(u, sRoom, sStage, BNo, sFromDate, sToDate, sParams, showSysLogs, iLimit);
+	mlLogs = logs.getLogHistory(sRoom, sStage, BNo, sFromDate, sToDate, sParams, showSysLogs, iLimit);
 }
 
 Map<String, String> mUsers = RDMServicesUtils.getUserNames();
@@ -115,6 +115,7 @@ boolean bHideRoomView = !(u.hasViewAccess(RDMServicesConstants.ROOMS_VIEW_SINGLE
 					String sBatchNo = null;
 					String sLoggedBy = null;
 					StringList slInactiveCntrl = RDMSession.getInactiveControllers();
+					StringList slUserCntrl = u.getControllers();
 
 					for(int i=0; i<iSz; i++)
 					{
@@ -130,7 +131,7 @@ boolean bHideRoomView = !(u.hasViewAccess(RDMServicesConstants.ROOMS_VIEW_SINGLE
 %>
 						<tr>
 <%
-							if(slInactiveCntrl.contains(sRoomId) || bHideRoomView)
+							if(bHideRoomView || !slUserCntrl.contains(sRoomId) || slInactiveCntrl.contains(sRoomId))
 							{
 %>
 								<td class="input"><%= sRoomId %></td>

@@ -1826,8 +1826,8 @@ public class DataQuery extends RDMServicesConstants {
 		}
 	}
 
-	public MapList getLogHistory(User ctxUser, String sRoom, String sStage, String BNo, String sFromDate,
-			String sToDate, String sParams, String showSysLogs, int limit) throws Exception {
+	public MapList getLogHistory(String sRoom, String sStage, String BNo, String sFromDate, String sToDate,
+			String sParams, String showSysLogs, int limit) throws Exception {
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -1838,11 +1838,8 @@ public class DataQuery extends RDMServicesConstants {
 		String sParam = null;
 		StringBuilder sbQuery = new StringBuilder();
 		StringList slControllers = null;
-		StringList userControllers = null;
 
 		try {
-			userControllers = ctxUser.getControllers();
-
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 
 			SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy");
@@ -1949,8 +1946,7 @@ public class DataQuery extends RDMServicesConstants {
 			rs = stmt.executeQuery(sbQuery.toString());
 			while (rs.next()) {
 				sController = rs.getString(ROOM_ID);
-				if (userControllers.contains(sController)
-						&& (slControllers == null || slControllers.contains(sController))) {
+				if (slControllers == null || slControllers.contains(sController)) {
 					mLog = new HashMap<String, String>();
 					sParam = rs.getString(PARAM_NAME);
 					BNo = rs.getString(BATCH_NO);
@@ -1977,8 +1973,8 @@ public class DataQuery extends RDMServicesConstants {
 		return mlLogs;
 	}
 
-	public MapList getAlarmLogHistory(User ctxUser, String sRoom, String sStage, String BNo, String sParams,
-			String sFromDate, String sToDate, String showOpenAlarms, int limit) throws Exception {
+	public MapList getAlarmLogHistory(String sRoom, String sStage, String BNo, String sParams, String sFromDate,
+			String sToDate, String showOpenAlarms, int limit) throws Exception {
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -1989,15 +1985,12 @@ public class DataQuery extends RDMServicesConstants {
 		String sMutedBy = null;
 		String sController = null;
 		StringList slControllers = null;
-		StringList userControllers = null;
 		Timestamp tsAcceptedOn = null;
 		Timestamp tsMutedOn = null;
 		Timestamp tsClearedOn = null;
 		Timestamp tsLastNotified = null;
 
 		try {
-			userControllers = ctxUser.getControllers();
-
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 
 			SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy");
@@ -2112,8 +2105,7 @@ public class DataQuery extends RDMServicesConstants {
 			rs = stmt.executeQuery(sbQuery.toString());
 			while (rs.next()) {
 				sController = rs.getString(ROOM_ID);
-				if (userControllers.contains(sController)
-						&& (slControllers == null || slControllers.contains(sController))) {
+				if (slControllers == null || slControllers.contains(sController)) {
 					mAlarm = new HashMap<String, String>();
 
 					sAcceptedBy = rs.getString(ACCEPTED_BY);
@@ -2586,9 +2578,9 @@ public class DataQuery extends RDMServicesConstants {
 		}
 	}
 
-	public MapList getUserComments(User ctxUser, String sRoom, String sStage, String BNo, String sFromDate,
-			String sToDate, String sLoggedBy, String sCategory, String sDept, boolean bGlobal, boolean bClosed,
-			int limit) throws Exception {
+	public MapList getUserComments(String sRoom, String sStage, String BNo, String sFromDate, String sToDate,
+			String sLoggedBy, String sCategory, String sDept, boolean bGlobal, boolean bClosed, int limit)
+			throws Exception {
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -2599,14 +2591,11 @@ public class DataQuery extends RDMServicesConstants {
 		String reviewComments = null;
 		String attachments = null;
 		StringList slControllers = null;
-		StringList userControllers = null;
 		Timestamp tsClosedOn = null;
 		MapList mlLogs = new MapList();
 		Map<String, String> mLog = null;
 
 		try {
-			userControllers = ctxUser.getControllers();
-
 			SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy HH:mm");
 
 			SimpleDateFormat input = new SimpleDateFormat("dd-MM-yyyy");
@@ -2750,11 +2739,11 @@ public class DataQuery extends RDMServicesConstants {
 
 			conn = connectionPool.getConnection();
 			stmt = conn.createStatement();
-			
+
 			rs = stmt.executeQuery(sbQuery.toString());
 			while (rs.next()) {
 				sRoom = rs.getString(ROOM_ID);
-				if (userControllers.contains(sRoom) && (slControllers == null || slControllers.contains(sRoom))) {
+				if (slControllers == null || slControllers.contains(sRoom)) {
 					mLog = new HashMap<String, String>();
 
 					mLog.put(COMMENT_ID, rs.getString(COMMENT_ID));
